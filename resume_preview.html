@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jaswanth Kamaraj J - Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 16mm 14mm 16mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #1c1917;
+      background: #ffffff;
+      line-height: 1.45;
+      font-size: 9.5pt;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .resume-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4px;
+    }
+
+    /* Header */
+    .header {
+      border-bottom: 2px solid #b45309;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+
+    .name-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+
+    .name {
+      font-size: 20pt;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .title {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: #b45309;
+    }
+
+    .contact-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 8.5pt;
+      color: #44403c;
+      font-weight: 500;
+    }
+
+    .contact-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .contact-item a {
+      color: #1c1917;
+      text-decoration: none;
+    }
+
+    .contact-dot {
+      color: #b45309;
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 11px;
+    }
+
+    .section-heading {
+      font-size: 10pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0f172a;
+      border-bottom: 1px solid #e7e5e4;
+      padding-bottom: 3px;
+      margin-bottom: 7px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-heading::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 12px;
+      background: #b45309;
+      border-radius: 2px;
+    }
+
+    /* Summary */
+    .summary-text {
+      font-size: 9pt;
+      color: #44403c;
+      line-height: 1.5;
+      text-align: justify;
+    }
+
+    /* Education */
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 2px;
+    }
+
+    .item-title {
+      font-size: 9.8pt;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .item-date {
+      font-size: 8.5pt;
+      font-weight: 600;
+      color: #b45309;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .item-subtitle {
+      font-size: 9pt;
+      font-weight: 600;
+      color: #57534e;
+      margin-bottom: 4px;
+    }
+
+    .item-details {
+      font-size: 8.7pt;
+      color: #44403c;
+      margin-bottom: 4px;
+    }
+
+    /* Skills Grid */
+    .skills-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8.8pt;
+    }
+
+    .skills-table td {
+      padding: 2.5px 0;
+      vertical-align: top;
+    }
+
+    .skill-cat {
+      width: 26%;
+      font-weight: 700;
+      color: #1c1917;
+    }
+
+    .skill-list {
+      width: 74%;
+      color: #44403c;
+    }
+
+    /* Projects */
+    .project-entry {
+      margin-bottom: 8px;
+    }
+
+    .project-entry:last-child {
+      margin-bottom: 0;
+    }
+
+    .project-tech {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.8pt;
+      font-weight: 600;
+      color: #b45309;
+      margin-left: 6px;
+    }
+
+    .bullet-list {
+      list-style-type: disc;
+      padding-left: 15px;
+      margin-top: 3px;
+    }
+
+    .bullet-list li {
+      font-size: 8.7pt;
+      color: #44403c;
+      margin-bottom: 2px;
+      line-height: 1.45;
+    }
+
+    /* Achievements */
+    .achievement-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 8.7pt;
+      margin-bottom: 3.5px;
+    }
+
+    .achievement-title {
+      font-weight: 600;
+      color: #1c1917;
+    }
+
+    .achievement-meta {
+      color: #78716c;
+      font-size: 8.2pt;
+    }
+  </style>
+</head>
+<body>
+  <div class="resume-container">
+    
+    <!-- Header -->
+    <header class="header">
+      <div class="name-title-row">
+        <h1 class="name">JASWANTH KAMARAJ J</h1>
+        <span class="title">AI & Data Science Student</span>
+      </div>
+      <div class="contact-bar">
+        <span class="contact-item">📧 jaswanthkamaraj@gmail.com</span>
+        <span class="contact-dot">•</span>
+        <span class="contact-item">📍 Pudukkottai, Tamil Nadu, India</span>
+        <span class="contact-dot">•</span>
+        <span class="contact-item">🌐 jaswanthkamaraj.github.io</span>
+        <span class="contact-dot">•</span>
+        <span class="contact-item">💼 linkedin.com/in/jaswanthkamaraj</span>
+        <span class="contact-dot">•</span>
+        <span class="contact-item">🐙 github.com/jaswanthkamaraj</span>
+      </div>
+    </header>
+
+    <!-- Professional Summary -->
+    <section class="section">
+      <h2 class="section-heading">Professional Summary</h2>
+      <p class="summary-text">
+        Motivated 2nd-year B.Tech undergraduate in Artificial Intelligence and Data Science at Mount Zion College of Engineering and Technology (Autonomous). Passionate about developing predictive machine learning models, exploratory data analytics, and intelligent software applications. Strong foundational grasp of Data Structures, Algorithms, and Object-Oriented design, actively seeking internship opportunities to contribute and learn in dynamic engineering environments.
+      </p>
+    </section>
+
+    <!-- Education -->
+    <section class="section">
+      <h2 class="section-heading">Education</h2>
+      <div class="item-header">
+        <span class="item-title">Bachelor of Technology (B.Tech) – Artificial Intelligence & Data Science</span>
+        <span class="item-date">2023 – 2027</span>
+      </div>
+      <div class="item-subtitle">Mount Zion College of Engineering and Technology (Autonomous), Pudukottai</div>
+      <div class="item-details">
+        <strong>Affiliation:</strong> Anna University, Chennai &nbsp;|&nbsp; <strong>Current Status:</strong> 2nd Year (Semester 4) &nbsp;|&nbsp; <strong>CGPA:</strong> 8.75 / 10.0
+      </div>
+      <div class="item-details">
+        <strong>Relevant Coursework:</strong> Data Structures & Algorithms, Probability & Statistics for AI, Database Management Systems (DBMS), Linear Algebra, Python for Data Science, Object-Oriented Programming (Java/C++).
+      </div>
+    </section>
+
+    <!-- Technical Skills -->
+    <section class="section">
+      <h2 class="section-heading">Technical Skills</h2>
+      <table class="skills-table">
+        <tr>
+          <td class="skill-cat">Languages</td>
+          <td class="skill-list">Python, SQL (PostgreSQL, MySQL), C++, C, Java, JavaScript (ES6+)</td>
+        </tr>
+        <tr>
+          <td class="skill-cat">ML & Data Science</td>
+          <td class="skill-list">Scikit-Learn, Pandas, NumPy, PyTorch, Matplotlib, Seaborn, OpenCV, Jupyter Notebooks</td>
+        </tr>
+        <tr>
+          <td class="skill-cat">Web & Frameworks</td>
+          <td class="skill-list">HTML5, CSS3, Flask, FastAPI, Streamlit, RESTful APIs, GitHub Pages</td>
+        </tr>
+        <tr>
+          <td class="skill-cat">CS Core & Tools</td>
+          <td class="skill-list">Data Structures & Algorithms, Object-Oriented Programming (OOP), DBMS, Git & GitHub, Linux</td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- Key Projects -->
+    <section class="section">
+      <h2 class="section-heading">Technical Projects</h2>
+
+      <div class="project-entry">
+        <div class="item-header">
+          <span class="item-title">CardioRisk: Heart Disease Risk Predictor <span class="project-tech">[Python, Scikit-Learn, Streamlit, Pandas]</span></span>
+          <span class="item-date">2024</span>
+        </div>
+        <ul class="bullet-list">
+          <li>Architected an end-to-end clinical diagnosis prediction model using Random Forest and XGBoost algorithms.</li>
+          <li>Preprocessed patient health telemetry, applied cross-validation, and achieved an 89% diagnostic accuracy score.</li>
+          <li>Deployed an interactive, user-friendly clinical triage web interface using Streamlit for instantaneous predictions.</li>
+        </ul>
+      </div>
+
+      <div class="project-entry">
+        <div class="item-header">
+          <span class="item-title">Telecom Customer Churn Analytics <span class="project-tech">[Python, Pandas, Seaborn, Matplotlib, Jupyter]</span></span>
+          <span class="item-date">2024</span>
+        </div>
+        <ul class="bullet-list">
+          <li>Executed thorough Exploratory Data Analysis (EDA) across 10,000+ subscriber profiles to uncover behavioral churn factors.</li>
+          <li>Identified key contract longevity and billing friction points, providing actionable insights to optimize retention campaigns.</li>
+        </ul>
+      </div>
+
+      <div class="project-entry">
+        <div class="item-header">
+          <span class="item-title">SmartDoc: AI PDF Q&A & Summarizer <span class="project-tech">[Python, FastAPI, HuggingFace, PyPDF2]</span></span>
+          <span class="item-date">2024</span>
+        </div>
+        <ul class="bullet-list">
+          <li>Built a lightweight document retrieval pipeline that chunks academic research PDFs and stores contextual vector representations.</li>
+          <li>Integrated semantic similarity search to generate precise, cited answers to user queries with low inference latency.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Certifications & Achievements -->
+    <section class="section">
+      <h2 class="section-heading">Certifications & Achievements</h2>
+      <div class="achievement-item">
+        <span class="achievement-title">• Machine Learning Specialization – DeepLearning.AI & Stanford Online</span>
+        <span class="achievement-meta">Coursera | Nov 2024</span>
+      </div>
+      <div class="achievement-item">
+        <span class="achievement-title">• Applied Data Science with Python – Kaggle & University of Michigan</span>
+        <span class="achievement-meta">Credentialed | Jun 2024</span>
+      </div>
+      <div class="achievement-item">
+        <span class="achievement-title">• Finalist – Inter-College AI Hackathon & Tech Fest (Top 10 out of 80+ Teams)</span>
+        <span class="achievement-meta">Campus Council | Sep 2024</span>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
