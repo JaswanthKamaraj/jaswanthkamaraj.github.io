@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <!-- ===================================================================
+       SEO & META INFORMATION
+       <!-- EDIT: Update title, meta description, and author with your details -->
+  <!-- =================================================================== -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- EDIT: Change to your name and tagline -->
+  <title>Jaswanth Kamaraj J | AI & Data Science Student Portfolio</title>
+  <meta name="description" content="Portfolio of Jaswanth Kamaraj J, 2nd-year B.Tech Artificial Intelligence and Data Science student passionate about Machine Learning, Data Analytics, and Intelligent Software.">
+  <meta name="keywords" content="AI, Data Science, Machine Learning, Portfolio, B.Tech Student, Python, Deep Learning, Jaswanth Kamaraj J">
+  <meta name="author" content="Jaswanth Kamaraj J">
+
+  <!-- Open Graph / Facebook / LinkedIn (Preview cards when shared) -->
+  <meta property="og:type" content="website">
+  <!-- EDIT: Replace with your actual GitHub Pages URL: https://<username>.github.io -->
+  <meta property="og:url" content="https://jaswanthkamaraj.github.io/">
+  <meta property="og:title" content="Jaswanth Kamaraj J | AI & Data Science Student Portfolio">
+  <meta property="og:description" content="2nd-year B.Tech AI & Data Science student building machine learning models, exploratory data analytics, and intelligent solutions.">
+  <meta property="og:image" content="favicon.svg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jaswanth Kamaraj J | AI & Data Science Student Portfolio">
+  <meta name="twitter:description" content="2nd-year B.Tech AI & Data Science student portfolio featuring machine learning projects, skills, and coursework.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===================================================================
+       STICKY NAVBAR
+       =================================================================== -->
+  <header class="header" id="navbar">
+    <div class="container nav-container">
+      <!-- Brand logo / initials -->
+      <a href="#hero" class="brand-logo" aria-label="Jaswanth Kamaraj Portfolio Home">
+        <span class="brand-icon">JK</span>
+        <span>jaswanth<span class="brand-dot">.ai</span></span>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#skills" class="nav-link">Skills</a></li>
+          <li><a href="#projects" class="nav-link">Projects</a></li>
+          <li><a href="#education" class="nav-link">Education</a></li>
+          <li><a href="#certifications" class="nav-link">Certifications</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Theme Toggle & Mobile Hamburger -->
+      <div class="nav-actions">
+        <!-- Light / Dark Mode Toggle Button -->
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle light or dark theme" title="Toggle theme">
+          <!-- Moon Icon (Visible in dark mode) -->
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+          <!-- Sun Icon (Visible in light mode) -->
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </button>
+
+        <!-- Mobile Menu Hamburger Button -->
+        <button id="mobileMenuBtn" class="mobile-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================
+       1. HERO SECTION
+       =================================================================== -->
+  <main>
+    <section class="section hero" id="hero">
+      <div class="container hero-grid">
+        
+        <!-- Left Column: Hero Content -->
+        <div class="hero-content reveal">
+          <!-- Availability / Status Tag -->
+          <div class="status-badge">
+            <span class="status-indicator"></span>
+            <!-- EDIT: Status message -->
+            <span>Open for Summer 2025 Internships & Research</span>
+          </div>
+
+          <p class="hero-greeting">Hello, I'm</p>
+          <h1 class="hero-name">Jaswanth <span class="gradient-text">Kamaraj J</span></h1>
+
+          <!-- Tagline -->
+          <p class="hero-tagline">&lt;AI & Data Science Student /&gt;</p>
+
+          <!-- EDIT: Short introductory text (2-3 lines) -->
+          <p class="hero-desc">
+            2nd-year B.Tech undergraduate crafting machine learning models, uncovering data-driven stories, and developing intelligent software. Passionate about applying AI to solve real-world problems.
+          </p>
+
+          <!-- Call to Action Buttons -->
+          <div class="hero-actions">
+            <a href="#projects" class="btn btn-primary">
+              View Projects
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+
+            <!-- EDIT: Put your resume file inside this repo (e.g. resume.pdf) and link it here -->
+            <a href="resume.pdf" class="btn btn-secondary" target="_blank" download>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download Resume
+            </a>
+
+            <a href="#contact" class="btn btn-ghost">
+              Contact Me
+            </a>
+          </div>
+
+          <!-- Quick Social Links with Icons -->
+          <div class="hero-socials">
+            <!-- EDIT: Replace with your GitHub profile URL -->
+            <a href="https://github.com/jaswanthkamaraj" target="_blank" rel="noopener noreferrer" class="social-link" title="GitHub Profile" aria-label="GitHub">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+            </a>
+
+            <!-- EDIT: Replace with your LinkedIn profile URL -->
+            <a href="https://linkedin.com/in/jaswanthkamaraj" target="_blank" rel="noopener noreferrer" class="social-link" title="LinkedIn Profile" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451c.979 0 1.778-.773 1.778-1.729V1.73C24 .774 23.205 0 22.225 0z"/>
+              </svg>
+            </a>
+
+            <!-- Quick email link -->
+            <a href="mailto:jaswanthkamaraj@gmail.com" class="social-link" title="Send Email" aria-label="Email">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Code & Stats Graphic -->
+        <div class="hero-visual reveal reveal-delay-2">
+          <div class="hero-card">
+            <div class="card-topbar">
+              <div class="card-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <span class="card-title-bar">student_profile.py</span>
+            </div>
+
+            <!-- Stylized Code Snippet -->
+            <pre class="code-preview"><code><span class="keyword">class</span> <span class="function">StudentDeveloper</span>:
+  <span class="keyword">def</span> <span class="function">__init__</span>(self):
+    self.name = <span class="string">"Jaswanth Kamaraj J"</span>
+    self.major = <span class="string">"AI & Data Science"</span>
+    self.year = <span class="number">2</span>  <span class="comment"># 2nd Year B.Tech</span>
+    self.focus = [<span class="string">"Machine Learning"</span>, <span class="string">"Data Analysis"</span>, <span class="string">"DSA"</span>]
+  
+  <span class="keyword">def</span> <span class="function">current_goal</span>(self):
+    <span class="keyword">return</span> <span class="string">"Seeking AI/ML Internship"</span></code></pre>
+
+            <!-- Quick Metrics Grid -->
+            <div class="quick-stats-grid">
+              <div class="quick-stat-box">
+                <span class="stat-label">Academic Status</span>
+                <!-- EDIT: Semester / Year -->
+                <p class="stat-value">2nd Year (Sem 4)</p>
+              </div>
+              <div class="quick-stat-box">
+                <span class="stat-label">Core Specialty</span>
+                <!-- EDIT: Core focus -->
+                <p class="stat-value">ML & Analytics</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         2. ABOUT SECTION
+         =================================================================== -->
+    <section class="section" id="about">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <span class="section-tag">// 01. About Me</span>
+          <h2 class="section-title">Driven by Curiosity & Data</h2>
+          <p class="section-subtitle">A glimpse into my background, academic passions, and what drives me every day.</p>
+        </div>
+
+        <div class="about-grid">
+          <!-- Left: Narrative Text -->
+          <div class="about-card reveal">
+            <p class="about-text">
+              I am currently a 2nd-year B.Tech undergraduate in <strong>Artificial Intelligence and Data Science</strong> at <strong>Mount Zion College of Engineering and Technology, Pudukottai</strong>. From unraveling patterns in chaotic datasets to fine-tuning machine learning models, I love working at the intersection of mathematical reasoning and code.
+            </p>
+            <p class="about-text">
+              My technical interests include <strong>Supervised & Unsupervised Machine Learning, Exploratory Data Analysis, and Natural Language Processing</strong>, alongside building strong foundations in <strong>Data Structures & Algorithms</strong>.
+            </p>
+            <p class="about-text">
+              When I'm not training models or solving algorithmic problems, I participate in hackathons, explore open-source research papers, and build intuitive user interfaces for AI tools.
+            </p>
+          </div>
+
+          <!-- Right: Key Focus Highlights -->
+          <div class="about-highlights reveal reveal-delay-2">
+            
+            <div class="highlight-box">
+              <div class="highlight-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="highlight-title">Machine Learning & Modeling</h3>
+                <p class="highlight-desc">Developing predictive models with Scikit-Learn, PyTorch, and clean feature engineering workflows.</p>
+              </div>
+            </div>
+
+            <div class="highlight-box">
+              <div class="highlight-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="highlight-title">Data Analytics & Storytelling</h3>
+                <p class="highlight-desc">Extracting actionable statistical insights using Pandas, NumPy, Matplotlib, and interactive dashboards.</p>
+              </div>
+            </div>
+
+            <div class="highlight-box">
+              <div class="highlight-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="highlight-title">Algorithms & Problem Solving</h3>
+                <p class="highlight-desc">Sharpening problem solving with daily practice in Data Structures and algorithmic efficiency.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         3. SKILLS SECTION (Grouped badges, progress-free)
+         =================================================================== -->
+    <section class="section" id="skills">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <span class="section-tag">// 02. Technical Toolkit</span>
+          <h2 class="section-title">Skills & Technologies</h2>
+          <p class="section-subtitle">Grouped technologies and tools I utilize across data pipelines, modeling, and software engineering.</p>
+        </div>
+
+        <div class="skills-grid">
+          
+          <!-- Category 1: Programming Languages -->
+          <div class="skill-category-card reveal">
+            <div class="category-header">
+              <div class="category-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 class="category-title">Programming Languages</h3>
+            </div>
+            <!-- EDIT: Add or remove language badges -->
+            <div class="skill-badges">
+              <span class="skill-badge"><span class="skill-dot"></span>Python</span>
+              <span class="skill-badge"><span class="skill-dot"></span>SQL (PostgreSQL / MySQL)</span>
+              <span class="skill-badge"><span class="skill-dot"></span>C++</span>
+              <span class="skill-badge"><span class="skill-dot"></span>C</span>
+              <span class="skill-badge"><span class="skill-dot"></span>Java</span>
+              <span class="skill-badge"><span class="skill-dot"></span>JavaScript (ES6+)</span>
+            </div>
+          </div>
+
+          <!-- Category 2: ML & Data Tools -->
+          <div class="skill-category-card reveal reveal-delay-1">
+            <div class="category-header">
+              <div class="category-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+              </div>
+              <h3 class="category-title">ML & Data Science Tools</h3>
+            </div>
+            <!-- EDIT: Add or remove ML/Data tool badges -->
+            <div class="skill-badges">
+              <span class="skill-badge"><span class="skill-dot"></span>Scikit-Learn</span>
+              <span class="skill-badge"><span class="skill-dot"></span>Pandas</span>
+              <span class="skill-badge"><span class="skill-dot"></span>NumPy</span>
+              <span class="skill-badge"><span class="skill-dot"></span>PyTorch</span>
+              <span class="skill-badge"><span class="skill-dot"></span>TensorFlow (Basics)</span>
+              <span class="skill-badge"><span class="skill-dot"></span>Matplotlib & Seaborn</span>
+              <span class="skill-badge"><span class="skill-dot"></span>OpenCV</span>
+              <span class="skill-badge"><span class="skill-dot"></span>Jupyter Notebooks</span>
+            </div>
+          </div>
+
+          <!-- Category 3: Web & Development -->
+          <div class="skill-category-card reveal reveal-delay-2">
+            <div class="category-header">
+              <div class="category-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                </svg>
+              </div>
+              <h3 class="category-title">Web & Deployment</h3>
+            </div>
+            <!-- EDIT: Add or remove Web badges -->
+            <div class="skill-badges">
+              <span class="skill-badge"><span class="skill-dot"></span>HTML5 & CSS3</span>
+              <span class="skill-badge"><span class="skill-dot"></span>Flask</span>
+              <span class="skill-badge"><span class="skill-dot"></span>FastAPI</span>
+              <span class="skill-badge"><span class="skill-dot"></span>Streamlit</span>
+              <span class="skill-badge"><span class="skill-dot"></span>RESTful APIs</span>
+              <span class="skill-badge"><span class="skill-dot"></span>GitHub Pages</span>
+            </div>
+          </div>
+
+          <!-- Category 4: CS Core & Other Tools -->
+          <div class="skill-category-card reveal reveal-delay-3">
+            <div class="category-header">
+              <div class="category-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <h3 class="category-title">CS Core & Workflow</h3>
+            </div>
+            <!-- EDIT: Add or remove Core badges -->
+            <div class="skill-badges">
+              <span class="skill-badge"><span class="skill-dot"></span>Data Structures & Algorithms</span>
+              <span class="skill-badge"><span class="skill-dot"></span>Object-Oriented Programming (OOP)</span>
+              <span class="skill-badge"><span class="skill-dot"></span>Database Management (DBMS)</span>
+              <span class="skill-badge"><span class="skill-dot"></span>Git & GitHub</span>
+              <span class="skill-badge"><span class="skill-dot"></span>Linux / Bash Basics</span>
+              <span class="skill-badge"><span class="skill-dot"></span>VS Code</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         4. PROJECTS SECTION (Card Grid with GitHub & Live Demo buttons)
+         =================================================================== -->
+    <section class="section" id="projects">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <span class="section-tag">// 03. Featured Work</span>
+          <h2 class="section-title">Projects & Experiments</h2>
+          <p class="section-subtitle">A collection of machine learning, data exploration, and intelligent application projects.</p>
+        </div>
+
+        <div class="projects-grid">
+          
+          <!-- Project 1: Healthcare ML -->
+          <article class="project-card reveal">
+            <div>
+              <div class="project-top">
+                <span class="project-type">Machine Learning</span>
+                <span class="project-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </span>
+              </div>
+
+              <!-- EDIT: Project 1 Title -->
+              <h3 class="project-title">CardioRisk: Heart Disease Predictor</h3>
+
+              <!-- EDIT: Project 1 Description -->
+              <p class="project-desc">
+                An end-to-end clinical risk classifier built with Random Forest and XGBoost. Evaluated on the Cleveland Heart dataset with comprehensive cross-validation, achieving 89% accuracy and deployed with interactive Streamlit UI.
+              </p>
+
+              <!-- Tech Stack Tags -->
+              <div class="project-tags">
+                <span class="project-tag">Python</span>
+                <span class="project-tag">Scikit-Learn</span>
+                <span class="project-tag">Pandas</span>
+                <span class="project-tag">Streamlit</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons: GitHub & Demo -->
+            <div class="project-actions">
+              <!-- EDIT: Project 1 GitHub Link -->
+              <a href="https://github.com/jaswanthkamaraj/cardiorisk-predictor" target="_blank" rel="noopener noreferrer" class="btn-project" aria-label="View source code on GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                GitHub
+              </a>
+
+              <!-- EDIT: Project 1 Live Demo Link (or keep # if not deployed) -->
+              <a href="https://jaswanthkamaraj.github.io/cardiorisk-demo" target="_blank" rel="noopener noreferrer" class="btn-project demo" aria-label="View live demo">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Live Demo
+              </a>
+            </div>
+          </article>
+
+          <!-- Project 2: Data Analytics / EDA -->
+          <article class="project-card reveal reveal-delay-1">
+            <div>
+              <div class="project-top">
+                <span class="project-type">Data Analytics</span>
+                <span class="project-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </span>
+              </div>
+
+              <!-- EDIT: Project 2 Title -->
+              <h3 class="project-title">Telecom Customer Churn Analytics</h3>
+
+              <!-- EDIT: Project 2 Description -->
+              <p class="project-desc">
+                Conducted deep exploratory data analysis on 10,000+ telecom customer profiles. Identified key contract length and payment churn indicators, reducing simulated retention costs with targeted statistical segmentation.
+              </p>
+
+              <!-- Tech Stack Tags -->
+              <div class="project-tags">
+                <span class="project-tag">Python</span>
+                <span class="project-tag">Pandas</span>
+                <span class="project-tag">Seaborn</span>
+                <span class="project-tag">Matplotlib</span>
+                <span class="project-tag">Jupyter</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons: GitHub & Demo -->
+            <div class="project-actions">
+              <!-- EDIT: Project 2 GitHub Link -->
+              <a href="https://github.com/jaswanthkamaraj/telecom-churn-analytics" target="_blank" rel="noopener noreferrer" class="btn-project" aria-label="View source code on GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                GitHub
+              </a>
+
+              <!-- EDIT: Project 2 Live Demo Link -->
+              <a href="https://nbviewer.org/github/jaswanthkamaraj/telecom-churn-analytics" target="_blank" rel="noopener noreferrer" class="btn-project demo" aria-label="View live notebook demo">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Notebook
+              </a>
+            </div>
+          </article>
+
+          <!-- Project 3: NLP / AI Application -->
+          <article class="project-card reveal reveal-delay-2">
+            <div>
+              <div class="project-top">
+                <span class="project-type">NLP / GenAI</span>
+                <span class="project-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                </span>
+              </div>
+
+              <!-- EDIT: Project 3 Title -->
+              <h3 class="project-title">SmartDoc: AI PDF Q&A Engine</h3>
+
+              <!-- EDIT: Project 3 Description -->
+              <p class="project-desc">
+                Lightweight document querying system that chunks research papers, generates vector embeddings, and answers domain questions with semantic similarity search and clean citation references.
+              </p>
+
+              <!-- Tech Stack Tags -->
+              <div class="project-tags">
+                <span class="project-tag">Python</span>
+                <span class="project-tag">HuggingFace</span>
+                <span class="project-tag">FastAPI</span>
+                <span class="project-tag">PyPDF2</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons: GitHub & Demo -->
+            <div class="project-actions">
+              <!-- EDIT: Project 3 GitHub Link -->
+              <a href="https://github.com/jaswanthkamaraj/smartdoc-qa-engine" target="_blank" rel="noopener noreferrer" class="btn-project" aria-label="View source code on GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                GitHub
+              </a>
+
+              <!-- EDIT: Project 3 Live Demo Link -->
+              <a href="https://jaswanthkamaraj.github.io/smartdoc-demo" target="_blank" rel="noopener noreferrer" class="btn-project demo" aria-label="View live demo">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Live Demo
+              </a>
+            </div>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         5. EDUCATION SECTION
+         =================================================================== -->
+    <section class="section" id="education">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <span class="section-tag">// 04. Academic Background</span>
+          <h2 class="section-title">Education</h2>
+          <p class="section-subtitle">My current undergraduate degree, department details, and relevant core coursework.</p>
+        </div>
+
+        <div class="education-container reveal">
+          <div class="edu-card">
+            
+            <div class="edu-header">
+              <div class="edu-main">
+                <div class="edu-icon-wrap">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                    <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                  </svg>
+                </div>
+                <div>
+                  <!-- Degree -->
+                  <h3 class="edu-degree">Bachelor of Technology (B.Tech)</h3>
+                  <!-- Department -->
+                  <p class="edu-dept">Artificial Intelligence & Data Science</p>
+                  <!-- College Name -->
+                  <p class="edu-college">Mount Zion College of Engineering and Technology, Pudukottai</p>
+                </div>
+              </div>
+
+              <!-- EDIT: Batch / Graduation Year -->
+              <span class="edu-badge-date">2023 – 2027</span>
+            </div>
+
+            <!-- Quick Academic Details -->
+            <div class="edu-meta-grid">
+              <div class="edu-meta-item">
+                <span class="meta-title">Standing</span>
+                <!-- EDIT: Current year & semester -->
+                <span class="meta-value">2nd Year (Semester 4)</span>
+              </div>
+              <div class="edu-meta-item">
+                <span class="meta-title">Cumulative CGPA</span>
+                <!-- EDIT: Replace with your CGPA or Percentage (optional) -->
+                <span class="meta-value">8.75 / 10.0</span>
+              </div>
+              <div class="edu-meta-item">
+                <span class="meta-title">Affiliation</span>
+                <span class="meta-value">Anna University Affiliated</span>
+              </div>
+            </div>
+
+            <!-- Relevant Coursework -->
+            <div>
+              <p class="edu-coursework-title">Key Relevant Coursework:</p>
+              <div class="coursework-pills">
+                <!-- EDIT: Update courses you have completed or are currently taking -->
+                <span class="course-pill">Data Structures & Algorithms</span>
+                <span class="course-pill">Probability & Statistics for AI</span>
+                <span class="course-pill">Linear Algebra & Calculus</span>
+                <span class="course-pill">Database Management Systems (DBMS)</span>
+                <span class="course-pill">Object-Oriented Programming (Java/C++)</span>
+                <span class="course-pill">Python for Data Science</span>
+                <span class="course-pill">Discrete Mathematics</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         6. CERTIFICATIONS & ACHIEVEMENTS SECTION (Timeline / List)
+         =================================================================== -->
+    <section class="section" id="certifications">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <span class="section-tag">// 05. Milestones</span>
+          <h2 class="section-title">Certifications & Honors</h2>
+          <p class="section-subtitle">Recognitions, competitive milestones, and verified credentials.</p>
+        </div>
+
+        <div class="achievements-wrapper reveal">
+          <div class="timeline">
+            
+            <!-- Item 1: ML Specialization / Course -->
+            <div class="timeline-item">
+              <div class="timeline-marker"></div>
+              <div class="timeline-card">
+                <div class="timeline-top">
+                  <!-- EDIT: Certificate Title -->
+                  <h3 class="timeline-title">Machine Learning Specialization</h3>
+                  <!-- EDIT: Completion Date -->
+                  <span class="timeline-date">Nov 2024</span>
+                </div>
+                <!-- EDIT: Issuing Organization -->
+                <p class="timeline-org">DeepLearning.AI & Stanford Online (Coursera)</p>
+                <p class="timeline-desc">
+                  Covered supervised learning (linear regression, logistic regression, neural networks) and unsupervised learning (clustering, dimensionality reduction, recommender systems).
+                </p>
+                <!-- EDIT: Link to certificate verification -->
+                <a href="https://coursera.org/verify/your-credential-id" target="_blank" rel="noopener noreferrer" class="timeline-link">
+                  View Certificate
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            <!-- Item 2: Hackathon Achievement -->
+            <div class="timeline-item">
+              <div class="timeline-marker"></div>
+              <div class="timeline-card">
+                <div class="timeline-top">
+                  <!-- EDIT: Achievement Title -->
+                  <h3 class="timeline-title">Finalist – Smart India Hackathon / Inter-College AI Hack</h3>
+                  <!-- EDIT: Date -->
+                  <span class="timeline-date">Sep 2024</span>
+                </div>
+                <!-- EDIT: Organizer / Venue -->
+                <p class="timeline-org">College Tech Fest / Innovation Council</p>
+                <p class="timeline-desc">
+                  Ranked among the top 10 teams out of 80+ participating groups for designing an automated real-time campus energy monitoring and predictive consumption dashboard.
+                </p>
+                <!-- EDIT: Link to project repo or event page -->
+                <a href="https://github.com/jaswanthkamaraj/hackathon-project" target="_blank" rel="noopener noreferrer" class="timeline-link">
+                  View Project Repository
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            <!-- Item 3: Data Science / Python Certification -->
+            <div class="timeline-item">
+              <div class="timeline-marker"></div>
+              <div class="timeline-card">
+                <div class="timeline-top">
+                  <!-- EDIT: Certification Title -->
+                  <h3 class="timeline-title">Applied Data Science with Python</h3>
+                  <!-- EDIT: Date -->
+                  <span class="timeline-date">June 2024</span>
+                </div>
+                <!-- EDIT: Issuing Platform -->
+                <p class="timeline-org">Kaggle / University of Michigan</p>
+                <p class="timeline-desc">
+                  Mastered data manipulation with Pandas, scientific computation with NumPy, statistical charting with Matplotlib, and intermediate SQL data extraction queries.
+                </p>
+                <!-- EDIT: Link to Kaggle profile or certificate -->
+                <a href="https://www.kaggle.com/jaswanthkamaraj" target="_blank" rel="noopener noreferrer" class="timeline-link">
+                  View Kaggle Credentials
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         7. CONTACT SECTION (Social Links + Working Mailto Form)
+         =================================================================== -->
+    <section class="section" id="contact">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <span class="section-tag">// 06. Get In Touch</span>
+          <h2 class="section-title">Let's Connect</h2>
+          <p class="section-subtitle">Whether you have an internship opportunity, project collaboration, or just want to discuss AI, my inbox is always open.</p>
+        </div>
+
+        <div class="contact-grid">
+          
+          <!-- Contact Info Column -->
+          <div class="contact-info-card reveal">
+            <h3 class="contact-info-title">Contact Information</h3>
+            <p class="contact-info-desc">
+              I am actively seeking <strong>Summer 2025 internships</strong>, research apprenticeships, and collaborative open-source AI projects. Feel free to ping me directly!
+            </p>
+
+            <div class="contact-methods">
+              <!-- Direct Email -->
+              <div class="contact-method-item">
+                <div class="method-icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <span class="method-label">Direct Email</span>
+                  <!-- Direct Email -->
+                  <div>
+                    <a href="mailto:jaswanthkamaraj@gmail.com" class="method-value" id="userEmailLink">
+                      jaswanthkamaraj@gmail.com
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Location / College City -->
+              <div class="contact-method-item">
+                <div class="method-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <span class="method-label">Location</span>
+                  <p class="method-value">Pudukkottai, Tamil Nadu, India</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Social Links Grid -->
+            <div>
+              <p class="social-connect-title">Social Profiles</p>
+              <div class="contact-social-row">
+                <!-- EDIT: GitHub link -->
+                <a href="https://github.com/jaswanthkamaraj" target="_blank" rel="noopener noreferrer" class="social-link" title="GitHub" aria-label="GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                  </svg>
+                </a>
+
+                <!-- EDIT: LinkedIn link -->
+                <a href="https://linkedin.com/in/jaswanthkamaraj" target="_blank" rel="noopener noreferrer" class="social-link" title="LinkedIn" aria-label="LinkedIn">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451c.979 0 1.778-.773 1.778-1.729V1.73C24 .774 23.205 0 22.225 0z"/>
+                  </svg>
+                </a>
+
+                <a href="mailto:jaswanthkamaraj@gmail.com" class="social-link" title="Email" aria-label="Send direct email">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Form (Direct client mailto dispatcher) -->
+          <div class="contact-form-card reveal reveal-delay-2">
+            <form id="contactForm" class="contact-form" data-recipient="jaswanthkamaraj@gmail.com">
+              
+              <div class="form-group">
+                <label for="senderName" class="form-label">Your Name</label>
+                <input type="text" id="senderName" name="name" class="form-input" placeholder="e.g. Jane Doe" required>
+              </div>
+
+              <div class="form-group">
+                <label for="senderEmail" class="form-label">Your Email</label>
+                <input type="email" id="senderEmail" name="email" class="form-input" placeholder="jane@example.com" required>
+              </div>
+
+              <div class="form-group">
+                <label for="msgSubject" class="form-label">Subject</label>
+                <input type="text" id="msgSubject" name="subject" class="form-input" placeholder="Internship Opportunity / Inquiry" required>
+              </div>
+
+              <div class="form-group">
+                <label for="msgBody" class="form-label">Message</label>
+                <textarea id="msgBody" name="message" class="form-textarea" placeholder="Hi Jaswanth, I came across your portfolio and wanted to reach out regarding..." required></textarea>
+              </div>
+
+              <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%;">
+                <span>Send Message</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              </button>
+
+              <div id="formStatus" class="form-status" role="alert"></div>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================================================================
+       FOOTER
+       =================================================================== -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-text">
+        <p>© <span id="currentYear"></span> Jaswanth Kamaraj J. Built with pure HTML, CSS, and JavaScript.</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Hosted for free on GitHub Pages</p>
+      </div>
+
+      <ul class="footer-links">
+        <li><a href="#hero" class="footer-link">Top</a></li>
+        <li><a href="#about" class="footer-link">About</a></li>
+        <li><a href="#skills" class="footer-link">Skills</a></li>
+        <li><a href="#projects" class="footer-link">Projects</a></li>
+        <li><a href="#contact" class="footer-link">Contact</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button id="backToTop" class="back-to-top" aria-label="Back to top" title="Scroll to top">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7" />
+    </svg>
+  </button>
+
+  <!-- Custom JavaScript Logic -->
+  <script src="script.js"></script>
+</body>
+</html>
