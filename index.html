@@ -104,8 +104,17 @@
             <span>Open for Internships & AI Research</span>
           </div>
 
-          <p class="hero-greeting">Hello, I'm</p>
-          <h1 class="hero-name">Jaswanth <span class="gradient-text">Kamaraj J</span></h1>
+          <!-- Profile Avatar & Greeting Header -->
+          <div class="hero-profile-header">
+            <div class="hero-avatar-wrap">
+              <img src="profile.jpg" alt="Jaswanth Kamaraj J" class="hero-avatar-img" onerror="this.onerror=null; this.src='profile.svg';">
+              <span class="avatar-status-dot" title="Open for Internships"></span>
+            </div>
+            <div class="hero-name-group">
+              <p class="hero-greeting">Hello, I'm</p>
+              <h1 class="hero-name">Jaswanth <span class="gradient-text">Kamaraj J</span></h1>
+            </div>
+          </div>
 
           <!-- Tagline -->
           <p class="hero-tagline">&lt;AI & Data Science Student /&gt;</p>
@@ -226,18 +235,30 @@
         </div>
 
         <div class="about-grid">
-          <!-- Left: Narrative Text -->
-          <div class="about-card reveal">
-            <p class="about-text">
-              I am currently a 2nd-year B.Tech undergraduate in <strong>Artificial Intelligence and Data Science</strong> at <strong>Mount Zion College of Engineering and Technology (Autonomous), Pudukottai</strong>. From unraveling patterns in chaotic datasets to fine-tuning machine learning models, I love working at the intersection of mathematical reasoning and code.
-            </p>
-            <p class="about-text">
-              My technical interests include <strong>Supervised & Unsupervised Machine Learning, Exploratory Data Analysis, and Natural Language Processing</strong>, alongside building strong foundations in <strong>Data Structures & Algorithms</strong>.
-            </p>
-            <p class="about-text">
-              When I'm not training models or solving algorithmic problems, I participate in hackathons, explore open-source research papers, and build intuitive user interfaces for AI tools.
-            </p>
+          <!-- Left: Profile Portrait Photo Card -->
+          <div class="about-photo-card reveal">
+            <div class="photo-inner">
+              <img src="profile.jpg" alt="Jaswanth Kamaraj J" class="about-portrait-img" onerror="this.onerror=null; this.src='profile.svg';">
+              <div class="photo-overlay-tag">
+                <span class="photo-status-dot"></span>
+                <span>Jaswanth Kamaraj J</span>
+              </div>
+            </div>
           </div>
+
+          <!-- Right: Narrative Content -->
+          <div class="about-content-col">
+            <div class="about-card reveal reveal-delay-1">
+              <p class="about-text">
+                I am currently a 2nd-year B.Tech undergraduate in <strong>Artificial Intelligence and Data Science</strong> at <strong>Mount Zion College of Engineering and Technology (Autonomous), Pudukottai</strong>. From unraveling patterns in chaotic datasets to fine-tuning machine learning models, I love working at the intersection of mathematical reasoning and code.
+              </p>
+              <p class="about-text">
+                My technical interests include <strong>Supervised & Unsupervised Machine Learning, Exploratory Data Analysis, and Natural Language Processing</strong>, alongside building strong foundations in <strong>Data Structures & Algorithms</strong>.
+              </p>
+              <p class="about-text">
+                When I'm not training models or solving algorithmic problems, I participate in hackathons, explore open-source research papers, and build intuitive user interfaces for AI tools.
+              </p>
+            </div>
 
           <!-- Right: Key Focus Highlights -->
           <div class="about-highlights reveal reveal-delay-2">
@@ -280,6 +301,7 @@
 
           </div>
         </div>
+      </div>
 
       </div>
     </section>
