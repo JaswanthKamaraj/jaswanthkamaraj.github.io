@@ -648,6 +648,8 @@ button, input, textarea {
   font-size: 0.88rem;
   line-height: 1.6;
   color: var(--text-secondary);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .code-preview .keyword { color: #f59e0b; }
@@ -1593,7 +1595,21 @@ button, input, textarea {
   }
 
   .section {
-    padding: 68px 0;
+    padding: 60px 0;
+  }
+
+  .container {
+    padding: 0 18px;
+  }
+
+  .hero {
+    padding-top: calc(var(--header-height) + 36px);
+    padding-bottom: 60px;
+    min-height: auto;
+  }
+
+  .hero-name {
+    font-size: clamp(2.2rem, 8vw, 3.4rem);
   }
 
   .mobile-toggle {
@@ -1612,7 +1628,7 @@ button, input, textarea {
     -webkit-backdrop-filter: blur(20px);
     flex-direction: column;
     padding: 24px;
-    gap: 20px;
+    gap: 16px;
     border-bottom: 1px solid var(--border-color);
     transform: translateY(-120%);
     opacity: 0;
@@ -1625,6 +1641,11 @@ button, input, textarea {
     opacity: 1;
     visibility: visible;
     box-shadow: var(--shadow-lg);
+  }
+
+  .nav-link {
+    font-size: 1.05rem;
+    padding: 8px 0;
   }
 
   .skills-grid {
@@ -1647,16 +1668,86 @@ button, input, textarea {
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .hero-name {
+    font-size: 2.1rem;
+    word-break: break-word;
+  }
+
+  .hero-tagline {
+    font-size: 1rem;
+  }
+
+  .hero-desc {
+    font-size: 0.98rem;
+  }
+
   .hero-actions {
     flex-direction: column;
     width: 100%;
+    gap: 10px;
   }
 
   .hero-actions .btn {
     width: 100%;
   }
 
+  .hero-card,
+  .about-card,
+  .skill-category-card,
+  .project-card,
+  .edu-card,
+  .contact-info-card,
+  .contact-form-card {
+    padding: 20px 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .skill-badge {
+    font-size: 0.84rem;
+    padding: 6px 10px;
+  }
+
   .quick-stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .project-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-project {
+    width: 100%;
+  }
+
+  .timeline {
+    padding-left: 28px;
+  }
+
+  .timeline-marker {
+    left: -28px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .timeline-card {
+    padding: 16px;
+  }
+
+  .hero-socials,
+  .contact-social-row {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .back-to-top {
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
   }
 }
