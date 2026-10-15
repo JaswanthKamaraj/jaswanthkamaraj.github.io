@@ -8,37 +8,37 @@
    1. CSS VARIABLES & DESIGN TOKENS
    ------------------------------------------------------------------- */
 :root {
-  /* Dark Theme Palette (Default) */
-  --bg-primary: #0a0e17;
-  --bg-secondary: #111827;
-  --bg-card: rgba(17, 24, 39, 0.75);
-  --bg-card-hover: rgba(30, 41, 59, 0.85);
-  --bg-input: rgba(15, 23, 42, 0.8);
-  --bg-glass: rgba(10, 14, 23, 0.8);
+  /* Luxury Black & Gold Theme Palette (Default) */
+  --bg-primary: #070709;
+  --bg-secondary: #0e0f14;
+  --bg-card: rgba(18, 19, 24, 0.78);
+  --bg-card-hover: rgba(28, 30, 38, 0.92);
+  --bg-input: rgba(15, 16, 21, 0.85);
+  --bg-glass: rgba(7, 7, 9, 0.85);
 
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #faf8f5;
+  --text-secondary: #a8a29e;
+  --text-muted: #78716c;
 
-  /* Accent & Gradients */
-  --accent-cyan: #38bdf8;
-  --accent-indigo: #6366f1;
-  --accent-violet: #a855f7;
-  --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #6366f1 50%, #a855f7 100%);
-  --accent-glow: rgba(56, 189, 248, 0.25);
-  --accent-glow-subtle: rgba(99, 102, 241, 0.15);
+  /* Accent & Gradients: Metallic Gold */
+  --accent-cyan: #fbbf24;       /* Primary Gold */
+  --accent-indigo: #d97706;     /* Deep Amber Gold */
+  --accent-violet: #b45309;     /* Burnished Gold */
+  --accent-gradient: linear-gradient(135deg, #ffd700 0%, #f59e0b 50%, #b45309 100%);
+  --accent-glow: rgba(245, 158, 11, 0.28);
+  --accent-glow-subtle: rgba(217, 119, 6, 0.16);
 
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-color-hover: rgba(56, 189, 248, 0.4);
+  --border-color: rgba(245, 158, 11, 0.12);
+  --border-color-hover: rgba(245, 158, 11, 0.45);
 
-  --badge-bg: rgba(56, 189, 248, 0.1);
-  --badge-text: #38bdf8;
-  --badge-border: rgba(56, 189, 248, 0.25);
+  --badge-bg: rgba(245, 158, 11, 0.1);
+  --badge-text: #fbbf24;
+  --badge-border: rgba(245, 158, 11, 0.3);
 
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 16px 36px -6px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.25);
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 16px 36px -6px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 25px rgba(245, 158, 11, 0.28);
 
   /* Typography */
   --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -57,37 +57,37 @@
   --transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Light Theme Variables */
+/* Light Theme Variables (Warm Champagne & Gold) */
 [data-theme="light"] {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #f1f5f9;
-  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-primary: #faf8f5;
+  --bg-secondary: #f4efe6;
+  --bg-card: rgba(255, 255, 255, 0.88);
   --bg-card-hover: rgba(255, 255, 255, 0.98);
   --bg-input: #ffffff;
-  --bg-glass: rgba(248, 250, 252, 0.85);
+  --bg-glass: rgba(250, 248, 245, 0.88);
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
+  --text-primary: #1c1917;
+  --text-secondary: #57534e;
+  --text-muted: #78716c;
 
-  --accent-cyan: #0284c7;
-  --accent-indigo: #4f46e5;
-  --accent-violet: #9333ea;
-  --accent-gradient: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
-  --accent-glow: rgba(2, 132, 199, 0.2);
-  --accent-glow-subtle: rgba(79, 70, 229, 0.1);
+  --accent-cyan: #d97706;
+  --accent-indigo: #b45309;
+  --accent-violet: #78350f;
+  --accent-gradient: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+  --accent-glow: rgba(217, 119, 6, 0.2);
+  --accent-glow-subtle: rgba(180, 83, 9, 0.1);
 
-  --border-color: rgba(0, 0, 0, 0.08);
-  --border-color-hover: rgba(2, 132, 199, 0.4);
+  --border-color: rgba(180, 83, 9, 0.14);
+  --border-color-hover: rgba(217, 119, 6, 0.45);
 
-  --badge-bg: rgba(2, 132, 199, 0.08);
-  --badge-text: #0369a1;
-  --badge-border: rgba(2, 132, 199, 0.25);
+  --badge-bg: rgba(217, 119, 6, 0.08);
+  --badge-text: #b45309;
+  --badge-border: rgba(217, 119, 6, 0.28);
 
-  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 16px 36px -6px rgba(15, 23, 42, 0.12);
-  --shadow-glow: 0 0 20px rgba(2, 132, 199, 0.15);
+  --shadow-sm: 0 2px 8px rgba(28, 25, 23, 0.05);
+  --shadow-md: 0 8px 24px -4px rgba(28, 25, 23, 0.08);
+  --shadow-lg: 0 16px 36px -6px rgba(28, 25, 23, 0.12);
+  --shadow-glow: 0 0 20px rgba(217, 119, 6, 0.16);
 }
 
 /* -------------------------------------------------------------------
@@ -650,11 +650,11 @@ button, input, textarea {
   color: var(--text-secondary);
 }
 
-.code-preview .keyword { color: #a855f7; }
-.code-preview .function { color: #38bdf8; }
-.code-preview .string { color: #34d399; }
-.code-preview .comment { color: #64748b; font-style: italic; }
-.code-preview .number { color: #f59e0b; }
+.code-preview .keyword { color: #f59e0b; }
+.code-preview .function { color: #fde047; }
+.code-preview .string { color: #fef08a; }
+.code-preview .comment { color: #78716c; font-style: italic; }
+.code-preview .number { color: #fbbf24; }
 
 .quick-stats-grid {
   display: grid;
