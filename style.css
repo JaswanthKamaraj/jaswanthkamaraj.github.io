@@ -405,12 +405,24 @@ button, input, textarea {
   grid-template-columns: 1.15fr 0.85fr;
   gap: 50px;
   align-items: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .hero-content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.hero-visual {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .status-badge {
@@ -606,6 +618,11 @@ button, input, textarea {
   -webkit-backdrop-filter: blur(16px);
   transition: transform var(--transition-normal), border-color var(--transition-normal);
   animation: floatSlow 6s ease-in-out infinite alternate;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 @keyframes floatSlow {
@@ -649,11 +666,16 @@ button, input, textarea {
 
 .code-preview {
   font-family: var(--font-mono);
-  font-size: 0.88rem;
-  line-height: 1.6;
+  font-size: clamp(0.72rem, 2.6vw, 0.86rem);
+  line-height: 1.5;
   color: var(--text-secondary);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  white-space: pre-wrap;
+  word-break: break-word;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .code-preview .keyword { color: #f59e0b; }
@@ -1596,6 +1618,15 @@ button, input, textarea {
 }
 
 @media (max-width: 768px) {
+  body::before,
+  body::after {
+    display: none !important;
+  }
+
+  .hero-card {
+    animation: none !important;
+  }
+
   :root {
     --header-height: 64px;
   }
