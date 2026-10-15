@@ -220,4 +220,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* -------------------------------------------------------------------
+     9. INTERACTIVE 3D PERSPECTIVE TILT ON HERO PORTRAIT SHOWCASE
+     ------------------------------------------------------------------- */
+  const showcaseContainer = document.getElementById('heroShowcase');
+  const portraitCard = document.getElementById('portraitCard');
+
+  if (showcaseContainer && portraitCard && window.matchMedia('(pointer: fine)').matches) {
+    showcaseContainer.addEventListener('mousemove', (e) => {
+      const rect = showcaseContainer.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = ((y - centerY) / centerY) * -12;
+      const rotateY = ((x - centerX) / centerX) * 12;
+
+      portraitCard.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateZ(8px)`;
+    });
+
+    showcaseContainer.addEventListener('mouseleave', () => {
+      portraitCard.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+    });
+  }
+
 });

@@ -108,24 +108,17 @@
           <!-- Availability / Status Tag -->
           <div class="status-badge">
             <span class="status-indicator"></span>
-            <!-- Availability / Status Tag -->
-            <span>Open for Internships & AI Research</span>
+            <span>SYSTEM ONLINE // OPEN FOR AI INTERNSHIPS</span>
           </div>
 
-          <!-- Profile Avatar & Greeting Header -->
-          <div class="hero-profile-header">
-            <div class="hero-avatar-wrap">
-              <img src="profile.jpg" alt="Jaswanth Kamaraj J" class="hero-avatar-img" onerror="this.onerror=null; this.src='profile.svg';">
-              <span class="avatar-status-dot" title="Open for Internships"></span>
-            </div>
-            <div class="hero-name-group">
-              <p class="hero-greeting">Hello, I'm</p>
-              <h1 class="hero-name">Jaswanth <span class="gradient-text">Kamaraj J</span></h1>
-            </div>
+          <!-- Greeting Header -->
+          <div class="hero-name-group">
+            <p class="hero-greeting">// HELLO WORLD, I'M</p>
+            <h1 class="hero-name">Jaswanth <span class="gradient-text">Kamaraj J</span></h1>
           </div>
 
           <!-- Tagline -->
-          <p class="hero-tagline">&lt;AI & Data Science Student /&gt;</p>
+          <p class="hero-tagline">&lt;AI &amp; Data Science Student /&gt;</p>
 
           <!-- EDIT: Short introductory text (2-3 lines) -->
           <p class="hero-desc">
@@ -186,44 +179,60 @@
           </div>
         </div>
 
-        <!-- Right Column: Interactive Code & Stats Graphic -->
+        <!-- Right Column: 3D Portrait Showcase with Floating Badges -->
         <div class="hero-visual reveal reveal-delay-2">
-          <div class="hero-card spotlight-card">
-            <div class="card-topbar">
-              <div class="card-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-              <span class="card-title-bar">student_profile.py</span>
-            </div>
-
-            <!-- Stylized Code Snippet -->
-            <pre class="code-preview"><code><span class="keyword">class</span> <span class="function">Student</span>:
-  <span class="keyword">def</span> <span class="function">__init__</span>(self):
-    self.name = <span class="string">"Jaswanth"</span>
-    self.dept = <span class="string">"AI & DS"</span>
-    self.year = <span class="number">2</span>
-    self.skills = [
-      <span class="string">"ML"</span>, <span class="string">"Analytics"</span>, <span class="string">"DSA"</span>
-    ]
-  
-  <span class="keyword">def</span> <span class="function">goal</span>(self):
-    <span class="keyword">return</span> <span class="string">"AI Internship"</span></code></pre>
-
-            <!-- Quick Metrics Grid -->
-            <div class="quick-stats-grid">
-              <div class="quick-stat-box">
-                <span class="stat-label">Academic Status</span>
-                <!-- EDIT: Semester / Year -->
-                <p class="stat-value">2nd Year (Sem 4)</p>
-              </div>
-              <div class="quick-stat-box">
-                <span class="stat-label">Core Specialty</span>
-                <!-- EDIT: Core focus -->
-                <p class="stat-value">ML & Analytics</p>
+          <div class="hero-showcase-container" id="heroShowcase">
+            
+            <!-- Floating Badge: Top Left -->
+            <div class="floating-badge badge-top-left">
+              <span class="badge-icon">⚡</span>
+              <div class="badge-content">
+                <span class="badge-sub">Specialty</span>
+                <span class="badge-main">ML &amp; Data Science</span>
               </div>
             </div>
+
+            <!-- Floating Badge: Top Right -->
+            <div class="floating-badge badge-top-right">
+              <span class="badge-icon">🔥</span>
+              <div class="badge-content">
+                <span class="badge-sub">Core Stack</span>
+                <span class="badge-main">Python • Scikit-Learn</span>
+              </div>
+            </div>
+
+            <!-- Main 3D Portrait Card -->
+            <div class="showcase-portrait-card spotlight-card" id="portraitCard">
+              <div class="showcase-photo-frame">
+                <img src="profile.jpg" alt="Jaswanth Kamaraj J" class="showcase-portrait-img" onerror="this.onerror=null; this.src='profile.svg';">
+                <div class="cyber-scanline"></div>
+                <div class="showcase-photo-overlay">
+                  <div class="showcase-caption">
+                    <span class="cyber-status-led"></span>
+                    <span>Jaswanth Kamaraj J // B.Tech AI &amp; DS</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating Badge: Bottom Left -->
+            <div class="floating-badge badge-bottom-left">
+              <span class="badge-icon">🎓</span>
+              <div class="badge-content">
+                <span class="badge-sub">Autonomous Batch</span>
+                <span class="badge-main">2025 – 2029</span>
+              </div>
+            </div>
+
+            <!-- Floating Badge: Bottom Right -->
+            <div class="floating-badge badge-bottom-right">
+              <span class="badge-icon">💡</span>
+              <div class="badge-content">
+                <span class="badge-sub">Availability</span>
+                <span class="badge-main">Open for Internships</span>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -243,13 +252,39 @@
         </div>
 
         <div class="about-grid">
-          <!-- Left: Profile Portrait Photo Card -->
-          <div class="about-photo-card spotlight-card reveal">
-            <div class="photo-inner">
-              <img src="profile.jpg" alt="Jaswanth Kamaraj J" class="about-portrait-img" onerror="this.onerror=null; this.src='profile.svg';">
-              <div class="photo-overlay-tag">
-                <span class="photo-status-dot"></span>
-                <span>Jaswanth Kamaraj J • AI &amp; Data Science</span>
+          <!-- Left: Interactive AI Terminal & Academic Profile -->
+          <div class="about-terminal-card spotlight-card reveal">
+            <div class="card-topbar">
+              <div class="card-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <span class="card-title-bar">student_profile.py</span>
+            </div>
+
+            <!-- Stylized Code Snippet -->
+            <pre class="code-preview"><code><span class="keyword">class</span> <span class="function">Student</span>:
+  <span class="keyword">def</span> <span class="function">__init__</span>(self):
+    self.name = <span class="string">"Jaswanth"</span>
+    self.dept = <span class="string">"AI &amp; DS"</span>
+    self.year = <span class="number">2</span>
+    self.skills = [
+      <span class="string">"ML"</span>, <span class="string">"Analytics"</span>, <span class="string">"DSA"</span>
+    ]
+  
+  <span class="keyword">def</span> <span class="function">goal</span>(self):
+    <span class="keyword">return</span> <span class="string">"AI Internship"</span></code></pre>
+
+            <!-- Quick Metrics Grid -->
+            <div class="quick-stats-grid">
+              <div class="quick-stat-box">
+                <span class="stat-label">Academic Status</span>
+                <p class="stat-value">2nd Year (Sem 4)</p>
+              </div>
+              <div class="quick-stat-box">
+                <span class="stat-label">Core Specialty</span>
+                <p class="stat-value">ML &amp; Analytics</p>
               </div>
             </div>
           </div>
