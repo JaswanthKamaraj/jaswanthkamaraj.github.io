@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Career & Domain Prediction System | Interactive AI Demo</title>
+  <meta name="description" content="Intelligent recommendation engine analyzing student aptitude competencies and programming language comfort to predict optimal career domains (AI/ML, Enterprise Backend, Full Stack, Systems). Built by Jaswanth Kamaraj J.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-pitch: #06060c;
+      --bg-surface: #0c0d16;
+      --bg-card: rgba(16, 18, 30, 0.75);
+      --border-color: rgba(0, 240, 255, 0.16);
+      --border-glow: rgba(0, 240, 255, 0.4);
+      --accent-cyan: #00f0ff;
+      --accent-pink: #ff007f;
+      --accent-purple: #8b5cf6;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-pitch);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 240, 255, 0.12), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 80%, rgba(139, 92, 246, 0.1), transparent);
+      background-attachment: fixed;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 32px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 6px 14px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: var(--radius-full);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(0, 240, 255, 0.18);
+      transform: translateX(-3px);
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.3);
+    }
+
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 10px var(--accent-cyan);
+      animation: pulseCyan 2s infinite;
+    }
+
+    @keyframes pulseCyan {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      margin-bottom: 14px;
+    }
+
+    .demo-title {
+      font-size: clamp(2rem, 4.5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 75%, var(--accent-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .demo-subtitle {
+      max-width: 720px;
+      margin: 0 auto;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    /* Preset Track Buttons */
+    .presets-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .preset-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .preset-btn {
+      background: rgba(16, 18, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn:hover, .preset-btn.active {
+      color: #ffffff;
+      border-color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.14);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    @media (max-width: 960px) {
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cyber-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 16px;
+      margin-bottom: 22px;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-primary);
+    }
+
+    .card-subtitle {
+      font-size: 0.82rem;
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+    }
+
+    .control-group {
+      margin-bottom: 20px;
+    }
+
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .control-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .control-value {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: #1e2238;
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--accent-cyan);
+    }
+
+    .cyber-select {
+      width: 100%;
+      background: #131626;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    /* Output Recommendation Card */
+    .recommendation-hero {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(139, 92, 246, 0.08));
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rec-badge-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 12px;
+    }
+
+    .primary-domain {
+      font-size: clamp(1.7rem, 3.5vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 80%, var(--accent-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .rec-narrative {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin: 0 auto 16px;
+      line-height: 1.55;
+    }
+
+    .profile-meta-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .meta-pill {
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      background: rgba(10, 12, 22, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+
+    .meta-pill strong {
+      color: #ffffff;
+    }
+
+    /* Secondary Domains Grid */
+    .secondary-section {
+      margin-bottom: 24px;
+    }
+
+    .section-mini-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-family: var(--font-mono);
+      margin-bottom: 12px;
+    }
+
+    .domains-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .domain-tag-item {
+      background: rgba(10, 12, 22, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    .domain-tag-item:hover {
+      border-color: rgba(0, 240, 255, 0.4);
+      background: rgba(0, 240, 255, 0.06);
+      color: #ffffff;
+      transform: translateX(2px);
+    }
+
+    /* Actionable Improvement Plan */
+    .plan-section {
+      background: rgba(10, 12, 22, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .plan-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.84rem;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .priority-badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .p-high { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .p-medium { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .p-low { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <header class="top-bar">
+      <a href="../#projects" class="back-btn" id="backToPortfolio">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to Portfolio
+      </a>
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span>DOMAIN PREDICTION ENGINE // ONLINE</span>
+      </div>
+    </header>
+
+    <div class="header-section">
+      <div class="badge-pill">🎯 Student Career &amp; Domain Recommendation Model</div>
+      <h1 class="demo-title">Student Domain Prediction System</h1>
+      <p class="demo-subtitle">
+        Maps aptitude competencies and programming language comfort to predict optimal engineering domains (AI/ML, Enterprise Backend, Full-Stack, Systems) and generate personalized skill roadmaps.
+      </p>
+    </div>
+
+    <!-- Quick Presets -->
+    <div class="presets-bar">
+      <span class="preset-label">Test Tracks:</span>
+      <button class="preset-btn active" onclick="applyPreset('ai')">🤖 AI &amp; Machine Learning (Python)</button>
+      <button class="preset-btn" onclick="applyPreset('java')">☕ Enterprise Backend (Java)</button>
+      <button class="preset-btn" onclick="applyPreset('web')">🌐 Full Stack Web (JavaScript)</button>
+      <button class="preset-btn" onclick="applyPreset('cpp')">⚡ Competitive &amp; Systems (C++)</button>
+    </div>
+
+    <div class="demo-grid">
+      
+      <!-- Input Parameters -->
+      <div class="cyber-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+            Student Technical Profile
+          </h2>
+          <span class="card-subtitle">Feature Mapping</span>
+        </div>
+
+        <!-- Primary Language -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="primaryLang">Primary Programming Language</label>
+          </div>
+          <select id="primaryLang" class="cyber-select" onchange="runPrediction()">
+            <option value="Python" selected>Python (Data &amp; AI Stack)</option>
+            <option value="Java">Java (Enterprise &amp; Android)</option>
+            <option value="C++">C++ (Competitive &amp; Systems)</option>
+            <option value="JavaScript">JavaScript / TypeScript (Full Stack Web)</option>
+            <option value="C">C (Embedded Systems &amp; Low Level)</option>
+            <option value="C#">C# (.NET &amp; Game Dev)</option>
+          </select>
+        </div>
+
+        <!-- Questions Solved -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="solvedCount">Coding Problems Solved</label>
+            <span class="control-value" id="valSolved">45 Questions</span>
+          </div>
+          <input type="range" id="solvedCount" min="5" max="150" value="45" oninput="runPrediction()">
+        </div>
+
+        <!-- Programming Accuracy -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="progAccuracy">Programming Accuracy / Assessment Score</label>
+            <span class="control-value" id="valProgAcc">85%</span>
+          </div>
+          <input type="range" id="progAccuracy" min="30" max="100" value="85" oninput="runPrediction()">
+        </div>
+
+        <!-- Aptitude Logical -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="aptitudeLogical">Logical Reasoning &amp; Patterns</label>
+            <span class="control-value" id="valLog">88%</span>
+          </div>
+          <input type="range" id="aptitudeLogical" min="30" max="100" value="88" oninput="runPrediction()">
+        </div>
+
+        <!-- Numerical Ability -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="aptitudeNum">Numerical Ability (Number System &amp; Series)</label>
+            <span class="control-value" id="valNum">82%</span>
+          </div>
+          <input type="range" id="aptitudeNum" min="30" max="100" value="82" oninput="runPrediction()">
+        </div>
+
+        <!-- Strongest Focus Topic -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="strongTopic">Core Analytical Strength</label>
+          </div>
+          <select id="strongTopic" class="cyber-select" onchange="runPrediction()">
+            <option value="Logical Problem Solving" selected>Logical Problem Solving &amp; Pattern Discovery</option>
+            <option value="Data Structures & Algorithms">Data Structures &amp; Algorithmic Thinking</option>
+            <option value="Numerical Reasoning">Mathematical &amp; Statistical Modeling</option>
+            <option value="System Architecture">System Logic &amp; Object-Oriented Design</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Output Recommendations -->
+      <div class="cyber-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-purple)" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="12 8 8 12 12 16 12 8"></polygon>
+            </svg>
+            Career Recommendation
+          </h2>
+          <span class="card-subtitle">Classification Output</span>
+        </div>
+
+        <div class="recommendation-hero">
+          <span class="rec-badge-tag">Primary Domain Match</span>
+          <h3 class="primary-domain" id="domainTitle">Artificial Intelligence</h3>
+          <p class="rec-narrative" id="domainNarrative">
+            This domain matches your strong foundation in logical reasoning and deep comfort with Python. Focusing your efforts here yields the highest return on investment.
+          </p>
+          <div class="profile-meta-row">
+            <span class="meta-pill">Profile: <strong id="profileType">Balanced Technical Profile</strong></span>
+            <span class="meta-pill">Confidence: <strong id="confLevel" style="color:var(--accent-green);">HIGH</strong></span>
+            <span class="meta-pill">Comfort Index: <strong id="comfortIndex" style="color:var(--accent-cyan);">86.4</strong></span>
+          </div>
+        </div>
+
+        <!-- Secondary Domains -->
+        <div class="secondary-section">
+          <div class="section-mini-title">Alternative Career Paths (Secondary Tracks)</div>
+          <div class="domains-grid" id="secondaryGrid">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Actionable Improvement Plan -->
+        <div class="plan-section">
+          <div class="section-mini-title" style="margin-bottom:8px;">Personalized Skill Improvement Plan</div>
+          <div id="planList">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const DOMAIN_MAPPING = {
+      'Python': [
+        'Artificial Intelligence & Machine Learning',
+        'Data Science & Analytics',
+        'Intelligent Automation & Scripting',
+        'Backend API Services'
+      ],
+      'Java': [
+        'Enterprise Application Development',
+        'Backend Architecture & Spring Boot',
+        'Android Application Engineering',
+        'Scalable Cloud Services'
+      ],
+      'C++': [
+        'Competitive Programming & DSA',
+        'High Performance Game Engine Dev',
+        'Systems & Low-Latency Applications',
+        'Robotics & Hardware Interfacing'
+      ],
+      'JavaScript': [
+        'Full Stack Web Engineering',
+        'Modern Frontend Architecture (React/Next)',
+        'Node.js Microservices',
+        'Cloud-Native Web Applications'
+      ],
+      'C': [
+        'Embedded Systems & Firmware',
+        'IoT (Internet of Things) Solutions',
+        'Operating System Kernel Development',
+        'Microcontroller Programming'
+      ],
+      'C#': [
+        'Enterprise .NET Cloud Development',
+        'Game Development (Unity Engine)',
+        'Desktop & Enterprise Software',
+        'Azure Cloud Microservices'
+      ]
+    };
+
+    function runPrediction() {
+      const lang = document.getElementById('primaryLang').value;
+      const solved = parseInt(document.getElementById('solvedCount').value);
+      const progAcc = parseInt(document.getElementById('progAccuracy').value);
+      const logScore = parseInt(document.getElementById('aptitudeLogical').value);
+      const numScore = parseInt(document.getElementById('aptitudeNum').value);
+      const strength = document.getElementById('strongTopic').value;
+
+      document.getElementById('valSolved').innerText = solved + ' Questions';
+      document.getElementById('valProgAcc').innerText = progAcc + '%';
+      document.getElementById('valLog').innerText = logScore + '%';
+      document.getElementById('valNum').innerText = numScore + '%';
+
+      // Comfort Index = 70% accuracy + 30% solved normalization
+      const comfort = ((0.7 * progAcc) + (0.3 * Math.min(100, (solved / 60) * 100))).toFixed(1);
+      document.getElementById('comfortIndex').innerText = comfort;
+
+      // Recommended domain
+      const domains = DOMAIN_MAPPING[lang] || ['General Software Engineering'];
+      const primary = domains[0];
+      const secondaries = domains.slice(1);
+
+      document.getElementById('domainTitle').innerText = primary;
+      document.getElementById('domainNarrative').innerText = 
+        `This domain directly leverages your proficiency in ${strength} and high comfort score in ${lang}. Pursuing this specialization aligns with top industry demand.`;
+
+      // Profile classification
+      const avgAptitude = (logScore + numScore) / 2;
+      let profile = 'Balanced Technical Profile';
+      if (avgAptitude >= 75 && progAcc >= 75) profile = 'Balanced Technical Profile';
+      else if (avgAptitude >= 75 && progAcc < 70) profile = 'Strong Analytical Potential • Programming Growing';
+      else if (avgAptitude < 70 && progAcc >= 75) profile = 'Programming-Oriented Profile • Aptitude Building';
+      else profile = 'Developing Technical Foundation';
+
+      document.getElementById('profileType').innerText = profile;
+
+      // Confidence
+      const conf = (solved >= 30 && avgAptitude >= 60) ? 'HIGH' : 'MEDIUM';
+      const confElem = document.getElementById('confLevel');
+      confElem.innerText = conf;
+      confElem.style.color = conf === 'HIGH' ? 'var(--accent-green)' : 'var(--accent-amber)';
+
+      // Secondary tracks
+      const secGrid = document.getElementById('secondaryGrid');
+      secGrid.innerHTML = '';
+      secondaries.forEach(d => {
+        const item = document.createElement('div');
+        item.className = 'domain-tag-item';
+        item.innerHTML = `
+          <span>${d}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        `;
+        secGrid.appendChild(item);
+      });
+
+      // Improvement plan
+      const planList = document.getElementById('planList');
+      planList.innerHTML = '';
+
+      const suggestions = [];
+      if (solved < 40) {
+        suggestions.push({
+          priority: 'HIGH',
+          cls: 'p-high',
+          text: `Increase daily problem-solving volume in ${lang} (aim for 50+ solved challenges on LeetCode/HackerRank).`
+        });
+      }
+
+      if (numScore < 75) {
+        suggestions.push({
+          priority: 'MEDIUM',
+          cls: 'p-medium',
+          text: 'Practice numerical series, permutations, and probability to bolster quantitative assessment readiness.'
+        });
+      } else {
+        suggestions.push({
+          priority: 'LOW',
+          cls: 'p-low',
+          text: `Solid quantitative aptitude. Build end-to-end portfolio projects in ${primary} to demonstrate practical execution.`
+        });
+      }
+
+      suggestions.push({
+        priority: 'LOW',
+        cls: 'p-low',
+        text: `Contribute to open-source ${lang} repositories and publish live project demonstrations on GitHub Pages.`
+      });
+
+      suggestions.forEach(s => {
+        const pItem = document.createElement('div');
+        pItem.className = 'plan-item';
+        pItem.innerHTML = `
+          <span class="priority-badge ${s.cls}">${s.priority}</span>
+          <span style="color:var(--text-secondary);">${s.text}</span>
+        `;
+        planList.appendChild(pItem);
+      });
+    }
+
+    function applyPreset(type) {
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (type === 'ai') {
+        document.getElementById('primaryLang').value = 'Python';
+        document.getElementById('solvedCount').value = 55;
+        document.getElementById('progAccuracy').value = 88;
+        document.getElementById('aptitudeLogical').value = 92;
+        document.getElementById('aptitudeNum').value = 85;
+        document.getElementById('strongTopic').value = 'Logical Problem Solving';
+      } else if (type === 'java') {
+        document.getElementById('primaryLang').value = 'Java';
+        document.getElementById('solvedCount').value = 40;
+        document.getElementById('progAccuracy').value = 82;
+        document.getElementById('aptitudeLogical').value = 80;
+        document.getElementById('aptitudeNum').value = 86;
+        document.getElementById('strongTopic').value = 'System Architecture';
+      } else if (type === 'web') {
+        document.getElementById('primaryLang').value = 'JavaScript';
+        document.getElementById('solvedCount').value = 48;
+        document.getElementById('progAccuracy').value = 84;
+        document.getElementById('aptitudeLogical').value = 82;
+        document.getElementById('aptitudeNum').value = 78;
+        document.getElementById('strongTopic').value = 'Logical Problem Solving';
+      } else if (type === 'cpp') {
+        document.getElementById('primaryLang').value = 'C++';
+        document.getElementById('solvedCount').value = 75;
+        document.getElementById('progAccuracy').value = 90;
+        document.getElementById('aptitudeLogical').value = 94;
+        document.getElementById('aptitudeNum').value = 91;
+        document.getElementById('strongTopic').value = 'Data Structures & Algorithms';
+      }
+
+      runPrediction();
+    }
+
+    window.addEventListener('DOMContentLoaded', runPrediction);
+  </script>
+</body>
+</html>
