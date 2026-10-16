@@ -3,29 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Advanced Science Museum: Tirunelveli | Futuristic 3D Walkthrough</title>
-  <meta name="description" content="Step inside the Advanced Science Museum, Tirunelveli. Experience a cinematic transition into an ultra-futuristic science interior with ISRO cryogenic propulsion, robotics, and clean energy.">
+  <title>Advanced Science Museum: Tirunelveli | Modern 3D Virtual Walkthrough</title>
+  <meta name="description" content="Explore the Advanced Science Museum, Tirunelveli. A realistic 3D walk-through building featuring bright modern galleries, ISRO aerospace, robotics, clean energy, and interactive display cases.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@500;700&display=swap" rel="stylesheet">
 
-  <!-- Core 3D Libraries -->
+  <!-- Three.js Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <style>
     :root {
-      --bg-dark: #040711;
-      --accent-cyan: #00f0ff;
-      --accent-gold: #f59e0b;
-      --accent-purple: #a855f7;
-      --accent-green: #10b981;
-      --accent-blue: #38bdf8;
-      --panel-glass: rgba(8, 14, 28, 0.88);
-      --panel-border: rgba(0, 240, 255, 0.25);
-      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --bg-dark: #0f172a;
+      --brand-blue: #0284c7;
+      --brand-cyan: #06b6d4;
+      --brand-amber: #d97706;
+      --panel-glass: rgba(255, 255, 255, 0.94);
+      --panel-dark-glass: rgba(15, 23, 42, 0.88);
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --border-light: rgba(226, 232, 240, 0.8);
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
       --font-tamil: 'Noto Sans Tamil', sans-serif;
     }
@@ -36,26 +36,47 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background: var(--bg-dark);
-      color: #f8fafc;
+      background: #0b1120;
       font-family: var(--font-sans);
+      color: #0f172a;
       user-select: none;
     }
 
-    /* 3D Canvas Fullscreen Background */
+    /* 3D Canvas */
     #canvas3d {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 1;
       display: block;
-      cursor: grab;
+      z-index: 1;
+      cursor: crosshair;
     }
-    #canvas3d:active { cursor: grabbing; }
 
-    /* Top Futuristic Sci-Fi Navigation HUD */
+    /* Crosshair Center Reticle */
+    .center-reticle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s ease;
+    }
+    .center-reticle.active {
+      width: 22px;
+      height: 22px;
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.25);
+    }
+
+    /* Top Contemporary Museum HUD Bar */
     .top-hud {
       position: absolute;
       top: 0;
@@ -65,348 +86,264 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 24px;
-      background: linear-gradient(180deg, rgba(4, 7, 17, 0.92) 0%, rgba(4, 7, 17, 0.4) 75%, transparent 100%);
+      padding: 16px 28px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 75%, transparent 100%);
       pointer-events: none;
     }
-
     .top-hud * { pointer-events: auto; }
 
-    .brand-group {
+    .brand-link {
       display: flex;
       align-items: center;
       gap: 14px;
-    }
-
-    .atom-logo-svg {
-      width: 40px;
-      height: 40px;
-      filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.6));
-      animation: spinAtom 20s linear infinite;
-    }
-
-    @keyframes spinAtom {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .brand-title {
-      font-family: var(--font-mono);
-      font-weight: 800;
-      font-size: 1.1rem;
-      letter-spacing: 0.08em;
+      text-decoration: none;
       color: #ffffff;
+    }
+
+    .brand-logo-badge {
+      width: 42px;
+      height: 42px;
+      background: #ffffff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #0284c7;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .brand-title-box {
       display: flex;
       flex-direction: column;
-      line-height: 1.2;
     }
-
-    .brand-subtitle {
+    .brand-name {
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+    }
+    .brand-location {
       font-size: 0.72rem;
-      color: var(--accent-cyan);
-      letter-spacing: 0.16em;
+      color: #38bdf8;
+      font-family: var(--font-mono);
+      letter-spacing: 0.12em;
       font-weight: 600;
     }
 
-    .hud-center-status {
+    .current-room-badge {
       display: flex;
       align-items: center;
       gap: 10px;
-      background: rgba(10, 18, 36, 0.75);
-      border: 1px solid var(--panel-border);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.92);
       padding: 8px 18px;
       border-radius: 999px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
       font-family: var(--font-mono);
-      font-size: 0.8rem;
-      letter-spacing: 0.06em;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #0f172a;
     }
-
-    .status-pulse-dot {
-      width: 10px;
-      height: 10px;
+    .room-pulse-dot {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: var(--accent-cyan);
-      box-shadow: 0 0 10px var(--accent-cyan);
-      animation: pulseGlow 1.8s infinite;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
     }
 
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.35); opacity: 0.5; }
-    }
-
-    .hud-controls-group {
+    .hud-actions {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
     .hud-btn {
-      background: rgba(12, 22, 44, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #0f172a;
       padding: 8px 14px;
       border-radius: 8px;
-      font-family: var(--font-mono);
       font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
+      font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.25s ease;
-      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     }
-
     .hud-btn:hover {
-      background: rgba(0, 240, 255, 0.18);
-      border-color: var(--accent-cyan);
-      color: var(--accent-cyan);
-      box-shadow: 0 0 14px rgba(0, 240, 255, 0.3);
+      background: #ffffff;
+      color: #0284c7;
       transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    }
+    .hud-btn.btn-primary {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+    }
+    .hud-btn.btn-primary:hover {
+      background: #0369a1;
+      color: #ffffff;
     }
 
-    .hud-btn.btn-cta {
-      background: linear-gradient(135deg, #00f0ff, #0284c7);
-      border: 1px solid #38bdf8;
-      color: #040711;
-      font-weight: 800;
-      box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
-    }
-
-    .hud-btn.btn-cta:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 0 25px rgba(0, 240, 255, 0.7);
-    }
-
-    /* Floating Waypoint & Enter Overlay (Shown on Exterior Plaza) */
-    .enter-waypoint-container {
-      position: absolute;
-      bottom: 110px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 20;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      pointer-events: none;
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-
-    .enter-waypoint-container * { pointer-events: auto; }
-
-    .enter-huge-btn {
-      background: linear-gradient(135deg, #00f0ff 0%, #0ea5e9 50%, #2563eb 100%);
-      color: #040711;
-      font-family: var(--font-mono);
-      font-size: 1.05rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      padding: 16px 36px;
-      border: 2px solid #ffffff;
-      border-radius: 999px;
-      cursor: pointer;
-      box-shadow: 0 0 35px rgba(0, 240, 255, 0.7), 0 0 60px rgba(0, 240, 255, 0.3);
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-      animation: floatPulse 3s ease-in-out infinite;
-    }
-
-    @keyframes floatPulse {
-      0%, 100% { transform: translateY(0); box-shadow: 0 0 30px rgba(0, 240, 255, 0.6); }
-      50% { transform: translateY(-5px); box-shadow: 0 0 45px rgba(0, 240, 255, 0.9); }
-    }
-
-    .enter-huge-btn:hover {
-      transform: translateY(-4px) scale(1.04);
-      background: linear-gradient(135deg, #ffffff 0%, #00f0ff 100%);
-      box-shadow: 0 0 50px rgba(0, 240, 255, 1);
-    }
-
-    .enter-subtext {
-      background: rgba(4, 7, 17, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 6px 18px;
-      border-radius: 20px;
-      font-size: 0.78rem;
-      color: #cbd5e1;
-      backdrop-filter: blur(8px);
-      letter-spacing: 0.04em;
-    }
-
-    /* Bottom Interactive Gallery Navigation Bar */
+    /* Bottom Museum Wing Quick-Teleport Bar */
     .bottom-dock {
       position: absolute;
-      bottom: 20px;
+      bottom: 22px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 20;
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(6, 11, 24, 0.85);
-      border: 1px solid var(--panel-border);
-      padding: 8px 12px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 8px 14px;
       border-radius: 999px;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 240, 255, 0.15);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       max-width: calc(100vw - 32px);
       overflow-x: auto;
       scrollbar-width: none;
     }
-
     .bottom-dock::-webkit-scrollbar { display: none; }
 
-    .dock-tab {
+    .wing-btn {
       background: transparent;
       border: 1px solid transparent;
-      color: #94a3b8;
+      color: #cbd5e1;
       padding: 8px 14px;
       border-radius: 999px;
-      font-family: var(--font-mono);
-      font-size: 0.74rem;
+      font-size: 0.76rem;
       font-weight: 600;
-      letter-spacing: 0.04em;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
       white-space: nowrap;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
+    }
+    .wing-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+    .wing-btn.active {
+      background: #ffffff;
+      color: #0f172a;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
-    .dock-tab:hover {
-      color: #f8fafc;
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .dock-tab.active {
-      background: rgba(0, 240, 255, 0.18);
-      border-color: var(--accent-cyan);
-      color: var(--accent-cyan);
-      box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
-    }
-
-    /* On-Screen Mobile Walk D-Pad Controls */
-    .mobile-dpad-container {
+    /* Floating Walk Controls & Interaction Tip Pill */
+    .walk-tips-pill {
       position: absolute;
-      bottom: 90px;
+      top: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      background: rgba(15, 23, 42, 0.78);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      padding: 6px 18px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      letter-spacing: 0.04em;
+      pointer-events: none;
+    }
+
+    /* On-Screen Mobile Walk Pad */
+    .mobile-walkpad {
+      position: absolute;
+      bottom: 85px;
       left: 24px;
       z-index: 20;
       display: grid;
-      grid-template-columns: repeat(3, 44px);
-      grid-template-rows: repeat(3, 44px);
+      grid-template-columns: repeat(3, 42px);
+      grid-template-rows: repeat(3, 42px);
       gap: 6px;
-      opacity: 0.75;
-      transition: opacity 0.2s ease;
+      opacity: 0.85;
     }
-
-    .mobile-dpad-container:hover, .mobile-dpad-container:active { opacity: 1; }
-
-    .dpad-btn {
-      background: rgba(10, 18, 36, 0.85);
-      border: 1px solid rgba(0, 240, 255, 0.3);
-      border-radius: 10px;
-      color: var(--accent-cyan);
+    .pad-btn {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      color: #0f172a;
       font-size: 1.1rem;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      backdrop-filter: blur(8px);
       user-select: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
-
-    .dpad-btn:active {
-      background: var(--accent-cyan);
-      color: #040711;
-      box-shadow: 0 0 15px var(--accent-cyan);
+    .pad-btn:active {
+      background: #0284c7;
+      color: #ffffff;
     }
+    .pad-u { grid-column: 2; grid-row: 1; }
+    .pad-l { grid-column: 1; grid-row: 2; }
+    .pad-d { grid-column: 2; grid-row: 3; }
+    .pad-r { grid-column: 3; grid-row: 2; }
 
-    .dpad-up    { grid-column: 2; grid-row: 1; }
-    .dpad-left  { grid-column: 1; grid-row: 2; }
-    .dpad-down  { grid-column: 2; grid-row: 3; }
-    .dpad-right { grid-column: 3; grid-row: 2; }
-
-    /* Flash Transition Overlay for Cinematic Door Crossing */
-    #flashOverlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle, rgba(0, 240, 255, 0.4) 0%, rgba(4, 7, 17, 0.95) 100%);
-      pointer-events: none;
-      z-index: 50;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    /* Sleek 3D Exhibit Hologram Inspector Modal */
-    .exhibit-modal {
+    /* Interactive Museum Exhibit Plaque Modal */
+    .museum-plaque {
       position: absolute;
       top: 50%;
-      right: 28px;
-      transform: translateY(-50%) scale(0.95);
-      width: 440px;
+      right: 32px;
+      transform: translateY(-50%) scale(0.96);
+      width: 450px;
       max-width: calc(100vw - 40px);
       background: var(--panel-glass);
-      border: 1px solid var(--panel-border);
-      border-radius: 18px;
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
       padding: 24px;
       z-index: 30;
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 240, 255, 0.2);
       opacity: 0;
       pointer-events: none;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
-    .exhibit-modal.open {
+    .museum-plaque.open {
       opacity: 1;
       pointer-events: auto;
       transform: translateY(-50%) scale(1);
     }
 
-    .modal-header {
+    .plaque-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e2e8f0;
     }
-
-    .modal-hall-badge {
+    .plaque-catalog {
       font-family: var(--font-mono);
       font-size: 0.72rem;
-      color: var(--accent-cyan);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      color: #0284c7;
       font-weight: 700;
+      letter-spacing: 0.08em;
     }
-
-    .modal-title {
+    .plaque-title {
       font-size: 1.35rem;
       font-weight: 800;
-      color: #ffffff;
+      color: #0f172a;
       margin-top: 4px;
       line-height: 1.25;
     }
-
-    .modal-close-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #cbd5e1;
+    .plaque-close-btn {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #475569;
       width: 32px;
       height: 32px;
       border-radius: 50%;
@@ -415,116 +352,82 @@
       justify-content: center;
       cursor: pointer;
       font-size: 1rem;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
-
-    .modal-close-btn:hover {
-      background: rgba(239, 68, 68, 0.2);
-      border-color: #ef4444;
+    .plaque-close-btn:hover {
+      background: #fee2e2;
       color: #ef4444;
+      border-color: #fca5a5;
     }
 
-    .modal-desc {
-      font-size: 0.88rem;
-      color: #cbd5e1;
+    .plaque-desc {
+      font-size: 0.9rem;
+      color: #334155;
       line-height: 1.6;
       margin-bottom: 18px;
     }
 
-    .modal-specs-grid {
+    .plaque-specs-table {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 18px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      background: rgba(4, 7, 17, 0.55);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 18px;
     }
-
-    .spec-item {
+    .spec-cell {
       display: flex;
       flex-direction: column;
     }
-
-    .spec-label {
-      font-family: var(--font-mono);
+    .spec-name {
       font-size: 0.68rem;
-      color: #94a3b8;
+      font-family: var(--font-mono);
+      color: #64748b;
       text-transform: uppercase;
+      font-weight: 600;
     }
-
     .spec-value {
-      font-family: var(--font-mono);
       font-size: 0.86rem;
-      color: var(--accent-cyan);
       font-weight: 700;
+      color: #0f172a;
     }
 
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .modal-action-btn {
-      flex: 1;
-      background: rgba(0, 240, 255, 0.12);
-      border: 1px solid var(--accent-cyan);
+    .plaque-audio-btn {
+      width: 100%;
+      background: #0284c7;
       color: #ffffff;
-      padding: 10px 14px;
+      border: none;
+      padding: 10px 16px;
       border-radius: 8px;
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
+      font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-    }
-
-    .modal-action-btn:hover {
-      background: var(--accent-cyan);
-      color: #040711;
-      box-shadow: 0 0 16px rgba(0, 240, 255, 0.5);
-    }
-
-    /* HUD Guidance Subtitle Bar */
-    .hud-guide-bar {
-      position: absolute;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 20;
-      background: rgba(8, 14, 28, 0.78);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(12px);
-      padding: 6px 20px;
-      border-radius: 999px;
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      color: #cbd5e1;
-      display: flex;
-      align-items: center;
       gap: 8px;
-      pointer-events: none;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      transition: background 0.2s;
     }
-
-    .hud-guide-bar .curator-badge {
-      color: var(--accent-cyan);
-      font-weight: 700;
-    }
+    .plaque-audio-btn:hover { background: #0369a1; }
 
     @media (max-width: 768px) {
-      .top-hud { padding: 12px 14px; }
-      .brand-subtitle { display: none; }
-      .hud-center-status { font-size: 0.72rem; padding: 6px 12px; }
-      .enter-huge-btn { font-size: 0.92rem; padding: 14px 26px; }
-      .exhibit-modal { right: 14px; left: 14px; width: auto; max-width: none; bottom: 80px; top: auto; transform: none; }
-      .exhibit-modal.open { transform: none; }
-      .hud-guide-bar { display: none; }
+      .top-hud { padding: 12px 16px; }
+      .brand-location { display: none; }
+      .current-room-badge { font-size: 0.7rem; padding: 6px 12px; }
+      .walk-tips-pill { display: none; }
+      .museum-plaque {
+        right: 14px;
+        left: 14px;
+        width: auto;
+        max-width: none;
+        bottom: 80px;
+        top: auto;
+        transform: none;
+      }
+      .museum-plaque.open { transform: none; }
     }
   </style>
 </head>
@@ -533,1222 +436,992 @@
   <!-- Fullscreen WebGL 3D Canvas -->
   <canvas id="canvas3d"></canvas>
 
-  <!-- Door Flash Transition Overlay -->
-  <div id="flashOverlay"></div>
+  <!-- Crosshair Pointer -->
+  <div class="center-reticle" id="reticle"></div>
 
-  <!-- Top Futuristic Sci-Fi Navigation HUD -->
+  <!-- Top Contemporary Museum Header -->
   <header class="top-hud">
-    <div class="brand-group">
-      <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: 12px;">
-        <svg class="atom-logo-svg" viewBox="0 0 100 100">
-          <defs>
-            <radialGradient id="nucGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#ffffff" />
-              <stop offset="60%" stop-color="#00f0ff" />
-              <stop offset="100%" stop-color="#0284c7" />
-            </radialGradient>
-          </defs>
-          <ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#00f0ff" stroke-width="2.5" />
-          <ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#f59e0b" stroke-width="2.5" transform="rotate(60 50 50)" />
-          <ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#a855f7" stroke-width="2.5" transform="rotate(120 50 50)" />
-          <circle cx="50" cy="50" r="8" fill="url(#nucGlow)" />
-        </svg>
-        <div class="brand-title">
-          <span data-en="ADVANCED SCIENCE MUSEUM" data-ta="மேம்பட்ட அறிவியல் மையம்">ADVANCED SCIENCE MUSEUM</span>
-          <span class="brand-subtitle" data-en="TIRUNELVELI • FUTURISTIC WALKTHROUGH" data-ta="திருநெல்வேலி • 3D உள்ளரங்கு">TIRUNELVELI • FUTURISTIC WALKTHROUGH</span>
-        </div>
-      </a>
+    <div class="brand-link">
+      <div class="brand-logo-badge">🏛️</div>
+      <div class="brand-title-box">
+        <span class="brand-name" data-en="ADVANCED SCIENCE MUSEUM" data-ta="மேம்பட்ட அறிவியல் அருங்காட்சியகம்">ADVANCED SCIENCE MUSEUM</span>
+        <span class="brand-location">TIRUNELVELI DISTRICT SCIENCE CENTRE</span>
+      </div>
     </div>
 
-    <div class="hud-center-status">
-      <div class="status-pulse-dot" id="statusDot"></div>
-      <span id="statusText">OUTSIDE PLAZA • CLICK 'STEP INSIDE'</span>
+    <div class="current-room-badge">
+      <div class="room-pulse-dot"></div>
+      <span id="currentRoomText">CAMPUS ENTRANCE PROMENADE</span>
     </div>
 
-    <div class="hud-controls-group">
-      <button class="hud-btn" onclick="toggleAudio()" id="btnAudio" title="Toggle Ambient Audio">
-        🔊 <span id="txtAudio">SOUND: ON</span>
-      </button>
-      <button class="hud-btn" onclick="toggleLanguage()" id="btnLang" title="Switch Language">
+    <div class="hud-actions">
+      <button class="hud-btn" onclick="toggleLanguage()" id="btnLang">
         🌐 <span id="txtLang">EN / தமிழ்</span>
       </button>
-      <button class="hud-btn btn-cta" id="btnEnterOrExit" onclick="handleEnterOrExit()">
-        🚶 <span id="txtEnterOrExit">STEP INSIDE</span>
+      <button class="hud-btn btn-primary" onclick="enterOrStepOutside()" id="btnAction">
+        🚪 <span id="txtAction">STEP INSIDE</span>
       </button>
     </div>
   </header>
 
-  <!-- Floating Guide Voice Bar -->
-  <div class="hud-guide-bar">
-    <span class="curator-badge">NOVA AI GUIDE:</span>
-    <span id="novaGuideText">Welcome to the Advanced Science Museum. Click 'STEP INSIDE' to walk through the rotunda into the futuristic atrium.</span>
+  <!-- Guidance Hints -->
+  <div class="walk-tips-pill" id="walkTips">
+    [WASD / Arrow Keys: Walk] • [Mouse Drag: Look 360°] • [Click Any Display Case to Inspect]
   </div>
 
-  <!-- Waypoint Overlay (Visible on Plaza) -->
-  <div class="enter-waypoint-container" id="enterWaypointBox">
-    <button class="enter-huge-btn" onclick="enterMuseumInside()">
-      <span>🚶 STEP INSIDE THE MUSEUM</span>
-      <span style="font-size: 1.3rem;">➔</span>
-    </button>
-    <div class="enter-subtext" data-en="Glide through the sliding glass rotunda into the 3D futuristic interior" data-ta="கண்ணாடி வழியே எதிர்கால அறிவியல் உள்ளரங்கிற்குள் நுழைய கிளிக் செய்யவும்">
-      Glide through the sliding glass rotunda into the 3D futuristic interior
-    </div>
-  </div>
-
-  <!-- Bottom Interactive Science Gallery Teleport Dock -->
-  <nav class="bottom-dock" id="bottomDock">
-    <button class="dock-tab active" onclick="warpToLocation('plaza')">🏛️ <span data-en="Entrance Plaza" data-ta="முகப்பு வளாகம்">Entrance Plaza</span></button>
-    <button class="dock-tab" onclick="warpToLocation('atrium')">⚛️ <span data-en="Quantum Core" data-ta="குவாண்டம் அரங்கு">Quantum Core</span></button>
-    <button class="dock-tab" onclick="warpToLocation('space')">🚀 <span data-en="ISRO Propulsion" data-ta="இஸ்ரோ ராக்கெட்">ISRO Propulsion</span></button>
-    <button class="dock-tab" onclick="warpToLocation('ai')">🤖 <span data-en="Robotics & AI" data-ta="ரோபாட்டிக்ஸ்">Robotics & AI</span></button>
-    <button class="dock-tab" onclick="warpToLocation('energy')">⚡ <span data-en="Clean Energy" data-ta="அணுமின் & காற்று">Clean Energy</span></button>
-    <button class="dock-tab" onclick="warpToLocation('planetarium')">🪐 <span data-en="Planetarium" data-ta="கோளரங்கம்">Planetarium</span></button>
-    <button class="dock-tab" onclick="warpToLocation('physics')">🧲 <span data-en="Levitron Lab" data-ta="காந்த மிதவை">Levitron Lab</span></button>
-    <button class="dock-tab" onclick="warpToLocation('heritage')">⚔️ <span data-en="Tamil Wootz" data-ta="தமிழர் உருக்கு">Tamil Wootz</span></button>
+  <!-- Bottom Navigation Wings Teleport Bar -->
+  <nav class="bottom-dock">
+    <button class="wing-btn active" onclick="teleportTo('entrance')">🏛️ <span data-en="Entrance" data-ta="முகப்பு">Entrance</span></button>
+    <button class="wing-btn" onclick="teleportTo('lobby')">🏢 <span data-en="Main Lobby" data-ta="வரவேற்பறை">Main Lobby</span></button>
+    <button class="wing-btn" onclick="teleportTo('space')">🚀 <span data-en="Aerospace Wing" data-ta="விண்வெளி பிரிவு">Aerospace Wing</span></button>
+    <button class="wing-btn" onclick="teleportTo('robotics')">🤖 <span data-en="Robotics Lab" data-ta="ரோபாட்டிக்ஸ் கூடம்">Robotics Lab</span></button>
+    <button class="wing-btn" onclick="teleportTo('energy')">⚡ <span data-en="Energy Hall" data-ta="ஆற்றல் அரங்கம்">Energy Hall</span></button>
+    <button class="wing-btn" onclick="teleportTo('heritage')">⚔️ <span data-en="Tamil Heritage" data-ta="தமிழர் அறிவியல்">Tamil Heritage</span></button>
   </nav>
 
   <!-- Mobile On-Screen D-Pad Walk Controls -->
-  <div class="mobile-dpad-container" id="mobileDpad">
-    <button class="dpad-btn dpad-up" onpointerdown="startWalk('forward')" onpointerup="stopWalk()" onpointerleave="stopWalk()">▲</button>
-    <button class="dpad-btn dpad-left" onpointerdown="startWalk('left')" onpointerup="stopWalk()" onpointerleave="stopWalk()">◄</button>
-    <button class="dpad-btn dpad-down" onpointerdown="startWalk('backward')" onpointerup="stopWalk()" onpointerleave="stopWalk()">▼</button>
-    <button class="dpad-btn dpad-right" onpointerdown="startWalk('right')" onpointerup="stopWalk()" onpointerleave="stopWalk()">►</button>
+  <div class="mobile-walkpad" id="mobilePad">
+    <button class="pad-btn pad-u" onpointerdown="startWalk('u')" onpointerup="stopWalk()" onpointerleave="stopWalk()">▲</button>
+    <button class="pad-btn pad-l" onpointerdown="startWalk('l')" onpointerup="stopWalk()" onpointerleave="stopWalk()">◄</button>
+    <button class="pad-btn pad-d" onpointerdown="startWalk('d')" onpointerup="stopWalk()" onpointerleave="stopWalk()">▼</button>
+    <button class="pad-btn pad-r" onpointerdown="startWalk('r')" onpointerup="stopWalk()" onpointerleave="stopWalk()">►</button>
   </div>
 
-  <!-- Sleek 3D Holographic Exhibit Inspector Modal -->
-  <aside class="exhibit-modal" id="exhibitModal">
-    <div class="modal-header">
+  <!-- Interactive Exhibit Plaque / Museum Vitrine Inspector -->
+  <aside class="museum-plaque" id="plaqueModal">
+    <div class="plaque-header">
       <div>
-        <div class="modal-hall-badge" id="modalHallBadge">ISRO SPACE PROPULSION</div>
-        <h3 class="modal-title" id="modalTitle">CE-20 Cryogenic Rocket Engine</h3>
+        <div class="plaque-catalog" id="plaqueCatalog">CATALOG: ASM-TN-01</div>
+        <h3 class="plaque-title" id="plaqueTitle">ISRO CE-20 Cryogenic Rocket Engine</h3>
       </div>
-      <button class="modal-close-btn" onclick="closeExhibitModal()" title="Close Inspector">✕</button>
+      <button class="plaque-close-btn" onclick="closePlaque()" title="Close">✕</button>
     </div>
 
-    <p class="modal-desc" id="modalDesc">
-      The CE-20 is India's most powerful cryogenic rocket engine, developed at ISRO Propulsion Complex (IPRC) Mahendragiri, Tirunelveli district. Powered by liquid oxygen (-183°C) and liquid hydrogen (-253°C).
+    <p class="plaque-desc" id="plaqueDesc">
+      The CE-20 cryogenic rocket engine was designed and validated at the ISRO Propulsion Complex (IPRC) Mahendragiri in Tirunelveli district. It powers the upper stage of the LVM3 launch vehicle.
     </p>
 
-    <div class="modal-specs-grid" id="modalSpecsGrid">
-      <div class="spec-item">
-        <span class="spec-label">Thrust (Vacuum)</span>
-        <span class="spec-value" id="spec1">200 kN (20 tons)</span>
+    <div class="plaque-specs-table" id="plaqueSpecs">
+      <div class="spec-cell">
+        <span class="spec-name">Propellant</span>
+        <span class="spec-value">LOX / LH2 (-253°C)</span>
       </div>
-      <div class="spec-item">
-        <span class="spec-label">Specific Impulse</span>
-        <span class="spec-value" id="spec2">443 seconds</span>
+      <div class="spec-cell">
+        <span class="spec-name">Thrust</span>
+        <span class="spec-value">200 kN (20 Tons)</span>
       </div>
-      <div class="spec-item">
-        <span class="spec-label">Facility Origin</span>
-        <span class="spec-value" id="spec3">IPRC Mahendragiri, TN</span>
+      <div class="spec-cell">
+        <span class="spec-name">Testing Complex</span>
+        <span class="spec-value">IPRC Mahendragiri, TN</span>
       </div>
-      <div class="spec-item">
-        <span class="spec-label">Propellant Mix</span>
-        <span class="spec-value" id="spec4">LOX / LH2 Gas Generator</span>
+      <div class="spec-cell">
+        <span class="spec-name">Launch Missions</span>
+        <span class="spec-value">Chandrayaan-3, Gaganyaan</span>
       </div>
     </div>
 
-    <div class="modal-actions">
-      <button class="modal-action-btn" onclick="toggleExplodedAssembly()" id="btnExplode">
-        💥 <span id="txtExplode">EXPLODE ASSEMBLY</span>
-      </button>
-      <button class="modal-action-btn" onclick="speakCuratorVoice()">
-        🎧 <span id="txtListen">LISTEN GUIDE</span>
-      </button>
-    </div>
+    <button class="plaque-audio-btn" onclick="playCuratorSpeech()">
+      🔊 <span id="txtAudioGuide">Listen to Curator Audio Guide</span>
+    </button>
   </aside>
 
   <!-- ===================================================================
-       THREE.JS SCRIPT: SCENE, ARCHITECTURE, EXHIBITS, WALKTHROUGH
+       THREE.JS SCRIPT: REALISTIC MODERN ARCHITECTURAL MUSEUM
        =================================================================== -->
   <script>
     /* ===============================================================
-       1. PROCEDURAL AUDIO SYNTHESIS
-       =============================================================== */
-    let audioCtx = null;
-    let isSoundOn = true;
-    let droneOsc = null;
-    let droneGain = null;
-
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
-
-    function toggleAudio() {
-      initAudio();
-      isSoundOn = !isSoundOn;
-      document.getElementById('txtAudio').innerText = isSoundOn ? 'SOUND: ON' : 'SOUND: OFF';
-      if (isSoundOn) {
-        startDrone();
-        playChime(880, 0.1);
-      } else {
-        stopDrone();
-      }
-    }
-
-    function startDrone() {
-      if (!isSoundOn || !audioCtx || droneOsc) return;
-      droneOsc = audioCtx.createOscillator();
-      droneGain = audioCtx.createGain();
-      droneOsc.type = 'sine';
-      droneOsc.frequency.setValueAtTime(68, audioCtx.currentTime);
-      droneGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-      droneGain.gain.linearRampToValueAtTime(0.03, audioCtx.currentTime + 2);
-      droneOsc.connect(droneGain);
-      droneGain.connect(audioCtx.destination);
-      droneOsc.start();
-    }
-
-    function stopDrone() {
-      if (droneGain) {
-        droneGain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
-        setTimeout(() => {
-          if (droneOsc) { droneOsc.stop(); droneOsc.disconnect(); droneOsc = null; }
-        }, 400);
-      }
-    }
-
-    function playChime(freq = 600, duration = 0.08) {
-      if (!isSoundOn || !audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
-    }
-
-    function playDoorPneumatic() {
-      if (!isSoundOn || !audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(140, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(750, audioCtx.currentTime + 0.6);
-      gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 0.2);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.9);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.95);
-    }
-
-    /* ===============================================================
-       2. THREE.JS SCENE, CAMERA, RENDERER, CONTROLS
+       1. SCENE SETUP & ARCHITECTURAL ENVIRONMENT
        =============================================================== */
     const canvas = document.getElementById('canvas3d');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x040711);
-    scene.fog = new THREE.FogExp2(0x040711, 0.016);
+    scene.background = new THREE.Color(0xdbeafe); // Bright daylight sky outside
+    scene.fog = new THREE.FogExp2(0xdbeafe, 0.012);
 
-    const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 180);
-    // Initial exterior position standing on plaza facing the grand entrance
-    camera.position.set(0, 3.8, 48);
+    const camera = new THREE.PerspectiveCamera(54, window.innerWidth / window.innerHeight, 0.1, 150);
+    // Human eye-level height = 1.7m, standing outside on the plaza
+    camera.position.set(0, 1.7, 26);
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.35;
+    renderer.toneMappingExposure = 1.15;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.minDistance = 2;
-    controls.maxDistance = 65;
-    controls.maxPolarAngle = Math.PI / 2 - 0.02; // Can't look below ground
-    controls.minPolarAngle = 0.1;
-    controls.target.set(0, 3.8, 0);
-
     /* ===============================================================
-       3. LIGHTING SYSTEM
+       2. REALISTIC BRIGHT MUSEUM LIGHTING
        =============================================================== */
-    const ambientLight = new THREE.AmbientLight(0x1e293b, 1.4);
+    // Bright natural daylight ambient
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambientLight);
 
-    // Exterior Sunlight
-    const sunLight = new THREE.DirectionalLight(0xfffbeb, 1.8);
-    sunLight.position.set(15, 30, 35);
+    // Warm Outdoor Sun Light
+    const sunLight = new THREE.DirectionalLight(0xfffbeb, 1.3);
+    sunLight.position.set(16, 28, 22);
     sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
     scene.add(sunLight);
 
-    // Interior Central Oculus Light
-    const oculusLight = new THREE.SpotLight(0x00f0ff, 3.5, 60, Math.PI / 3, 0.4);
-    oculusLight.position.set(0, 22, 0);
-    oculusLight.target.position.set(0, 0, 0);
-    scene.add(oculusLight);
-    scene.add(oculusLight.target);
+    // Interior Ceiling Spotlights & Downlights
+    function addCeilingDownlight(x, y, z, color = 0xffffff, intensity = 1.8, distance = 16) {
+      const spot = new THREE.SpotLight(color, intensity, distance, Math.PI / 4, 0.4);
+      spot.position.set(x, y, z);
+      spot.target.position.set(x, 0, z);
+      scene.add(spot);
+      scene.add(spot.target);
 
-    // Cyan and Amber Radial Interior Accents
-    const cyanLight = new THREE.PointLight(0x00f0ff, 2.2, 40);
-    cyanLight.position.set(-10, 10, -5);
-    scene.add(cyanLight);
+      // Visible circular recessed ceiling fixture
+      const fixture = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.35, 0.35, 0.08, 16),
+        new THREE.MeshBasicMaterial({ color: 0xffffff })
+      );
+      fixture.position.set(x, y - 0.04, z);
+      scene.add(fixture);
+    }
 
-    const amberLight = new THREE.PointLight(0xf59e0b, 2.0, 40);
-    amberLight.position.set(10, 10, 5);
-    scene.add(amberLight);
+    // Lobby downlights
+    addCeilingDownlight(0, 5.8, 8);
+    addCeilingDownlight(0, 5.8, 0);
+    addCeilingDownlight(0, 5.8, -8);
+
+    // Wings downlights
+    addCeilingDownlight(16, 5.8, 0); // East Aerospace Wing
+    addCeilingDownlight(-16, 5.8, 0); // West Robotics Wing
+    addCeilingDownlight(0, 5.8, -20); // North Energy Hall
 
     /* ===============================================================
-       4. EXTERIOR CAMPUS ARCHITECTURE & PLAZA (z >= 26)
+       3. MATERIALS FOR A REAL MODERN CONTEMPORARY MUSEUM
        =============================================================== */
-    // Plaza Promenade Floor
-    const plazaFloor = new THREE.Mesh(
-      new THREE.BoxGeometry(60, 0.4, 45),
-      new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.35, metalness: 0.25 })
-    );
-    plazaFloor.position.set(0, -0.2, 46);
+    // Procedural Polished Marble Floor Texture
+    function createMarbleCanvas() {
+      const c = document.createElement('canvas');
+      c.width = 512;
+      c.height = 512;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, 512, 512);
+
+      // Subtle light gray tile grid lines
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 3;
+      for (let x = 0; x <= 512; x += 128) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 512); ctx.stroke();
+      }
+      for (let y = 0; y <= 512; y += 128) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    const marbleTex = createMarbleCanvas();
+    marbleTex.wrapS = THREE.RepeatWrapping;
+    marbleTex.wrapT = THREE.RepeatWrapping;
+    marbleTex.repeat.set(12, 12);
+
+    const marbleFloorMat = new THREE.MeshStandardMaterial({
+      map: marbleTex,
+      roughness: 0.15,
+      metalness: 0.1,
+      color: 0xffffff
+    });
+
+    // Pristine Gallery White Wall Material
+    const whiteWallMat = new THREE.MeshStandardMaterial({
+      color: 0xf8fafc,
+      roughness: 0.45,
+      metalness: 0.05
+    });
+
+    // Baseboard dark accent trim
+    const baseboardMat = new THREE.MeshStandardMaterial({
+      color: 0x334155,
+      roughness: 0.3
+    });
+
+    // Acoustic Modern Ceiling Material
+    const ceilingMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.7
+    });
+
+    // Clear Showcase Vitrine Glass
+    const caseGlassMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.28,
+      roughness: 0.05,
+      metalness: 0.9,
+      side: THREE.DoubleSide
+    });
+
+    // Display Plinth Base Material
+    const plinthMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.2,
+      metalness: 0.1
+    });
+
+    /* ===============================================================
+       4. EXTERIOR CAMPUS & ENTRANCE PLAZA (z >= 18)
+       =============================================================== */
+    // Plaza Pavers Floor
+    const plazaMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.6 });
+    const plazaFloor = new THREE.Mesh(new THREE.BoxGeometry(60, 0.4, 30), plazaMat);
+    plazaFloor.position.set(0, -0.2, 32);
     plazaFloor.receiveShadow = true;
     scene.add(plazaFloor);
 
-    // Manicured Green Lawns on Plaza Sides
-    const lawnMat = new THREE.MeshStandardMaterial({ color: 0x14532d, roughness: 0.8 });
-    const leftLawn = new THREE.Mesh(new THREE.BoxGeometry(24, 0.45, 45), lawnMat);
-    leftLawn.position.set(-42, -0.18, 46);
+    // Green Lawns on Plaza Sides
+    const lawnMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.9 });
+    const leftLawn = new THREE.Mesh(new THREE.BoxGeometry(25, 0.45, 30), lawnMat);
+    leftLawn.position.set(-36, -0.18, 32);
     scene.add(leftLawn);
 
-    const rightLawn = new THREE.Mesh(new THREE.BoxGeometry(24, 0.45, 45), lawnMat);
-    rightLawn.position.set(42, -0.18, 46);
+    const rightLawn = new THREE.Mesh(new THREE.BoxGeometry(25, 0.45, 30), lawnMat);
+    rightLawn.position.set(36, -0.18, 32);
     scene.add(rightLawn);
 
-    // Modern Plaza Lighting Bollards
-    [-18, 18].forEach(x => {
-      [36, 44, 52].forEach(z => {
-        const pole = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.12, 0.12, 2.8, 16),
-          new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8 })
-        );
-        pole.position.set(x, 1.4, z);
-        scene.add(pole);
+    // Exterior Museum Front Facade (at z = 18)
+    const facadeWallMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+    const leftFrontWall = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 1.2), facadeWallMat);
+    leftFrontWall.position.set(-15, 4.5, 18);
+    scene.add(leftFrontWall);
 
-        const lamp = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.25, 0.25, 0.3, 16),
-          new THREE.MeshBasicMaterial({ color: 0x00f0ff })
-        );
-        lamp.position.set(x, 2.7, z);
-        scene.add(lamp);
-      });
-    });
+    const rightFrontWall = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 1.2), facadeWallMat);
+    rightFrontWall.position.set(15, 4.5, 18);
+    scene.add(rightFrontWall);
 
-    // Grand Exterior Facade Wall (at z = 26)
-    const facadeGroup = new THREE.Group();
-    facadeGroup.position.set(0, 0, 26);
+    const topFrontArch = new THREE.Mesh(new THREE.BoxGeometry(8, 3.5, 1.2), facadeWallMat);
+    topFrontArch.position.set(0, 7.25, 18);
+    scene.add(topFrontArch);
 
-    // Main curved outer building wings
-    const wingMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.2, metalness: 0.7 });
-    const leftWing = new THREE.Mesh(new THREE.BoxGeometry(26, 14, 2), wingMat);
-    leftWing.position.set(-20, 7, 0);
-    facadeGroup.add(leftWing);
-
-    const rightWing = new THREE.Mesh(new THREE.BoxGeometry(26, 14, 2), wingMat);
-    rightWing.position.set(20, 7, 0);
-    facadeGroup.add(rightWing);
-
-    // Facade Overhead Arch Header
-    const facadeHeader = new THREE.Mesh(
-      new THREE.BoxGeometry(16, 4, 3),
-      new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.2, metalness: 0.8 })
-    );
-    facadeHeader.position.set(0, 11, 0);
-    facadeGroup.add(facadeHeader);
-
-    // Glowing Architectural Signage above entrance
+    // Museum Grand Lettering Sign on Front
     const signCanvas = document.createElement('canvas');
     signCanvas.width = 1024;
     signCanvas.height = 256;
     const sctx = signCanvas.getContext('2d');
-    sctx.fillStyle = '#060b18';
+    sctx.fillStyle = '#0f172a';
     sctx.fillRect(0, 0, 1024, 256);
-    sctx.fillStyle = '#00f0ff';
-    sctx.shadowColor = '#00f0ff';
-    sctx.shadowBlur = 18;
-    sctx.font = 'bold 54px monospace';
+    sctx.fillStyle = '#ffffff';
+    sctx.font = 'bold 50px sans-serif';
     sctx.textAlign = 'center';
     sctx.fillText('ADVANCED SCIENCE MUSEUM', 512, 100);
-    sctx.fillStyle = '#f59e0b';
-    sctx.shadowColor = '#f59e0b';
-    sctx.font = 'bold 40px monospace';
-    sctx.fillText('TIRUNELVELI DISTRICT SCIENCE CENTRE', 512, 175);
+    sctx.fillStyle = '#38bdf8';
+    sctx.font = 'bold 36px monospace';
+    sctx.fillText('DISTRICT SCIENCE CENTRE • TIRUNELVELI', 512, 175);
 
-    const signTexture = new THREE.CanvasTexture(signCanvas);
     const signMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(13, 3.2),
-      new THREE.MeshBasicMaterial({ map: signTexture, transparent: true })
+      new THREE.PlaneGeometry(7.2, 1.8),
+      new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(signCanvas) })
     );
-    signMesh.position.set(0, 10.8, 1.6);
-    facadeGroup.add(signMesh);
+    signMesh.position.set(0, 7.2, 18.62);
+    scene.add(signMesh);
 
-    // Glass Entrance Rotunda Portico Arch
-    const rotundaFrame = new THREE.Mesh(
-      new THREE.TorusGeometry(5.2, 0.35, 16, 32, Math.PI),
-      new THREE.MeshStandardMaterial({ color: 0x00f0ff, metalness: 0.9, roughness: 0.1 })
-    );
-    rotundaFrame.position.set(0, 0, 1.2);
-    facadeGroup.add(rotundaFrame);
+    // Sliding Glass Entrance Doors (Doorway x from -2.8 to 2.8, height 5.5m)
+    const leftDoor = new THREE.Mesh(new THREE.BoxGeometry(2.8, 5.4, 0.1), caseGlassMat);
+    leftDoor.position.set(-1.4, 2.7, 18);
+    scene.add(leftDoor);
 
-    // Left and Right Sliding Glass Doors
-    const doorMat = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      transparent: true,
-      opacity: 0.55,
-      roughness: 0.05,
-      metalness: 0.9
-    });
-
-    const leftDoor = new THREE.Mesh(new THREE.BoxGeometry(2.35, 6.2, 0.15), doorMat);
-    leftDoor.position.set(-1.22, 3.1, 1.2);
-    facadeGroup.add(leftDoor);
-
-    const rightDoor = new THREE.Mesh(new THREE.BoxGeometry(2.35, 6.2, 0.15), doorMat);
-    rightDoor.position.set(1.22, 3.1, 1.2);
-    facadeGroup.add(rightDoor);
-
-    // Glowing Neon Frames along door edges
-    const doorNeonMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
-    const leftNeon = new THREE.Mesh(new THREE.BoxGeometry(0.08, 6.2, 0.18), doorNeonMat);
-    leftNeon.position.set(1.15, 0, 0);
-    leftDoor.add(leftNeon);
-
-    const rightNeon = new THREE.Mesh(new THREE.BoxGeometry(0.08, 6.2, 0.18), doorNeonMat);
-    rightNeon.position.set(-1.15, 0, 0);
-    rightDoor.add(rightNeon);
-
-    scene.add(facadeGroup);
+    const rightDoor = new THREE.Mesh(new THREE.BoxGeometry(2.8, 5.4, 0.1), caseGlassMat);
+    rightDoor.position.set(1.4, 2.7, 18);
+    scene.add(rightDoor);
 
     /* ===============================================================
-       5. FUTURISTIC INTERIOR ARCHITECTURE (z <= 26)
+       5. INTERIOR ARCHITECTURE: ROOMS, WALLS, FLOORS & CEILINGS
        =============================================================== */
-    const interiorGroup = new THREE.Group();
-
-    // High-Gloss Polished Marble Floor with Hexagonal Inlays
-    const floorGeo = new THREE.CylinderGeometry(35, 35, 0.4, 64);
-    const floorMat = new THREE.MeshStandardMaterial({
-      color: 0x070c1a,
-      roughness: 0.12,
-      metalness: 0.45
-    });
-    const interiorFloor = new THREE.Mesh(floorGeo, floorMat);
-    interiorFloor.position.y = -0.2;
+    const interiorFloor = new THREE.Mesh(new THREE.BoxGeometry(60, 0.4, 52), marbleFloorMat);
+    interiorFloor.position.set(0, -0.2, -8);
     interiorFloor.receiveShadow = true;
-    interiorGroup.add(interiorFloor);
+    scene.add(interiorFloor);
 
-    // Glowing Concentric Floor Rings
-    [8, 18, 28].forEach((r, idx) => {
-      const ring = new THREE.Mesh(
-        new THREE.RingGeometry(r - 0.1, r + 0.1, 64),
-        new THREE.MeshBasicMaterial({ color: idx === 0 ? 0x00f0ff : (idx === 1 ? 0xf59e0b : 0x38bdf8), side: THREE.DoubleSide })
-      );
-      ring.rotation.x = Math.PI / 2;
-      ring.position.y = 0.02;
-      interiorGroup.add(ring);
-    });
+    // Ceilings (Height 6.0m)
+    const mainCeiling = new THREE.Mesh(new THREE.BoxGeometry(60, 0.4, 52), ceilingMat);
+    mainCeiling.position.set(0, 6.2, -8);
+    scene.add(mainCeiling);
 
-    // 10 Parametric Soaring Structural Ribs with Neon Spine
-    const ribCount = 10;
-    const ribGroup = new THREE.Group();
-    for (let i = 0; i < ribCount; i++) {
-      const angle = (i / ribCount) * Math.PI * 2;
-      const ribPivot = new THREE.Group();
-      ribPivot.rotation.y = angle;
+    // Skylight Glass Strip above Main Lobby
+    const skylight = new THREE.Mesh(
+      new THREE.BoxGeometry(8, 0.2, 28),
+      new THREE.MeshStandardMaterial({ color: 0x93c5fd, transparent: true, opacity: 0.55 })
+    );
+    skylight.position.set(0, 6.3, 0);
+    scene.add(skylight);
 
-      // Curved Arch Arm
-      const curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(32, 0, 0),
-        new THREE.Vector3(26, 10, 0),
-        new THREE.Vector3(14, 17, 0),
-        new THREE.Vector3(4.5, 19, 0)
-      ]);
-      const tubeGeo = new THREE.TubeGeometry(curve, 32, 0.45, 12, false);
-      const tubeMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.85, roughness: 0.2 });
-      const archMesh = new THREE.Mesh(tubeGeo, tubeMat);
-      ribPivot.add(archMesh);
+    // Helper: Create Wall with Baseboard
+    function buildWall(w, h, d, x, y, z) {
+      const wall = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), whiteWallMat);
+      wall.position.set(x, y, z);
+      scene.add(wall);
 
-      // Embedded Glowing Neon Strip along the arch spine
-      const neonGeo = new THREE.TubeGeometry(curve, 32, 0.12, 8, false);
-      const neonMat = new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0x00f0ff : 0xf59e0b });
-      const neonMesh = new THREE.Mesh(neonGeo, neonMat);
-      ribPivot.add(neonMesh);
-
-      ribGroup.add(ribPivot);
+      // Baseboard trim at bottom
+      const trim = new THREE.Mesh(new THREE.BoxGeometry(w + 0.04, 0.18, d + 0.04), baseboardMat);
+      trim.position.set(x, 0.09, z);
+      scene.add(trim);
     }
-    interiorGroup.add(ribGroup);
 
-    // Central Ceiling Oculus Skylight
-    const oculusRing = new THREE.Mesh(
-      new THREE.TorusGeometry(4.8, 0.4, 16, 64),
-      new THREE.MeshStandardMaterial({ color: 0x00f0ff, metalness: 0.9, roughness: 0.1 })
-    );
-    oculusRing.position.set(0, 19, 0);
-    oculusRing.rotation.x = Math.PI / 2;
-    interiorGroup.add(oculusRing);
+    // Outer Perimeter Walls
+    buildWall(60, 6, 0.8, 0, 3, -34); // North back wall
+    buildWall(0.8, 6, 52, -30, 3, -8); // West wall
+    buildWall(0.8, 6, 52, 30, 3, -8);  // East wall
 
-    const oculusGlass = new THREE.Mesh(
-      new THREE.CircleGeometry(4.6, 32),
-      new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65, roughness: 0.1 })
-    );
-    oculusGlass.position.set(0, 19, 0);
-    oculusGlass.rotation.x = Math.PI / 2;
-    interiorGroup.add(oculusGlass);
+    // Internal Partition Walls dividing Lobby and Galleries
+    // East Wall of Lobby (x = 8): Doorway at z = 2 to -4
+    buildWall(0.6, 6, 12, 8, 3, 12);
+    buildWall(0.6, 6, 14, 8, 3, -15);
+    buildWall(0.6, 1.8, 6, 8, 5.1, -1); // Header above doorway
 
-    // Elevated Mezzanine Catwalk at y = 6.5
-    const catwalkGeo = new THREE.RingGeometry(22, 25, 64);
-    const catwalkMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.3, metalness: 0.7, side: THREE.DoubleSide });
-    const catwalk = new THREE.Mesh(catwalkGeo, catwalkMat);
-    catwalk.position.y = 6.5;
-    catwalk.rotation.x = Math.PI / 2;
-    interiorGroup.add(catwalk);
+    // West Wall of Lobby (x = -8): Doorway at z = 2 to -4
+    buildWall(0.6, 6, 12, -8, 3, 12);
+    buildWall(0.6, 6, 14, -8, 3, -15);
+    buildWall(0.6, 1.8, 6, -8, 5.1, -1); // Header above doorway
 
-    // Glass Balustrade on Mezzanine
-    const balustradeGeo = new THREE.CylinderGeometry(22, 22, 1.2, 64, 1, true);
-    const balustradeMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.25, side: THREE.DoubleSide });
-    const balustrade = new THREE.Mesh(balustradeGeo, balustradeMat);
-    balustrade.position.y = 7.1;
-    interiorGroup.add(balustrade);
-
-    scene.add(interiorGroup);
+    // North Wall dividing Lobby from Energy Hall (z = -18): Doorway at x = -3 to 3
+    buildWall(11, 6, 0.6, -13.5, 3, -18);
+    buildWall(11, 6, 0.6, 13.5, 3, -18);
+    buildWall(6, 1.8, 0.6, 0, 5.1, -18); // Header above doorway
 
     /* ===============================================================
-       6. CENTRAL ATRIUM: REVOLVING QUANTUM SCIENCE CORE
+       6. INTERIOR FURNITURE & MUSEUM RECEPTION
        =============================================================== */
-    const coreGroup = new THREE.Group();
-    coreGroup.position.set(0, 0, 0);
+    // Reception Desk in Lobby (at z = 8)
+    const deskMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.2 });
+    const receptionDesk = new THREE.Mesh(new THREE.BoxGeometry(4.8, 1.15, 1.4), deskMat);
+    receptionDesk.position.set(0, 0.58, 8.5);
+    scene.add(receptionDesk);
 
-    // Raised Circular Dais Platform
-    const dais = new THREE.Mesh(
-      new THREE.CylinderGeometry(4.8, 5.2, 0.8, 32),
-      new THREE.MeshStandardMaterial({ color: 0x091124, metalness: 0.9, roughness: 0.2 })
-    );
-    dais.position.y = 0.4;
-    coreGroup.add(dais);
+    const deskTopMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.1 });
+    const deskTop = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.08, 1.6), deskTopMat);
+    deskTop.position.set(0, 1.18, 8.5);
+    scene.add(deskTop);
 
-    // Glowing Dais Rim Ring
-    const daisRim = new THREE.Mesh(
-      new THREE.TorusGeometry(5.0, 0.12, 16, 64),
-      new THREE.MeshBasicMaterial({ color: 0x00f0ff })
-    );
-    daisRim.position.y = 0.82;
-    daisRim.rotation.x = Math.PI / 2;
-    coreGroup.add(daisRim);
-
-    // Transparent Cylindrical Energy Chamber
-    const chamber = new THREE.Mesh(
-      new THREE.CylinderGeometry(3.6, 3.6, 7.5, 32, 1, true),
-      new THREE.MeshStandardMaterial({
-        color: 0x00f0ff,
-        transparent: true,
-        opacity: 0.18,
-        roughness: 0.05,
-        side: THREE.DoubleSide
-      })
-    );
-    chamber.position.y = 4.5;
-    coreGroup.add(chamber);
-
-    // Revolving Holographic Earth / Science Globe
-    const globeCanvas = document.createElement('canvas');
-    globeCanvas.width = 512;
-    globeCanvas.height = 256;
-    const gctx = globeCanvas.getContext('2d');
-    gctx.fillStyle = '#06132d';
-    gctx.fillRect(0, 0, 512, 256);
-    gctx.strokeStyle = '#00f0ff';
-    gctx.lineWidth = 1.5;
-    // Draw latitude & longitude grid lines
-    for (let x = 0; x <= 512; x += 32) {
-      gctx.beginPath(); gctx.moveTo(x, 0); gctx.lineTo(x, 256); gctx.stroke();
+    // Visitor Seating Benches
+    function addBench(x, z, rotY = 0) {
+      const bench = new THREE.Mesh(
+        new THREE.BoxGeometry(2.4, 0.45, 0.8),
+        new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.3 })
+      );
+      bench.position.set(x, 0.22, z);
+      bench.rotation.y = rotY;
+      scene.add(bench);
     }
-    for (let y = 0; y <= 256; y += 32) {
-      gctx.beginPath(); gctx.moveTo(0, y); gctx.lineTo(512, y); gctx.stroke();
+    addBench(-4.5, 0, Math.PI / 2);
+    addBench(4.5, 0, Math.PI / 2);
+
+    // Indoor Architectural Ficus Plants
+    function addPottedPlant(x, z) {
+      const pot = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.35, 0.25, 0.6, 16),
+        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 })
+      );
+      pot.position.set(x, 0.3, z);
+      scene.add(pot);
+
+      const bush = new THREE.Mesh(
+        new THREE.SphereGeometry(0.55, 16, 16),
+        new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.8 })
+      );
+      bush.position.set(x, 0.85, z);
+      scene.add(bush);
     }
-    gctx.fillStyle = '#f59e0b';
-    gctx.font = 'bold 24px monospace';
-    gctx.textAlign = 'center';
-    gctx.fillText('NEXUS • 2100', 256, 135);
+    addPottedPlant(-7, 16);
+    addPottedPlant(7, 16);
+    addPottedPlant(-7, -16);
+    addPottedPlant(7, -16);
 
-    const globeTexture = new THREE.CanvasTexture(globeCanvas);
-    const globeGeo = new THREE.SphereGeometry(2.2, 32, 32);
-    const globeMat = new THREE.MeshStandardMaterial({
-      map: globeTexture,
-      emissive: 0x0077aa,
-      emissiveIntensity: 0.6,
-      roughness: 0.2
-    });
-    const holoGlobe = new THREE.Mesh(globeGeo, globeMat);
-    holoGlobe.position.y = 4.5;
-    coreGroup.add(holoGlobe);
+    // Wall Framed Science Posters
+    function addWallPoster(w, h, x, y, z, rotY, title, subtitle) {
+      const c = document.createElement('canvas');
+      c.width = 512;
+      c.height = 384;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, 512, 384);
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 34px sans-serif';
+      ctx.fillText(title, 36, 80);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '22px sans-serif';
+      ctx.fillText(subtitle, 36, 130);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '16px monospace';
+      ctx.fillText('Advanced Science Centre Tirunelveli', 36, 340);
 
-    // Counter-Rotating Gyroscope Quantum Rings
-    const ringMat1 = new THREE.MeshStandardMaterial({ color: 0x00f0ff, metalness: 0.9, roughness: 0.1 });
-    const gyroRing1 = new THREE.Mesh(new THREE.TorusGeometry(3.1, 0.08, 16, 64), ringMat1);
-    gyroRing1.position.y = 4.5;
-    coreGroup.add(gyroRing1);
+      const frame = new THREE.Mesh(
+        new THREE.BoxGeometry(w + 0.1, h + 0.1, 0.05),
+        new THREE.MeshStandardMaterial({ color: 0x1e293b })
+      );
+      frame.position.set(x, y, z);
+      frame.rotation.y = rotY;
 
-    const ringMat2 = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.9, roughness: 0.1 });
-    const gyroRing2 = new THREE.Mesh(new THREE.TorusGeometry(2.8, 0.08, 16, 64), ringMat2);
-    gyroRing2.position.y = 4.5;
-    gyroRing2.rotation.x = Math.PI / 3;
-    coreGroup.add(gyroRing2);
+      const poster = new THREE.Mesh(
+        new THREE.PlaneGeometry(w, h),
+        new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c) })
+      );
+      poster.position.z = 0.03;
+      frame.add(poster);
+      scene.add(frame);
+    }
 
-    // Vertical Upward Particle Energy Beam
-    const beamGeo = new THREE.CylinderGeometry(0.2, 0.6, 18, 16, 1, true);
-    const beamMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.45, side: THREE.DoubleSide });
-    const beam = new THREE.Mesh(beamGeo, beamMat);
-    beam.position.y = 9.5;
-    coreGroup.add(beam);
-
-    scene.add(coreGroup);
+    addWallPoster(2.4, 1.6, 7.68, 3.2, 10, -Math.PI / 2, 'ISRO PROPULSION', 'Liquid Propulsion at Mahendragiri');
+    addWallPoster(2.4, 1.6, -7.68, 3.2, 10, Math.PI / 2, 'AI & ROBOTICS', 'Autonomous Cognitive Cybernetics');
+    addWallPoster(3.0, 1.8, 0, 3.4, -33.58, 0, 'KUDANKULAM GRID', 'Clean Nuclear & Wind Energy Corridor');
 
     /* ===============================================================
-       7. THE 6 INTERACTIVE FUTURISTIC EXHIBIT STATIONS
+       7. MUSEUM DISPLAY CASES (VITRINES) & EXHIBITS
        =============================================================== */
     const exhibits = [];
 
-    // Helper: Build a High-Tech Glowing Museum Pedestal
-    function createExhibitPodium(color = 0x00f0ff) {
-      const g = new THREE.Group();
-      // Base Plinth
-      const base = new THREE.Mesh(
-        new THREE.CylinderGeometry(2.4, 2.7, 0.5, 24),
-        new THREE.MeshStandardMaterial({ color: 0x0b1329, metalness: 0.9, roughness: 0.2 })
+    // Factory: Build a Modern Museum Glass Showcase
+    function createGlassShowcase(w, d, h, x, z) {
+      const showcaseGroup = new THREE.Group();
+      showcaseGroup.position.set(x, 0, z);
+
+      // White Wooden / Lacquer Plinth Stand
+      const plinthH = 1.0;
+      const plinth = new THREE.Mesh(new THREE.BoxGeometry(w, plinthH, d), plinthMat);
+      plinth.position.y = plinthH / 2;
+      plinth.receiveShadow = true;
+      showcaseGroup.add(plinth);
+
+      // Polished Metal Inset Base trim
+      const trim = new THREE.Mesh(
+        new THREE.BoxGeometry(w + 0.04, 0.06, d + 0.04),
+        new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8, roughness: 0.2 })
       );
-      base.position.y = 0.25;
-      base.receiveShadow = true;
-      g.add(base);
+      trim.position.y = plinthH;
+      showcaseGroup.add(trim);
 
-      // Glowing LED Edge Strip
-      const led = new THREE.Mesh(
-        new THREE.TorusGeometry(2.45, 0.06, 16, 32),
-        new THREE.MeshBasicMaterial({ color: color })
+      // Glass Enclosure Box
+      const glassH = h;
+      const glassBox = new THREE.Mesh(new THREE.BoxGeometry(w, glassH, d), caseGlassMat);
+      glassBox.position.y = plinthH + glassH / 2;
+      showcaseGroup.add(glassBox);
+
+      // Spot light directly inside the glass case illuminating the artifact
+      const caseSpot = new THREE.PointLight(0xffffff, 1.6, 5);
+      caseSpot.position.set(0, plinthH + glassH - 0.2, 0);
+      showcaseGroup.add(caseSpot);
+
+      // Case Top Canopy with recessed metal frame
+      const canopy = new THREE.Mesh(
+        new THREE.BoxGeometry(w + 0.02, 0.08, d + 0.02),
+        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 })
       );
-      led.position.y = 0.52;
-      led.rotation.x = Math.PI / 2;
-      g.add(led);
+      canopy.position.y = plinthH + glassH;
+      showcaseGroup.add(canopy);
 
-      // Glass Upper Stand
-      const stand = new THREE.Mesh(
-        new THREE.CylinderGeometry(1.9, 2.1, 0.9, 24),
-        new THREE.MeshStandardMaterial({ color: 0x111c38, roughness: 0.3, metalness: 0.7 })
-      );
-      stand.position.y = 0.95;
-      g.add(stand);
-
-      return g;
-    }
-
-    // Helper: Floating 3D Title Hotspot Sprite
-    function createHotspotSprite(title) {
-      const c = document.createElement('canvas');
-      c.width = 512;
-      c.height = 128;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = 'rgba(6, 12, 26, 0.88)';
-      ctx.strokeStyle = '#00f0ff';
-      ctx.lineWidth = 4;
-      ctx.roundRect ? ctx.roundRect(10, 10, 492, 108, 24) : ctx.rect(10, 10, 492, 108);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = '#00f0ff';
-      ctx.font = 'bold 36px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText(title, 256, 75);
-
-      const tex = new THREE.CanvasTexture(c);
-      const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true });
-      const sprite = new THREE.Sprite(spriteMat);
-      sprite.scale.set(3.8, 0.95, 1);
-      return sprite;
+      scene.add(showcaseGroup);
+      return { group: showcaseGroup, plinthY: plinthH };
     }
 
     // -------------------------------------------------------------
-    // EXHIBIT 1: ISRO CE-20 CRYOGENIC ROCKET ENGINE
+    // EXHIBIT 1: CE-20 CRYOGENIC ROCKET ENGINE (East Aerospace Wing)
     // -------------------------------------------------------------
-    const spaceGroup = new THREE.Group();
-    spaceGroup.position.set(0, 0, -22);
-    spaceGroup.add(createExhibitPodium(0x00f0ff));
-
-    // CE-20 3D Model
+    const case1 = createGlassShowcase(3.2, 3.2, 3.2, 18, 0);
     const engineModel = new THREE.Group();
-    engineModel.position.y = 1.4;
+    engineModel.position.set(18, case1.plinthY + 0.1, 0);
 
-    // Bell Nozzle
+    // Rocket Bell Nozzle
     const nozzle = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.7, 1.8, 2.2, 32, 1, true),
+      new THREE.CylinderGeometry(0.45, 1.15, 1.6, 24, 1, true),
       new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.9, roughness: 0.2, side: THREE.DoubleSide })
     );
-    nozzle.position.y = 1.1;
+    nozzle.position.y = 0.8;
     engineModel.add(nozzle);
 
-    // Glowing Plasma Thrust Interior
-    const plasmaCone = new THREE.Mesh(
-      new THREE.ConeGeometry(0.65, 1.8, 16),
-      new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.8 })
+    // Glowing Combustion Chamber
+    const chamber = new THREE.Mesh(
+      new THREE.SphereGeometry(0.6, 20, 20),
+      new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.85, roughness: 0.2 })
     );
-    plasmaCone.position.y = 0.5;
-    plasmaCone.rotation.x = Math.PI;
-    engineModel.add(plasmaCone);
+    chamber.position.y = 1.85;
+    engineModel.add(chamber);
 
-    // Spherical Combustion Chamber
-    const chamberSphere = new THREE.Mesh(
-      new THREE.SphereGeometry(0.85, 24, 24),
-      new THREE.MeshStandardMaterial({ color: 0x0ea5e9, metalness: 0.9, roughness: 0.15 })
-    );
-    chamberSphere.position.y = 2.4;
-    engineModel.add(chamberSphere);
-
-    // Gimbal Actuator Arms
-    [-0.75, 0.75].forEach(x => {
-      const arm = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.08, 0.08, 1.6, 8),
-        new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.8 })
+    // Turbopump Manifolds
+    [-0.5, 0.5].forEach(ox => {
+      const pipe = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.09, 0.09, 1.2, 12),
+        new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9 })
       );
-      arm.position.set(x, 2.3, 0.5);
-      arm.rotation.z = x > 0 ? -0.2 : 0.2;
-      engineModel.add(arm);
+      pipe.position.set(ox, 1.8, 0.3);
+      engineModel.add(pipe);
     });
 
-    spaceGroup.add(engineModel);
-    const spaceTag = createHotspotSprite('🚀 ISRO CE-20 ENGINE');
-    spaceTag.position.set(0, 4.4, 0);
-    spaceGroup.add(spaceTag);
-
-    scene.add(spaceGroup);
+    scene.add(engineModel);
     exhibits.push({
-      key: 'space',
-      name: 'ISRO CE-20 Cryogenic Rocket Engine',
-      hall: 'ISRO SPACE & PROPULSION HALL',
-      group: spaceGroup,
-      model: engineModel,
-      camPos: { x: 0, y: 3.5, z: -15 },
-      targetPos: { x: 0, y: 2.4, z: -22 },
-      desc: "Developed at ISRO Propulsion Complex (IPRC) Mahendragiri, Tirunelveli. Powers the upper stage of LVM3 (Geosynchronous Satellite Launch Vehicle Mk III) delivering India's Chandrayaan and Gaganyaan missions into orbit.",
+      id: 'ASM-AERO-01',
+      title: 'ISRO CE-20 Cryogenic Rocket Engine',
+      room: 'EAST AEROSPACE WING',
+      pos: new THREE.Vector3(18, 1.7, 0),
+      camTarget: new THREE.Vector3(18, 1.8, 0),
+      desc: "Designed and tested at ISRO Propulsion Complex (IPRC) Mahendragiri, Tirunelveli district. As India's most powerful cryogenic engine, it powers the LVM3 launch vehicle carrying Chandrayaan and Gaganyaan missions into orbit.",
       specs: [
-        { label: 'Thrust (Vacuum)', val: '200 kN (20 Tons)' },
-        { label: 'Specific Impulse', val: '443 Seconds' },
-        { label: 'Fuel Types', val: 'LOX / LH2 (-253°C)' },
-        { label: 'Origin Facility', val: 'IPRC Mahendragiri, TN' }
+        { name: 'Thrust (Vacuum)', val: '200 kN (20 Tons)' },
+        { name: 'Propellants', val: 'LOX (-183°C) / LH2 (-253°C)' },
+        { name: 'Specific Impulse', val: '443 Seconds' },
+        { name: 'Testing Complex', val: 'IPRC Mahendragiri, TN' }
       ]
     });
 
     // -------------------------------------------------------------
-    // EXHIBIT 2: AUTONOMOUS CYBERNETIC AI LAB
+    // EXHIBIT 2: CHANDRAYAAN-3 LUNAR LANDER (East Aerospace Wing)
     // -------------------------------------------------------------
-    const aiGroup = new THREE.Group();
-    aiGroup.position.set(19, 0, -11);
-    aiGroup.add(createExhibitPodium(0xa855f7));
+    const case2 = createGlassShowcase(2.6, 2.6, 2.8, 18, 10);
+    const landerModel = new THREE.Group();
+    landerModel.position.set(18, case2.plinthY + 0.1, 10);
 
-    const aiModel = new THREE.Group();
-    aiModel.position.y = 1.4;
-
-    // Sleek Android Torso
-    const torso = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.65, 0.45, 1.5, 16),
-      new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 })
+    const landerBody = new THREE.Mesh(
+      new THREE.BoxGeometry(1.2, 1.0, 1.2),
+      new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.95, roughness: 0.15 }) // Gold foil
     );
-    torso.position.y = 1.4;
-    aiModel.add(torso);
+    landerBody.position.y = 0.8;
+    landerModel.add(landerBody);
 
-    // Glowing Optical Sensor Visor
-    const head = new THREE.Mesh(
-      new THREE.SphereGeometry(0.42, 16, 16),
-      new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8, roughness: 0.1 })
-    );
-    head.position.y = 2.4;
-    aiModel.add(head);
+    // Lander Legs
+    [-0.7, 0.7].forEach(lx => {
+      [-0.7, 0.7].forEach(lz => {
+        const leg = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.04, 0.04, 0.9, 8),
+          new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8 })
+        );
+        leg.position.set(lx, 0.35, lz);
+        leg.rotation.z = lx > 0 ? -0.3 : 0.3;
+        landerModel.add(leg);
+      });
+    });
 
-    const visor = new THREE.Mesh(
-      new THREE.BoxGeometry(0.55, 0.14, 0.2),
-      new THREE.MeshBasicMaterial({ color: 0xa855f7 })
-    );
-    visor.position.set(0, 2.4, 0.38);
-    aiModel.add(visor);
-
-    // Animated Neural Matrix Core
-    const neuralCore = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(0.35, 1),
-      new THREE.MeshBasicMaterial({ color: 0x00f0ff, wireframe: true })
-    );
-    neuralCore.position.set(0, 1.4, 0.42);
-    aiModel.add(neuralCore);
-    aiModel.userData.neural = neuralCore;
-
-    aiGroup.add(aiModel);
-    const aiTag = createHotspotSprite('🤖 AI CYBERNETICS');
-    aiTag.position.set(0, 4.4, 0);
-    aiGroup.add(aiTag);
-
-    scene.add(aiGroup);
+    scene.add(landerModel);
     exhibits.push({
-      key: 'ai',
-      name: 'Autonomous Cybernetics & Robotics Unit',
-      hall: 'ROBOTICS & ARTIFICIAL INTELLIGENCE LAB',
-      group: aiGroup,
-      model: aiModel,
-      camPos: { x: 13, y: 3.5, z: -7 },
-      targetPos: { x: 19, y: 2.4, z: -11 },
-      desc: "Demonstrates next-generation autonomous humanoid kinematics, edge machine learning inference, real-time spatial computer vision, and neural network sensor fusion.",
+      id: 'ASM-AERO-02',
+      title: 'Chandrayaan-3 Lunar Lander Replica',
+      room: 'EAST AEROSPACE WING',
+      pos: new THREE.Vector3(18, 1.7, 10),
+      camTarget: new THREE.Vector3(18, 1.6, 10),
+      desc: "Scale replica of the Vikram lander that achieved humanity's historic landing near the Moon's South Pole on August 23, 2023. Powered by throttleable liquid engines tested in Tamil Nadu.",
       specs: [
-        { label: 'Compute Engine', val: '250 TOPS Neural TPU' },
-        { label: 'DoF (Degrees of Freedom)', val: '42 Articulated Joints' },
-        { label: 'Latency', val: '< 2.4ms Real-Time' },
-        { label: 'Vision System', val: 'Spatial Lidar + Stereo' }
+        { name: 'Landing Date', val: 'August 23, 2023' },
+        { name: 'Landing Site', val: 'Lunar South Pole (Shiv Shakti)' },
+        { name: 'Rover Deployed', val: 'Pragyan 6-Wheel Rover' },
+        { name: 'Payload', val: 'ChaSTE, ILSA, RAMBHA' }
       ]
     });
 
     // -------------------------------------------------------------
-    // EXHIBIT 3: KUDANKULAM CLEAN ENERGY GRID
+    // EXHIBIT 3: AUTONOMOUS BIPEDAL HUMANOID (West Robotics Wing)
     // -------------------------------------------------------------
-    const energyGroup = new THREE.Group();
-    energyGroup.position.set(19, 0, 11);
-    energyGroup.add(createExhibitPodium(0x10b981));
+    const case3 = createGlassShowcase(2.6, 2.6, 3.2, -18, 0);
+    const robotModel = new THREE.Group();
+    robotModel.position.set(-18, case3.plinthY + 0.1, 0);
 
-    const energyModel = new THREE.Group();
-    energyModel.position.y = 1.4;
-
-    // Nuclear Reactor Containment Vessel Dome
-    const containment = new THREE.Mesh(
-      new THREE.SphereGeometry(1.2, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2),
-      new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8, roughness: 0.3 })
+    // Torso
+    const rTorso = new THREE.Mesh(
+      new THREE.BoxGeometry(0.7, 0.9, 0.4),
+      new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.2, metalness: 0.8 })
     );
-    containment.position.y = 1.0;
-    energyModel.add(containment);
+    rTorso.position.y = 1.35;
+    robotModel.add(rTorso);
 
-    // Glowing Magnetic Plasma Torus inside
-    const plasmaTorus = new THREE.Mesh(
-      new THREE.TorusGeometry(1.35, 0.12, 16, 32),
-      new THREE.MeshBasicMaterial({ color: 0x10b981 })
+    // Head with Cyan Sensor Visor
+    const rHead = new THREE.Mesh(
+      new THREE.BoxGeometry(0.35, 0.35, 0.35),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.1 })
     );
-    plasmaTorus.position.y = 1.0;
-    plasmaTorus.rotation.x = Math.PI / 2;
-    energyModel.add(plasmaTorus);
+    rHead.position.y = 2.05;
+    robotModel.add(rHead);
 
-    // Clean Wind Energy Turbine Mast & Rotor
-    const turbineMast = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.08, 0.14, 2.8, 16),
-      new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.5 })
+    const rVisor = new THREE.Mesh(
+      new THREE.BoxGeometry(0.38, 0.1, 0.1),
+      new THREE.MeshBasicMaterial({ color: 0x06b6d4 })
     );
-    turbineMast.position.set(0.9, 1.8, -0.6);
-    energyModel.add(turbineMast);
+    rVisor.position.set(0, 2.05, 0.18);
+    robotModel.add(rVisor);
 
-    const turbineRotor = new THREE.Group();
-    turbineRotor.position.set(0.9, 3.2, -0.5);
-    for (let b = 0; b < 3; b++) {
+    // Articulated Arms
+    [-0.5, 0.5].forEach(ax => {
+      const arm = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.08, 0.8, 12),
+        new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.8 })
+      );
+      arm.position.set(ax, 1.25, 0);
+      robotModel.add(arm);
+    });
+
+    scene.add(robotModel);
+    exhibits.push({
+      id: 'ASM-ROBO-01',
+      title: 'Autonomous Cognitive Humanoid Robot',
+      room: 'WEST ROBOTICS & AI LAB',
+      pos: new THREE.Vector3(-18, 1.7, 0),
+      camTarget: new THREE.Vector3(-18, 1.8, 0),
+      desc: "Demonstrates next-generation full-body balance kinematics, onboard neural tensor processing, edge SLAM spatial mapping, and human-collaborative safety systems.",
+      specs: [
+        { name: 'Compute Node', val: '275 TOPS Neural Edge Engine' },
+        { name: 'Degrees of Freedom', val: '38 Articulated Joints' },
+        { name: 'Perception', val: 'Stereo Vision + Solid-State Lidar' },
+        { name: 'Applications', val: 'Disaster Search & Clean Rooms' }
+      ]
+    });
+
+    // -------------------------------------------------------------
+    // EXHIBIT 4: KUDANKULAM NUCLEAR REACTOR (North Energy Hall)
+    // -------------------------------------------------------------
+    const case4 = createGlassShowcase(3.2, 3.2, 2.8, -8, -26);
+    const nuclearModel = new THREE.Group();
+    nuclearModel.position.set(-8, case4.plinthY + 0.1, -26);
+
+    const vessel = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.7, 0.7, 1.4, 24),
+      new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9, roughness: 0.2 })
+    );
+    vessel.position.y = 0.8;
+    nuclearModel.add(vessel);
+
+    const coreRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.85, 0.08, 16, 32),
+      new THREE.MeshBasicMaterial({ color: 0x06b6d4 })
+    );
+    coreRing.position.y = 0.8;
+    coreRing.rotation.x = Math.PI / 2;
+    nuclearModel.add(coreRing);
+
+    scene.add(nuclearModel);
+    exhibits.push({
+      id: 'ASM-NRG-01',
+      title: 'Kudankulam VVER-1000 Reactor Core Model',
+      room: 'NORTH CLEAN ENERGY HALL',
+      pos: new THREE.Vector3(-8, 1.7, -26),
+      camTarget: new THREE.Vector3(-8, 1.7, -26),
+      desc: "Cutaway engineering model of the Kudankulam Nuclear Power Plant located in Tirunelveli district—India's highest-capacity clean nuclear base-load generating station.",
+      specs: [
+        { name: 'Reactor Type', val: 'VVER-1000 Pressurized Water' },
+        { name: 'Unit Capacity', val: '1,000 MW per Reactor' },
+        { name: 'District', val: 'Radhapuram Taluk, Tirunelveli' },
+        { name: 'Safety Systems', val: 'Passive Heat Removal & Core Catcher' }
+      ]
+    });
+
+    // -------------------------------------------------------------
+    // EXHIBIT 5: MUPPANDAL WIND TURBINE (North Energy Hall)
+    // -------------------------------------------------------------
+    const case5 = createGlassShowcase(2.6, 2.6, 3.2, 8, -26);
+    const windModel = new THREE.Group();
+    windModel.position.set(8, case5.plinthY + 0.1, -26);
+
+    const mast = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.06, 0.12, 1.8, 16),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 })
+    );
+    mast.position.y = 0.9;
+    windModel.add(mast);
+
+    const rotorGroup = new THREE.Group();
+    rotorGroup.position.set(0, 1.8, 0.1);
+    for (let i = 0; i < 3; i++) {
       const blade = new THREE.Mesh(
-        new THREE.BoxGeometry(0.12, 1.2, 0.02),
+        new THREE.BoxGeometry(0.08, 0.85, 0.02),
         new THREE.MeshStandardMaterial({ color: 0xffffff })
       );
-      blade.rotation.z = (b / 3) * Math.PI * 2;
-      blade.position.y = Math.sin((b / 3) * Math.PI * 2) * 0.5;
-      blade.position.x = Math.cos((b / 3) * Math.PI * 2) * 0.5;
-      turbineRotor.add(blade);
+      blade.rotation.z = (i / 3) * Math.PI * 2;
+      blade.position.y = Math.sin((i / 3) * Math.PI * 2) * 0.42;
+      blade.position.x = Math.cos((i / 3) * Math.PI * 2) * 0.42;
+      rotorGroup.add(blade);
     }
-    energyModel.add(turbineRotor);
-    energyModel.userData.rotor = turbineRotor;
+    windModel.add(rotorGroup);
+    windModel.userData.rotor = rotorGroup;
 
-    energyGroup.add(energyModel);
-    const energyTag = createHotspotSprite('⚡ KUDANKULAM ENERGY');
-    energyTag.position.set(0, 4.4, 0);
-    energyGroup.add(energyTag);
-
-    scene.add(energyGroup);
+    scene.add(windModel);
     exhibits.push({
-      key: 'energy',
-      name: 'Kudankulam Clean Nuclear & Wind Grid',
-      hall: 'SUSTAINABLE ENERGY & NUCLEAR SCIENCE',
-      group: energyGroup,
-      model: energyModel,
-      camPos: { x: 13, y: 3.5, z: 7 },
-      targetPos: { x: 19, y: 2.4, z: 11 },
-      desc: "Inspired by the Kudankulam Nuclear Power Plant (KKNPP) and the Muppandal Wind Farm near Tirunelveli—India's greatest clean energy corridor generating thousands of gigawatts of emission-free power.",
+      id: 'ASM-NRG-02',
+      title: 'Muppandal High-Yield Wind Turbine',
+      room: 'NORTH CLEAN ENERGY HALL',
+      pos: new THREE.Vector3(8, 1.7, -26),
+      camTarget: new THREE.Vector3(8, 1.8, -26),
+      desc: "Model of the massive wind farms spanning the Muppandal mountain pass near Tirunelveli, harnessing mountain gap winds to form one of the world's most productive onshore wind corridors.",
       specs: [
-        { label: 'Plant Capacity', val: '2 x 1,000 MW VVER' },
-        { label: 'Wind Corridor', val: 'Muppandal Pass (1.5 GW)' },
-        { label: 'Grid Output', val: 'Clean Base-load Energy' },
-        { label: 'District', val: 'Tirunelveli, Tamil Nadu' }
+        { name: 'Corridor Capacity', val: '1,500+ Megawatts' },
+        { name: 'Wind Mechanism', val: 'Western Ghats Palghat/Aralvaimozhi Gap' },
+        { name: 'Annual Generation', val: 'Clean Renewable Electricity' },
+        { name: 'Regional Impact', val: 'Powers Southern Grid' }
       ]
     });
 
     // -------------------------------------------------------------
-    // EXHIBIT 4: GEODESIC PLANETARIUM DOME & ORRERY
+    // EXHIBIT 6: ANCIENT TAMIL WOOTZ STEEL (Lobby Centerpiece)
     // -------------------------------------------------------------
-    const planetGroup = new THREE.Group();
-    planetGroup.position.set(0, 0, 22);
-    planetGroup.add(createExhibitPodium(0x38bdf8));
+    const case6 = createGlassShowcase(2.6, 2.6, 2.6, 0, -4);
+    const wootzModel = new THREE.Group();
+    wootzModel.position.set(0, case6.plinthY + 0.1, -4);
 
-    const planetModel = new THREE.Group();
-    planetModel.position.y = 1.4;
-
-    // Glowing Central Sun
-    const sun = new THREE.Mesh(
-      new THREE.SphereGeometry(0.65, 24, 24),
-      new THREE.MeshBasicMaterial({ color: 0xf59e0b })
-    );
-    sun.position.y = 1.8;
-    planetModel.add(sun);
-
-    // Planetary Rings & Orbiting Spheres
-    const orreryRotors = [];
-    [
-      { r: 1.1, size: 0.16, color: 0x38bdf8, speed: 0.02 }, // Earth
-      { r: 1.6, size: 0.14, color: 0xef4444, speed: 0.015 }, // Mars
-      { r: 2.2, size: 0.28, color: 0xd97706, speed: 0.009 }  // Jupiter
-    ].forEach(p => {
-      const ring = new THREE.Mesh(
-        new THREE.RingGeometry(p.r - 0.02, p.r + 0.02, 32),
-        new THREE.MeshBasicMaterial({ color: 0x334155, side: THREE.DoubleSide })
-      );
-      ring.position.y = 1.8;
-      ring.rotation.x = Math.PI / 2;
-      planetModel.add(ring);
-
-      const pivot = new THREE.Group();
-      pivot.position.y = 1.8;
-      const planetMesh = new THREE.Mesh(
-        new THREE.SphereGeometry(p.size, 16, 16),
-        new THREE.MeshStandardMaterial({ color: p.color, metalness: 0.4 })
-      );
-      planetMesh.position.x = p.r;
-      pivot.add(planetMesh);
-      planetModel.add(pivot);
-      orreryRotors.push({ group: pivot, speed: p.speed });
-    });
-    planetModel.userData.rotors = orreryRotors;
-
-    planetGroup.add(planetModel);
-    const planetTag = createHotspotSprite('🪐 PLANETARIUM ORRERY');
-    planetTag.position.set(0, 4.4, 0);
-    planetGroup.add(planetTag);
-
-    scene.add(planetGroup);
-    exhibits.push({
-      key: 'planetarium',
-      name: 'Planetary Orrery & Celestial Geodesic Dome',
-      hall: 'DEEP SPACE & ASTRONOMY DOME',
-      group: planetGroup,
-      model: planetModel,
-      camPos: { x: 0, y: 3.5, z: 15 },
-      targetPos: { x: 0, y: 2.4, z: 22 },
-      desc: "Simulates orbital mechanics, planetary resonances, and stellar navigation. The Tirunelveli Science Centre planetarium is renowned for astronomy education and stargazing outreach.",
-      specs: [
-        { label: 'Projection', val: '8K Digital Optomechanical' },
-        { label: 'Orbits Modeled', val: 'Inner & Outer Solar System' },
-        { label: 'Outreach', val: 'Night Sky Stargazing' },
-        { label: 'Dome Diameter', val: '12-Meter Geodesic' }
-      ]
-    });
-
-    // -------------------------------------------------------------
-    // EXHIBIT 5: SUPERCONDUCTING LEVITRON PHYSICS LAB
-    // -------------------------------------------------------------
-    const physicsGroup = new THREE.Group();
-    physicsGroup.position.set(-19, 0, 11);
-    physicsGroup.add(createExhibitPodium(0x00f0ff));
-
-    const physicsModel = new THREE.Group();
-    physicsModel.position.y = 1.4;
-
-    // Superconducting Electromagnetic Ring Base
-    const emBase = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.6, 1.8, 0.4, 32),
-      new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.1 })
-    );
-    emBase.position.y = 0.8;
-    physicsModel.add(emBase);
-
-    // Floating, Hovering Levitron Torus Craft
-    const floatingTorus = new THREE.Mesh(
-      new THREE.TorusGeometry(0.9, 0.28, 16, 32),
-      new THREE.MeshStandardMaterial({ color: 0x00f0ff, metalness: 0.95, roughness: 0.1 })
-    );
-    floatingTorus.position.y = 2.1;
-    floatingTorus.rotation.x = Math.PI / 2;
-    physicsModel.add(floatingTorus);
-    physicsModel.userData.floatingTorus = floatingTorus;
-
-    // Electromagnetic Flux Beam Indicator
-    const fluxBeam = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.3, 0.3, 1.4, 16, 1, true),
-      new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.35 })
-    );
-    fluxBeam.position.y = 1.4;
-    physicsModel.add(fluxBeam);
-
-    physicsGroup.add(physicsModel);
-    const physicsTag = createHotspotSprite('🧲 QUANTUM LEVITRON');
-    physicsTag.position.set(0, 4.4, 0);
-    physicsGroup.add(physicsTag);
-
-    scene.add(physicsGroup);
-    exhibits.push({
-      key: 'physics',
-      name: 'Superconducting Magnetic Levitron',
-      hall: 'APPLIED PHYSICS & QUANTUM DYNAMICS',
-      group: physicsGroup,
-      model: physicsModel,
-      camPos: { x: -13, y: 3.5, z: 7 },
-      targetPos: { x: -19, y: 2.4, z: 11 },
-      desc: "Demonstrates the Meissner Effect, magnetic levitation, and Eddy current braking. Zero-friction magnetic suspension forms the engineering foundation for 600 km/h hyperloop trains.",
-      specs: [
-        { label: 'Levitation Type', val: 'Flux-Pinned Superconductor' },
-        { label: 'Operating Temp', val: '77 Kelvin (-196°C)' },
-        { label: 'Friction Coeff.', val: '0.00000 (Zero Friction)' },
-        { label: 'Application', val: 'Maglev & Quantum Gyroscopes' }
-      ]
-    });
-
-    // -------------------------------------------------------------
-    // EXHIBIT 6: ANCIENT TAMIL WOOTZ STEEL & METALLURGY
-    // -------------------------------------------------------------
-    const heritageGroup = new THREE.Group();
-    heritageGroup.position.set(-19, 0, -11);
-    heritageGroup.add(createExhibitPodium(0xf59e0b));
-
-    const heritageModel = new THREE.Group();
-    heritageModel.position.y = 1.4;
-
-    // Ancient Crucible Vessel
+    // Ancient Ceramic Crucible
     const crucible = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.7, 0.5, 1.1, 16),
-      new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.7 })
+      new THREE.CylinderGeometry(0.5, 0.35, 0.7, 16),
+      new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.85 })
     );
-    crucible.position.y = 0.9;
-    heritageModel.add(crucible);
+    crucible.position.y = 0.45;
+    wootzModel.add(crucible);
 
-    // Glowing Forged Wootz Damascus Blade / Ingot
-    const blade = new THREE.Mesh(
-      new THREE.BoxGeometry(0.35, 2.2, 0.08),
-      new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.9, roughness: 0.15 })
+    // Damascus Blade on Stasis Stand
+    const sword = new THREE.Mesh(
+      new THREE.BoxGeometry(0.18, 1.4, 0.04),
+      new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.95, roughness: 0.2 })
     );
-    blade.position.y = 2.4;
-    heritageModel.add(blade);
+    sword.position.y = 1.35;
+    wootzModel.add(sword);
 
-    // Armillary Brass Rings encasing the heritage ingot
-    const armSphere = new THREE.Mesh(
-      new THREE.TorusGeometry(1.3, 0.04, 16, 32),
-      new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.9 })
-    );
-    armSphere.position.y = 2.4;
-    heritageModel.add(armSphere);
-    heritageModel.userData.armSphere = armSphere;
-
-    heritageGroup.add(heritageModel);
-    const heritageTag = createHotspotSprite('⚔️ TAMIL WOOTZ STEEL');
-    heritageTag.position.set(0, 4.4, 0);
-    heritageGroup.add(heritageTag);
-
-    scene.add(heritageGroup);
+    scene.add(wootzModel);
     exhibits.push({
-      key: 'heritage',
-      name: 'Tamil Heritage: Ancient Wootz Crucible Steel',
-      hall: 'ANCIENT TAMIL SCIENCE & METALLURGY',
-      group: heritageGroup,
-      model: heritageModel,
-      camPos: { x: -13, y: 3.5, z: -7 },
-      targetPos: { x: -19, y: 2.4, z: -11 },
-      desc: "Originated in Tamil Nadu (documented in Sangam literature and Chera/Pandya ports like Korkai and Kodumanal). Known globally as Damascus steel, Wootz pioneered high-carbon carbon-nanotube steel matrices 2,000 years ago.",
+      id: 'ASM-HERITAGE-01',
+      title: 'Ancient Tamil Wootz Crucible Steel',
+      room: 'CENTRAL ATRIUM & HERITAGE',
+      pos: new THREE.Vector3(0, 1.7, -4),
+      camTarget: new THREE.Vector3(0, 1.6, -4),
+      desc: "Wootz crucible steel originated in Tamil Nadu and was celebrated in Sangam literature and maritime trade through Korkai and Kodumanal. Known globally as Damascus steel, it was the world's first carbon-nanotube steel matrix.",
       specs: [
-        { label: 'Origin Era', val: '300 BCE (Sangam Age)' },
-        { label: 'Carbon Ratio', val: '1.5% Ultra-High Carbon' },
-        { label: 'Nano Structure', val: 'Cementite Carbon Nanowires' },
-        { label: 'Export Route', val: 'Tamil Ports to Rome & Arabia' }
+        { name: 'Era', val: '300 BCE (Sangam Classical Era)' },
+        { name: 'Metallurgy', val: 'High-Carbon Crucible Melting' },
+        { name: 'Microstructure', val: 'Carbon Nanotubes & Cementite Wires' },
+        { name: 'Global Trade', val: 'Exported to Rome, Persia, & Arabia' }
       ]
     });
 
     /* ===============================================================
-       8. CAMERA CINEMATIC TRANSITIONS & ENTRANCE LOGIC
+       8. FIRST-PERSON WALKING & SMOOTH MOUSE LOOK CONTROLS
        =============================================================== */
     let isInside = false;
-    let isTransitioning = false;
+    let isWalkingSmoothly = false;
+    const keys = {};
 
-    // Built-in Smooth Tween Fallback (Zero external dependency)
-    function tweenCamera(fromCam, toCam, fromTarget, toTarget, duration, onComplete) {
-      isTransitioning = true;
-      controls.enabled = false;
+    window.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
+    window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
+
+    let activeTouchDir = null;
+    function startWalk(dir) { activeTouchDir = dir; }
+    function stopWalk() { activeTouchDir = null; }
+
+    // Smooth Mouse / Touch Look
+    let isMouseDown = false;
+    let prevMouseX = 0;
+    let prevMouseY = 0;
+    let yaw = 0;
+    let pitch = 0;
+
+    window.addEventListener('mousedown', (e) => {
+      if (e.target === canvas) {
+        isMouseDown = true;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      }
+    });
+
+    window.addEventListener('mouseup', () => { isMouseDown = false; });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isMouseDown) return;
+      const deltaX = e.clientX - prevMouseX;
+      const deltaY = e.clientY - prevMouseY;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+
+      yaw -= deltaX * 0.0035;
+      pitch -= deltaY * 0.0035;
+      pitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, pitch));
+
+      updateCameraRotation();
+    });
+
+    // Touch Drag Look for Mobile
+    window.addEventListener('touchstart', (e) => {
+      if (e.target === canvas && e.touches.length === 1) {
+        isMouseDown = true;
+        prevMouseX = e.touches[0].clientX;
+        prevMouseY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => { isMouseDown = false; });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isMouseDown || e.touches.length !== 1) return;
+      const deltaX = e.touches[0].clientX - prevMouseX;
+      const deltaY = e.touches[0].clientY - prevMouseY;
+      prevMouseX = e.touches[0].clientX;
+      prevMouseY = e.touches[0].clientY;
+
+      yaw -= deltaX * 0.0045;
+      pitch -= deltaY * 0.0045;
+      pitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, pitch));
+
+      updateCameraRotation();
+    }, { passive: true });
+
+    function updateCameraRotation() {
+      const dir = new THREE.Vector3(
+        Math.sin(yaw) * Math.cos(pitch),
+        Math.sin(pitch),
+        -Math.cos(yaw) * Math.cos(pitch)
+      );
+      camera.lookAt(camera.position.clone().add(dir));
+    }
+
+    // Walking Motion with Wall Boundaries & Collision
+    function updateWalkMovement() {
+      if (isWalkingSmoothly) return;
+      const moveSpeed = 0.16;
+
+      const forward = new THREE.Vector3(Math.sin(yaw), 0, -Math.cos(yaw)).normalize();
+      const right = new THREE.Vector3(Math.cos(yaw), 0, Math.sin(yaw)).normalize();
+
+      let moved = false;
+      const nextPos = camera.position.clone();
+
+      if (keys['w'] || keys['arrowup'] || activeTouchDir === 'u') {
+        nextPos.addScaledVector(forward, moveSpeed);
+        moved = true;
+      }
+      if (keys['s'] || keys['arrowdown'] || activeTouchDir === 'd') {
+        nextPos.addScaledVector(forward, -moveSpeed);
+        moved = true;
+      }
+      if (keys['a'] || keys['arrowleft'] || activeTouchDir === 'l') {
+        nextPos.addScaledVector(right, -moveSpeed);
+        moved = true;
+      }
+      if (keys['d'] || keys['arrowright'] || activeTouchDir === 'r') {
+        nextPos.addScaledVector(right, moveSpeed);
+        moved = true;
+      }
+
+      // Check Automatic Sliding Doors
+      if (nextPos.z < 21 && nextPos.z > 15 && Math.abs(nextPos.x) < 4) {
+        // Open glass doors
+        leftDoor.position.x = -3.8;
+        rightDoor.position.x = 3.8;
+      } else if (nextPos.z >= 22) {
+        // Close doors when far outside
+        leftDoor.position.x = -1.4;
+        rightDoor.position.x = 1.4;
+      }
+
+      // Museum Outer Walls Collision Constraints
+      if (nextPos.z <= 18) {
+        // Inside building bounds
+        nextPos.x = Math.max(-28, Math.min(28, nextPos.x));
+        nextPos.z = Math.max(-32, Math.min(18, nextPos.z));
+      } else {
+        // Outside plaza bounds
+        nextPos.x = Math.max(-25, Math.min(25, nextPos.x));
+        nextPos.z = Math.max(18, Math.min(38, nextPos.z));
+      }
+
+      camera.position.copy(nextPos);
+      camera.position.y = 1.7; // Locked human eye level
+
+      // Update Current Room Status Badge
+      updateCurrentRoom();
+    }
+
+    function updateCurrentRoom() {
+      const z = camera.position.z;
+      const x = camera.position.x;
+      let room = 'CAMPUS ENTRANCE PROMENADE';
+
+      if (z > 18) {
+        room = 'CAMPUS ENTRANCE PROMENADE';
+        isInside = false;
+        document.getElementById('txtAction').innerText = 'STEP INSIDE';
+      } else {
+        isInside = true;
+        document.getElementById('txtAction').innerText = 'EXIT OUTSIDE';
+
+        if (z > -16) {
+          if (x > 8) room = 'EAST AEROSPACE WING';
+          else if (x < -8) room = 'WEST ROBOTICS & AI LAB';
+          else room = 'MAIN RECEPTION LOBBY & ATRIUM';
+        } else {
+          room = 'NORTH CLEAN ENERGY & PHYSICS HALL';
+        }
+      }
+
+      document.getElementById('currentRoomText').innerText = room;
+    }
+
+    /* ===============================================================
+       9. CINEMATIC GLIDE & QUICK TELEPORT
+       =============================================================== */
+    function smoothGlideTo(targetCam, targetLook, duration = 1.6, onComplete) {
+      isWalkingSmoothly = true;
+      const startCam = camera.position.clone();
       const startTime = performance.now();
 
       function step(now) {
         const elapsed = (now - startTime) / 1000;
-        const progress = Math.min(elapsed / duration, 1);
-        // Ease In Out Cubic
-        const ease = progress < 0.5
-          ? 4 * progress * progress * progress
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        const p = Math.min(elapsed / duration, 1);
+        const ease = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
 
-        camera.position.x = fromCam.x + (toCam.x - fromCam.x) * ease;
-        camera.position.y = fromCam.y + (toCam.y - fromCam.y) * ease;
-        camera.position.z = fromCam.z + (toCam.z - fromCam.z) * ease;
+        camera.position.lerpVectors(startCam, targetCam, ease);
+        camera.lookAt(targetLook);
 
-        controls.target.x = fromTarget.x + (toTarget.x - fromTarget.x) * ease;
-        controls.target.y = fromTarget.y + (toTarget.y - fromTarget.y) * ease;
-        controls.target.z = fromTarget.z + (toTarget.z - fromTarget.z) * ease;
-
-        if (progress < 1) {
+        if (p < 1) {
           requestAnimationFrame(step);
         } else {
-          isTransitioning = false;
-          controls.enabled = true;
+          isWalkingSmoothly = false;
+          // Synchronize yaw and pitch to current forward direction
+          const forward = new THREE.Vector3();
+          camera.getWorldDirection(forward);
+          yaw = Math.atan2(forward.x, -forward.z);
+          pitch = Math.asin(forward.y);
           if (onComplete) onComplete();
         }
       }
       requestAnimationFrame(step);
     }
 
-    // ENTER THE MUSEUM (CINEMATIC GLIDE FROM PLAZA TO INTERIOR ATRIUM)
-    function enterMuseumInside() {
-      if (isTransitioning) return;
-      initAudio();
-      playDoorPneumatic();
-
-      // Door Flash Overlay
-      const flash = document.getElementById('flashOverlay');
-      flash.style.opacity = '0.7';
-
-      // Slide Doors Open
-      const doorStartTime = performance.now();
-      function animateDoors(now) {
-        const dt = Math.min((now - doorStartTime) / 1000, 1.2);
-        const ease = dt / 1.2;
-        leftDoor.position.x = -1.22 - (2.6 * ease);
-        rightDoor.position.x = 1.22 + (2.6 * ease);
-        if (dt < 1.2) requestAnimationFrame(animateDoors);
-      }
-      requestAnimationFrame(animateDoors);
-
-      // Hide Waypoint
-      document.getElementById('enterWaypointBox').style.opacity = '0';
-      document.getElementById('enterWaypointBox').style.pointerEvents = 'none';
-
-      // Camera swoops forward through the doors into the atrium
-      const startCam = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-      const startTarget = { x: controls.target.x, y: controls.target.y, z: controls.target.z };
-      const destCam = { x: 0, y: 4.8, z: 9 };
-      const destTarget = { x: 0, y: 3.5, z: 0 };
-
-      tweenCamera(startCam, destCam, startTarget, destTarget, 2.4, () => {
-        flash.style.opacity = '0';
-        isInside = true;
-        document.getElementById('statusText').innerText = 'INSIDE ATRIUM • EXHIBIT LEVEL 1';
-        document.getElementById('statusDot').style.background = '#00f0ff';
-        document.getElementById('txtEnterOrExit').innerText = 'EXIT OUTSIDE';
-        updateNovaText("Welcome inside the Advanced Science Museum, Tirunelveli. Explore the 6 exhibition halls or click any pedestal to inspect models in 3D.");
-        playChime(920, 0.15);
-      });
-    }
-
-    // EXIT TO EXTERIOR PLAZA
-    function exitToExterior() {
-      if (isTransitioning) return;
-      playDoorPneumatic();
-
-      const flash = document.getElementById('flashOverlay');
-      flash.style.opacity = '0.5';
-
-      // Slide doors closed
-      const doorStartTime = performance.now();
-      function closeDoors(now) {
-        const dt = Math.min((now - doorStartTime) / 1000, 1.2);
-        const ease = dt / 1.2;
-        leftDoor.position.x = -3.82 + (2.6 * ease);
-        rightDoor.position.x = 3.82 - (2.6 * ease);
-        if (dt < 1.2) requestAnimationFrame(closeDoors);
-      }
-      requestAnimationFrame(closeDoors);
-
-      const startCam = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-      const startTarget = { x: controls.target.x, y: controls.target.y, z: controls.target.z };
-      const destCam = { x: 0, y: 3.8, z: 48 };
-      const destTarget = { x: 0, y: 3.8, z: 0 };
-
-      tweenCamera(startCam, destCam, startTarget, destTarget, 2.0, () => {
-        flash.style.opacity = '0';
-        isInside = false;
-        document.getElementById('statusText').innerText = "OUTSIDE PLAZA • CLICK 'STEP INSIDE'";
-        document.getElementById('statusDot').style.background = '#f59e0b';
-        document.getElementById('txtEnterOrExit').innerText = 'STEP INSIDE';
-        document.getElementById('enterWaypointBox').style.opacity = '1';
-        document.getElementById('enterWaypointBox').style.pointerEvents = 'auto';
-        updateNovaText("You are outside on the campus promenade. Click 'STEP INSIDE' to walk through the rotunda into the futuristic atrium.");
-      });
-    }
-
-    function handleEnterOrExit() {
+    function enterOrStepOutside() {
       if (isInside) {
-        exitToExterior();
+        // Step outside to plaza
+        smoothGlideTo(new THREE.Vector3(0, 1.7, 26), new THREE.Vector3(0, 1.7, 18), 1.6);
       } else {
-        enterMuseumInside();
+        // Open doors and glide into the lobby
+        leftDoor.position.x = -3.8;
+        rightDoor.position.x = 3.8;
+        smoothGlideTo(new THREE.Vector3(0, 1.7, 5), new THREE.Vector3(0, 1.7, -4), 1.8);
       }
     }
 
-    // WARP TO SPECIFIC HALL / TELEPORT
-    function warpToLocation(locKey) {
-      closeExhibitModal();
-      playChime(760, 0.08);
-
-      // Highlight active dock button
-      document.querySelectorAll('.dock-tab').forEach(b => b.classList.remove('active'));
+    function teleportTo(wingKey) {
+      closePlaque();
+      document.querySelectorAll('.wing-btn').forEach(b => b.classList.remove('active'));
       if (event && event.currentTarget) event.currentTarget.classList.add('active');
 
-      if (locKey === 'plaza') {
-        exitToExterior();
-        return;
+      if (wingKey === 'entrance') {
+        smoothGlideTo(new THREE.Vector3(0, 1.7, 26), new THREE.Vector3(0, 1.7, 18));
+      } else if (wingKey === 'lobby') {
+        leftDoor.position.x = -3.8;
+        rightDoor.position.x = 3.8;
+        smoothGlideTo(new THREE.Vector3(0, 1.7, 6), new THREE.Vector3(0, 1.7, -4));
+      } else if (wingKey === 'space') {
+        smoothGlideTo(new THREE.Vector3(14, 1.7, 0), new THREE.Vector3(18, 1.7, 0));
+      } else if (wingKey === 'robotics') {
+        smoothGlideTo(new THREE.Vector3(-14, 1.7, 0), new THREE.Vector3(-18, 1.7, 0));
+      } else if (wingKey === 'energy') {
+        smoothGlideTo(new THREE.Vector3(0, 1.7, -24), new THREE.Vector3(8, 1.7, -26));
+      } else if (wingKey === 'heritage') {
+        smoothGlideTo(new THREE.Vector3(0, 1.7, 0), new THREE.Vector3(0, 1.7, -4));
       }
-
-      if (!isInside) {
-        // First glide inside, then warp
-        enterMuseumInside();
-      }
-
-      let destCam = { x: 0, y: 4.8, z: 9 };
-      let destTarget = { x: 0, y: 3.5, z: 0 };
-
-      if (locKey === 'atrium') {
-        destCam = { x: 0, y: 5.2, z: 9 };
-        destTarget = { x: 0, y: 3.5, z: 0 };
-        document.getElementById('statusText').innerText = 'CENTRAL ATRIUM • QUANTUM CORE';
-        updateNovaText("Standing before the Central Quantum Science Core, powering the museum's holographic simulation grid.");
-      } else {
-        const found = exhibits.find(e => e.key === locKey);
-        if (found) {
-          destCam = found.camPos;
-          destTarget = found.targetPos;
-          document.getElementById('statusText').innerText = found.hall;
-          updateNovaText("Arrived at the " + found.name + ". Click the pedestal to open the 3D inspection assembly.");
-        }
-      }
-
-      const startCam = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-      const startTarget = { x: controls.target.x, y: controls.target.y, z: controls.target.z };
-      tweenCamera(startCam, destCam, startTarget, destTarget, 1.4);
-    }
-
-    function updateNovaText(text) {
-      const el = document.getElementById('novaGuideText');
-      el.innerText = text;
     }
 
     /* ===============================================================
-       9. INTERACTION: RAYCASTING EXHIBIT PEDESTALS
+       10. CLICK INTERACTION: INSPECT DISPLAY CASES
        =============================================================== */
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
     let currentOpenExhibit = null;
-    let isExploded = false;
 
     window.addEventListener('click', (e) => {
-      // Ignore if clicking UI elements
       if (e.target.closest('.top-hud') || e.target.closest('.bottom-dock') ||
-          e.target.closest('.exhibit-modal') || e.target.closest('.enter-waypoint-container') ||
-          e.target.closest('.mobile-dpad-container')) {
+          e.target.closest('.museum-plaque') || e.target.closest('.mobile-walkpad')) {
         return;
       }
 
@@ -1757,141 +1430,65 @@
 
       raycaster.setFromCamera(mouse, camera);
 
-      // Check clicks on exhibit models or tags
       for (let ex of exhibits) {
-        const intersects = raycaster.intersectObjects(ex.group.children, true);
+        // If clicking near the showcase
+        const dist = camera.position.distanceTo(ex.pos);
+        const intersects = raycaster.intersectObjects(scene.children, true);
         if (intersects.length > 0) {
-          openExhibitModal(ex);
-          return;
+          const hitPoint = intersects[0].point;
+          if (hitPoint.distanceTo(ex.pos) < 3.2) {
+            openPlaque(ex);
+            return;
+          }
         }
       }
     });
 
-    function openExhibitModal(ex) {
+    function openPlaque(ex) {
       currentOpenExhibit = ex;
-      isExploded = false;
-      document.getElementById('txtExplode').innerText = 'EXPLODE ASSEMBLY';
+      document.getElementById('plaqueCatalog').innerText = 'CATALOG: ' + ex.id;
+      document.getElementById('plaqueTitle').innerText = ex.title;
+      document.getElementById('plaqueDesc').innerText = ex.desc;
 
-      document.getElementById('modalHallBadge').innerText = ex.hall;
-      document.getElementById('modalTitle').innerText = ex.name;
-      document.getElementById('modalDesc').innerText = ex.desc;
-
-      const specsBox = document.getElementById('modalSpecsGrid');
+      const specsBox = document.getElementById('plaqueSpecs');
       specsBox.innerHTML = '';
       ex.specs.forEach(s => {
-        const item = document.createElement('div');
-        item.className = 'spec-item';
-        item.innerHTML = '<span class="spec-label">' + s.label + '</span><span class="spec-value">' + s.val + '</span>';
-        specsBox.appendChild(item);
+        const cell = document.createElement('div');
+        cell.className = 'spec-cell';
+        cell.innerHTML = '<span class="spec-name">' + s.name + '</span><span class="spec-value">' + s.val + '</span>';
+        specsBox.appendChild(cell);
       });
 
-      document.getElementById('exhibitModal').classList.add('open');
-      playChime(950, 0.1);
+      document.getElementById('plaqueModal').classList.add('open');
+      document.getElementById('reticle').classList.add('active');
 
-      // Camera glides smoothly to frame the exhibit
-      const startCam = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-      const startTarget = { x: controls.target.x, y: controls.target.y, z: controls.target.z };
-      tweenCamera(startCam, ex.camPos, startTarget, ex.targetPos, 1.2);
+      // Smooth camera framing
+      const targetCam = ex.pos.clone().add(new THREE.Vector3(0, 0, 3.2));
+      smoothGlideTo(targetCam, ex.camTarget, 1.2);
     }
 
-    function closeExhibitModal() {
-      if (isExploded && currentOpenExhibit) {
-        toggleExplodedAssembly();
-      }
-      document.getElementById('exhibitModal').classList.remove('open');
+    function closePlaque() {
+      document.getElementById('plaqueModal').classList.remove('open');
+      document.getElementById('reticle').classList.remove('active');
       currentOpenExhibit = null;
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     }
 
-    function toggleExplodedAssembly() {
-      if (!currentOpenExhibit) return;
-      isExploded = !isExploded;
-      document.getElementById('txtExplode').innerText = isExploded ? 'ASSEMBLE' : 'EXPLODE ASSEMBLY';
-      playChime(isExploded ? 1100 : 700, 0.1);
-
-      // Animate child meshes outward or back
-      currentOpenExhibit.model.children.forEach((child, idx) => {
-        const offset = isExploded ? (idx % 2 === 0 ? 1.4 : -0.8) : 0;
-        child.position.y = (child.userData.origY || child.position.y) + offset;
-        if (!child.userData.origY) child.userData.origY = child.position.y;
-      });
-    }
-
-    function speakCuratorVoice() {
+    function playCuratorSpeech() {
       if (!currentOpenExhibit) return;
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const text = isTamil
-          ? currentOpenExhibit.name + ". " + currentOpenExhibit.desc
-          : currentOpenExhibit.name + ". " + currentOpenExhibit.desc;
+          ? currentOpenExhibit.title + ". " + currentOpenExhibit.desc
+          : currentOpenExhibit.title + ". " + currentOpenExhibit.desc;
         const utter = new SpeechSynthesisUtterance(text);
         utter.rate = 1.0;
-        utter.pitch = 1.05;
         window.speechSynthesis.speak(utter);
       }
     }
 
     /* ===============================================================
-       10. KEYBOARD & MOBILE FIRST-PERSON WALKING CONTROLS
-       =============================================================== */
-    const keys = {};
-    window.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
-    window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
-
-    let activeWalkDir = null;
-    function startWalk(dir) { activeWalkDir = dir; }
-    function stopWalk() { activeWalkDir = null; }
-
-    function updateWalkMovement() {
-      if (isTransitioning) return;
-      const moveSpeed = 0.22;
-      const forward = new THREE.Vector3();
-      camera.getWorldDirection(forward);
-      forward.y = 0;
-      forward.normalize();
-
-      const right = new THREE.Vector3();
-      right.crossVectors(forward, camera.up).normalize();
-
-      let moved = false;
-      if (keys['w'] || keys['arrowup'] || activeWalkDir === 'forward') {
-        camera.position.addScaledVector(forward, moveSpeed);
-        controls.target.addScaledVector(forward, moveSpeed);
-        moved = true;
-      }
-      if (keys['s'] || keys['arrowdown'] || activeWalkDir === 'backward') {
-        camera.position.addScaledVector(forward, -moveSpeed);
-        controls.target.addScaledVector(forward, -moveSpeed);
-        moved = true;
-      }
-      if (keys['a'] || keys['arrowleft'] || activeWalkDir === 'left') {
-        camera.position.addScaledVector(right, -moveSpeed);
-        controls.target.addScaledVector(right, -moveSpeed);
-        moved = true;
-      }
-      if (keys['d'] || keys['arrowright'] || activeWalkDir === 'right') {
-        camera.position.addScaledVector(right, moveSpeed);
-        controls.target.addScaledVector(right, moveSpeed);
-        moved = true;
-      }
-
-      // If user walks forward through the entrance doors at z = 26
-      if (!isInside && camera.position.z < 25 && Math.abs(camera.position.x) < 5) {
-        enterMuseumInside();
-      }
-
-      // Constrain inside museum boundaries
-      if (isInside) {
-        const dist = Math.sqrt(camera.position.x * camera.position.x + camera.position.z * camera.position.z);
-        if (dist > 32 && camera.position.z < 25) {
-          const factor = 32 / dist;
-          camera.position.x *= factor;
-          camera.position.z *= factor;
-        }
-      }
-    }
-
-    /* ===============================================================
-       11. LANGUAGE LOCALIZATION TOGGLE
+       11. LANGUAGE TOGGLE (ENGLISH / TAMIL)
        =============================================================== */
     let isTamil = false;
     function toggleLanguage() {
@@ -1904,48 +1501,22 @@
     }
 
     /* ===============================================================
-       12. ANIMATION & RENDER LOOP (60 FPS)
+       12. 60 FPS RENDER LOOP
        =============================================================== */
     const clock = new THREE.Clock();
 
     function animate() {
       requestAnimationFrame(animate);
-      const elapsed = clock.getElapsedTime();
+      const delta = clock.getDelta();
 
-      // Free Walk
+      // First-person walking
       updateWalkMovement();
 
-      // Central Quantum Core Holographic Revolutions
-      holoGlobe.rotation.y += 0.007;
-      gyroRing1.rotation.z += 0.012;
-      gyroRing2.rotation.x += 0.009;
-
-      // Exhibits continuous mechanical motions
-      if (energyModel.userData.rotor) {
-        energyModel.userData.rotor.rotation.z += 0.035;
+      // Active exhibit animations
+      if (windModel.userData.rotor) {
+        windModel.userData.rotor.rotation.z += 0.03;
       }
 
-      if (aiModel.userData.neural) {
-        aiModel.userData.neural.rotation.y += 0.015;
-        aiModel.userData.neural.rotation.x += 0.008;
-      }
-
-      if (planetModel.userData.rotors) {
-        planetModel.userData.rotors.forEach(r => {
-          r.group.rotation.y += r.speed;
-        });
-      }
-
-      if (physicsModel.userData.floatingTorus) {
-        physicsModel.userData.floatingTorus.position.y = 2.1 + Math.sin(elapsed * 2.8) * 0.16;
-        physicsModel.userData.floatingTorus.rotation.z += 0.02;
-      }
-
-      if (heritageModel.userData.armSphere) {
-        heritageModel.userData.armSphere.rotation.y += 0.01;
-      }
-
-      controls.update();
       renderer.render(scene, camera);
     }
 
