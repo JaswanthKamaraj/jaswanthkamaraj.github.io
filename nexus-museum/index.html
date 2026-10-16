@@ -3,28 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Advanced Science Museum: Tirunelveli | Modern 3D Virtual Walkthrough</title>
-  <meta name="description" content="Explore the Advanced Science Museum, Tirunelveli. A realistic 3D walk-through building featuring bright modern galleries, ISRO aerospace, robotics, clean energy, and interactive display cases.">
+  <title>Advanced Science Museum: Tirunelveli | Realistic 3D Virtual Walkthrough</title>
+  <meta name="description" content="A realistic 3D walk-through building of the Advanced Science Museum, Tirunelveli. Explore bright modern galleries with real physical models, display vitrines, ISRO propulsion, robotics, and clean energy.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@500;700&display=swap" rel="stylesheet">
 
-  <!-- Three.js Library -->
+  <!-- Three.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
     :root {
-      --bg-dark: #0f172a;
-      --brand-blue: #0284c7;
-      --brand-cyan: #06b6d4;
-      --brand-amber: #d97706;
-      --panel-glass: rgba(255, 255, 255, 0.94);
-      --panel-dark-glass: rgba(15, 23, 42, 0.88);
-      --text-dark: #0f172a;
+      --bg-museum: #f8fafc;
+      --text-main: #0f172a;
       --text-muted: #64748b;
-      --border-light: rgba(226, 232, 240, 0.8);
+      --brand-blue: #0284c7;
+      --panel-glass: rgba(255, 255, 255, 0.96);
+      --border-subtle: #e2e8f0;
       --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
       --font-tamil: 'Noto Sans Tamil', sans-serif;
@@ -36,9 +33,9 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background: #0b1120;
+      background: #0f172a;
       font-family: var(--font-sans);
-      color: #0f172a;
+      color: var(--text-main);
       user-select: none;
     }
 
@@ -54,26 +51,26 @@
       cursor: crosshair;
     }
 
-    /* Crosshair Center Reticle */
+    /* Crosshair Reticle */
     .center-reticle {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 8px;
-      height: 8px;
-      border: 1.5px solid rgba(255, 255, 255, 0.85);
+      width: 6px;
+      height: 6px;
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
       border-radius: 50%;
       pointer-events: none;
       z-index: 10;
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
       transition: all 0.2s ease;
     }
     .center-reticle.active {
-      width: 22px;
-      height: 22px;
-      border-color: #38bdf8;
-      background: rgba(56, 189, 248, 0.25);
+      width: 18px;
+      height: 18px;
+      border-color: #0284c7;
+      background: rgba(2, 132, 199, 0.2);
     }
 
     /* Top Contemporary Museum HUD Bar */
@@ -136,7 +133,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.95);
       padding: 8px 18px;
       border-radius: 999px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
@@ -160,7 +157,7 @@
     }
 
     .hud-btn {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.95);
       border: 1px solid rgba(255, 255, 255, 0.4);
       color: #0f172a;
       padding: 8px 14px;
@@ -200,7 +197,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(15, 23, 42, 0.9);
       border: 1px solid rgba(255, 255, 255, 0.15);
       padding: 8px 14px;
       border-radius: 999px;
@@ -239,16 +236,16 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
-    /* Floating Walk Controls & Interaction Tip Pill */
+    /* Guidance Hint Pill */
     .walk-tips-pill {
       position: absolute;
       top: 84px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 15;
-      background: rgba(15, 23, 42, 0.78);
+      background: rgba(15, 23, 42, 0.85);
       color: #e2e8f0;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(8px);
       padding: 6px 18px;
       border-radius: 999px;
@@ -271,7 +268,7 @@
       opacity: 0.85;
     }
     .pad-btn {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.95);
       border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: 8px;
       color: #0f172a;
@@ -292,22 +289,22 @@
     .pad-d { grid-column: 2; grid-row: 3; }
     .pad-r { grid-column: 3; grid-row: 2; }
 
-    /* Interactive Museum Exhibit Plaque Modal */
+    /* Museum Exhibit Info Plaque Modal */
     .museum-plaque {
       position: absolute;
       top: 50%;
       right: 32px;
       transform: translateY(-50%) scale(0.96);
-      width: 450px;
+      width: 440px;
       max-width: calc(100vw - 40px);
       background: var(--panel-glass);
-      border: 1px solid var(--border-light);
-      border-radius: 16px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
       padding: 24px;
       z-index: 30;
-      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -334,7 +331,7 @@
       letter-spacing: 0.08em;
     }
     .plaque-title {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 800;
       color: #0f172a;
       margin-top: 4px;
@@ -371,7 +368,7 @@
       width: 100%;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 10px;
+      border-radius: 8px;
       padding: 12px;
       margin-bottom: 18px;
       display: grid;
@@ -466,7 +463,7 @@
 
   <!-- Guidance Hints -->
   <div class="walk-tips-pill" id="walkTips">
-    [WASD / Arrow Keys: Walk] • [Mouse Drag: Look 360°] • [Click Any Display Case to Inspect]
+    [WASD / Arrow Keys: Walk] • [Mouse Drag: Look 360°] • [Click Display Cases to Inspect]
   </div>
 
   <!-- Bottom Navigation Wings Teleport Bar -->
@@ -487,7 +484,7 @@
     <button class="pad-btn pad-r" onpointerdown="startWalk('r')" onpointerup="stopWalk()" onpointerleave="stopWalk()">►</button>
   </div>
 
-  <!-- Interactive Exhibit Plaque / Museum Vitrine Inspector -->
+  <!-- Museum Exhibit Information Plaque Modal -->
   <aside class="museum-plaque" id="plaqueModal">
     <div class="plaque-header">
       <div>
@@ -526,7 +523,7 @@
   </aside>
 
   <!-- ===================================================================
-       THREE.JS SCRIPT: REALISTIC MODERN ARCHITECTURAL MUSEUM
+       THREE.JS SCRIPT: PHYSICAL REALISTIC SCIENCE MUSEUM
        =================================================================== -->
   <script>
     /* ===============================================================
@@ -534,12 +531,11 @@
        =============================================================== */
     const canvas = document.getElementById('canvas3d');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xdbeafe); // Bright daylight sky outside
+    scene.background = new THREE.Color(0xdbeafe); // Bright sky
     scene.fog = new THREE.FogExp2(0xdbeafe, 0.012);
 
     const camera = new THREE.PerspectiveCamera(54, window.innerWidth / window.innerHeight, 0.1, 150);
-    // Human eye-level height = 1.7m, standing outside on the plaza
-    camera.position.set(0, 1.7, 26);
+    camera.position.set(0, 1.7, 26); // Real human eye-level height = 1.7m
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -550,29 +546,24 @@
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     /* ===============================================================
-       2. REALISTIC BRIGHT MUSEUM LIGHTING
+       2. REALISTIC MUSEUM LIGHTING (NATURAL DAYLIGHT & SPOTLIGHTS)
        =============================================================== */
-    // Bright natural daylight ambient
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambientLight);
 
-    // Warm Outdoor Sun Light
     const sunLight = new THREE.DirectionalLight(0xfffbeb, 1.3);
     sunLight.position.set(16, 28, 22);
     sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 2048;
-    sunLight.shadow.mapSize.height = 2048;
     scene.add(sunLight);
 
-    // Interior Ceiling Spotlights & Downlights
-    function addCeilingDownlight(x, y, z, color = 0xffffff, intensity = 1.8, distance = 16) {
-      const spot = new THREE.SpotLight(color, intensity, distance, Math.PI / 4, 0.4);
+    // Warm gallery recessed ceiling downlights
+    function addCeilingDownlight(x, y, z, color = 0xffffff, intensity = 1.6, distance = 16) {
+      const spot = new THREE.SpotLight(color, intensity, distance, Math.PI / 4, 0.35);
       spot.position.set(x, y, z);
       spot.target.position.set(x, 0, z);
       scene.add(spot);
       scene.add(spot.target);
 
-      // Visible circular recessed ceiling fixture
       const fixture = new THREE.Mesh(
         new THREE.CylinderGeometry(0.35, 0.35, 0.08, 16),
         new THREE.MeshBasicMaterial({ color: 0xffffff })
@@ -581,20 +572,16 @@
       scene.add(fixture);
     }
 
-    // Lobby downlights
     addCeilingDownlight(0, 5.8, 8);
     addCeilingDownlight(0, 5.8, 0);
     addCeilingDownlight(0, 5.8, -8);
-
-    // Wings downlights
-    addCeilingDownlight(16, 5.8, 0); // East Aerospace Wing
-    addCeilingDownlight(-16, 5.8, 0); // West Robotics Wing
-    addCeilingDownlight(0, 5.8, -20); // North Energy Hall
+    addCeilingDownlight(18, 5.8, 0);  // East Aerospace Wing
+    addCeilingDownlight(-18, 5.8, 0); // West Robotics Wing
+    addCeilingDownlight(0, 5.8, -24); // North Energy Hall
 
     /* ===============================================================
-       3. MATERIALS FOR A REAL MODERN CONTEMPORARY MUSEUM
+       3. REALISTIC MATERIALS (NO HOLOGRAPHY)
        =============================================================== */
-    // Procedural Polished Marble Floor Texture
     function createMarbleCanvas() {
       const c = document.createElement('canvas');
       c.width = 512;
@@ -602,8 +589,6 @@
       const ctx = c.getContext('2d');
       ctx.fillStyle = '#f8fafc';
       ctx.fillRect(0, 0, 512, 512);
-
-      // Subtle light gray tile grid lines
       ctx.strokeStyle = '#e2e8f0';
       ctx.lineWidth = 3;
       for (let x = 0; x <= 512; x += 128) {
@@ -622,58 +607,38 @@
 
     const marbleFloorMat = new THREE.MeshStandardMaterial({
       map: marbleTex,
-      roughness: 0.15,
+      roughness: 0.16,
       metalness: 0.1,
       color: 0xffffff
     });
 
-    // Pristine Gallery White Wall Material
-    const whiteWallMat = new THREE.MeshStandardMaterial({
-      color: 0xf8fafc,
-      roughness: 0.45,
-      metalness: 0.05
-    });
+    const whiteWallMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.5 });
+    const baseboardMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.3 });
+    const ceilingMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.7 });
 
-    // Baseboard dark accent trim
-    const baseboardMat = new THREE.MeshStandardMaterial({
-      color: 0x334155,
-      roughness: 0.3
-    });
-
-    // Acoustic Modern Ceiling Material
-    const ceilingMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      roughness: 0.7
-    });
-
-    // Clear Showcase Vitrine Glass
-    const caseGlassMat = new THREE.MeshStandardMaterial({
+    const vitrineGlassMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       transparent: true,
-      opacity: 0.28,
+      opacity: 0.22,
       roughness: 0.05,
       metalness: 0.9,
       side: THREE.DoubleSide
     });
 
-    // Display Plinth Base Material
-    const plinthMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      roughness: 0.2,
-      metalness: 0.1
-    });
+    const plinthMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
 
     /* ===============================================================
-       4. EXTERIOR CAMPUS & ENTRANCE PLAZA (z >= 18)
+       4. EXTERIOR PROMENADE & FACADE (z >= 18)
        =============================================================== */
-    // Plaza Pavers Floor
-    const plazaMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.6 });
-    const plazaFloor = new THREE.Mesh(new THREE.BoxGeometry(60, 0.4, 30), plazaMat);
+    const plazaFloor = new THREE.Mesh(
+      new THREE.BoxGeometry(60, 0.4, 30),
+      new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.6 })
+    );
     plazaFloor.position.set(0, -0.2, 32);
     plazaFloor.receiveShadow = true;
     scene.add(plazaFloor);
 
-    // Green Lawns on Plaza Sides
+    // Green Lawns
     const lawnMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.9 });
     const leftLawn = new THREE.Mesh(new THREE.BoxGeometry(25, 0.45, 30), lawnMat);
     leftLawn.position.set(-36, -0.18, 32);
@@ -683,21 +648,21 @@
     rightLawn.position.set(36, -0.18, 32);
     scene.add(rightLawn);
 
-    // Exterior Museum Front Facade (at z = 18)
-    const facadeWallMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
-    const leftFrontWall = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 1.2), facadeWallMat);
+    // Museum Front Entrance Facade Wall (at z = 18)
+    const facadeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+    const leftFrontWall = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 1.2), facadeMat);
     leftFrontWall.position.set(-15, 4.5, 18);
     scene.add(leftFrontWall);
 
-    const rightFrontWall = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 1.2), facadeWallMat);
+    const rightFrontWall = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 1.2), facadeMat);
     rightFrontWall.position.set(15, 4.5, 18);
     scene.add(rightFrontWall);
 
-    const topFrontArch = new THREE.Mesh(new THREE.BoxGeometry(8, 3.5, 1.2), facadeWallMat);
+    const topFrontArch = new THREE.Mesh(new THREE.BoxGeometry(8, 3.5, 1.2), facadeMat);
     topFrontArch.position.set(0, 7.25, 18);
     scene.add(topFrontArch);
 
-    // Museum Grand Lettering Sign on Front
+    // Physical Signboard above Entrance
     const signCanvas = document.createElement('canvas');
     signCanvas.width = 1024;
     signCanvas.height = 256;
@@ -719,29 +684,28 @@
     signMesh.position.set(0, 7.2, 18.62);
     scene.add(signMesh);
 
-    // Sliding Glass Entrance Doors (Doorway x from -2.8 to 2.8, height 5.5m)
-    const leftDoor = new THREE.Mesh(new THREE.BoxGeometry(2.8, 5.4, 0.1), caseGlassMat);
+    // Glass Entrance Sliding Doors
+    const leftDoor = new THREE.Mesh(new THREE.BoxGeometry(2.8, 5.4, 0.1), vitrineGlassMat);
     leftDoor.position.set(-1.4, 2.7, 18);
     scene.add(leftDoor);
 
-    const rightDoor = new THREE.Mesh(new THREE.BoxGeometry(2.8, 5.4, 0.1), caseGlassMat);
+    const rightDoor = new THREE.Mesh(new THREE.BoxGeometry(2.8, 5.4, 0.1), vitrineGlassMat);
     rightDoor.position.set(1.4, 2.7, 18);
     scene.add(rightDoor);
 
     /* ===============================================================
-       5. INTERIOR ARCHITECTURE: ROOMS, WALLS, FLOORS & CEILINGS
+       5. INTERIOR ROOMS & WALLS
        =============================================================== */
     const interiorFloor = new THREE.Mesh(new THREE.BoxGeometry(60, 0.4, 52), marbleFloorMat);
     interiorFloor.position.set(0, -0.2, -8);
     interiorFloor.receiveShadow = true;
     scene.add(interiorFloor);
 
-    // Ceilings (Height 6.0m)
     const mainCeiling = new THREE.Mesh(new THREE.BoxGeometry(60, 0.4, 52), ceilingMat);
     mainCeiling.position.set(0, 6.2, -8);
     scene.add(mainCeiling);
 
-    // Skylight Glass Strip above Main Lobby
+    // Natural Skylight Strip
     const skylight = new THREE.Mesh(
       new THREE.BoxGeometry(8, 0.2, 28),
       new THREE.MeshStandardMaterial({ color: 0x93c5fd, transparent: true, opacity: 0.55 })
@@ -749,13 +713,11 @@
     skylight.position.set(0, 6.3, 0);
     scene.add(skylight);
 
-    // Helper: Create Wall with Baseboard
     function buildWall(w, h, d, x, y, z) {
       const wall = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), whiteWallMat);
       wall.position.set(x, y, z);
       scene.add(wall);
 
-      // Baseboard trim at bottom
       const trim = new THREE.Mesh(new THREE.BoxGeometry(w + 0.04, 0.18, d + 0.04), baseboardMat);
       trim.position.set(x, 0.09, z);
       scene.add(trim);
@@ -766,37 +728,36 @@
     buildWall(0.8, 6, 52, -30, 3, -8); // West wall
     buildWall(0.8, 6, 52, 30, 3, -8);  // East wall
 
-    // Internal Partition Walls dividing Lobby and Galleries
-    // East Wall of Lobby (x = 8): Doorway at z = 2 to -4
+    // Internal Partition Walls
     buildWall(0.6, 6, 12, 8, 3, 12);
     buildWall(0.6, 6, 14, 8, 3, -15);
-    buildWall(0.6, 1.8, 6, 8, 5.1, -1); // Header above doorway
+    buildWall(0.6, 1.8, 6, 8, 5.1, -1);
 
-    // West Wall of Lobby (x = -8): Doorway at z = 2 to -4
     buildWall(0.6, 6, 12, -8, 3, 12);
     buildWall(0.6, 6, 14, -8, 3, -15);
-    buildWall(0.6, 1.8, 6, -8, 5.1, -1); // Header above doorway
+    buildWall(0.6, 1.8, 6, -8, 5.1, -1);
 
-    // North Wall dividing Lobby from Energy Hall (z = -18): Doorway at x = -3 to 3
     buildWall(11, 6, 0.6, -13.5, 3, -18);
     buildWall(11, 6, 0.6, 13.5, 3, -18);
-    buildWall(6, 1.8, 0.6, 0, 5.1, -18); // Header above doorway
+    buildWall(6, 1.8, 0.6, 0, 5.1, -18);
 
     /* ===============================================================
-       6. INTERIOR FURNITURE & MUSEUM RECEPTION
+       6. RECEPTION DESK, BENCHES & POSTERS
        =============================================================== */
-    // Reception Desk in Lobby (at z = 8)
-    const deskMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.2 });
-    const receptionDesk = new THREE.Mesh(new THREE.BoxGeometry(4.8, 1.15, 1.4), deskMat);
+    const receptionDesk = new THREE.Mesh(
+      new THREE.BoxGeometry(4.8, 1.15, 1.4),
+      new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.2 })
+    );
     receptionDesk.position.set(0, 0.58, 8.5);
     scene.add(receptionDesk);
 
-    const deskTopMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.1 });
-    const deskTop = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.08, 1.6), deskTopMat);
+    const deskTop = new THREE.Mesh(
+      new THREE.BoxGeometry(5.0, 0.08, 1.6),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.1 })
+    );
     deskTop.position.set(0, 1.18, 8.5);
     scene.add(deskTop);
 
-    // Visitor Seating Benches
     function addBench(x, z, rotY = 0) {
       const bench = new THREE.Mesh(
         new THREE.BoxGeometry(2.4, 0.45, 0.8),
@@ -809,28 +770,6 @@
     addBench(-4.5, 0, Math.PI / 2);
     addBench(4.5, 0, Math.PI / 2);
 
-    // Indoor Architectural Ficus Plants
-    function addPottedPlant(x, z) {
-      const pot = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.35, 0.25, 0.6, 16),
-        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 })
-      );
-      pot.position.set(x, 0.3, z);
-      scene.add(pot);
-
-      const bush = new THREE.Mesh(
-        new THREE.SphereGeometry(0.55, 16, 16),
-        new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.8 })
-      );
-      bush.position.set(x, 0.85, z);
-      scene.add(bush);
-    }
-    addPottedPlant(-7, 16);
-    addPottedPlant(7, 16);
-    addPottedPlant(-7, -16);
-    addPottedPlant(7, -16);
-
-    // Wall Framed Science Posters
     function addWallPoster(w, h, x, y, z, rotY, title, subtitle) {
       const c = document.createElement('canvas');
       c.width = 512;
@@ -869,82 +808,119 @@
     addWallPoster(3.0, 1.8, 0, 3.4, -33.58, 0, 'KUDANKULAM GRID', 'Clean Nuclear & Wind Energy Corridor');
 
     /* ===============================================================
-       7. MUSEUM DISPLAY CASES (VITRINES) & EXHIBITS
+       7. REAL PHYSICAL EXHIBITS & DISPLAY VITRINES (NO HOLOGRAPHY)
        =============================================================== */
     const exhibits = [];
 
-    // Factory: Build a Modern Museum Glass Showcase
-    function createGlassShowcase(w, d, h, x, z) {
-      const showcaseGroup = new THREE.Group();
-      showcaseGroup.position.set(x, 0, z);
+    // Helper: Build a Clean Museum Glass Display Vitrine with Velvet Barrier Stanchions
+    function createMuseumDisplay(w, d, h, x, z, addBarrier = false) {
+      const group = new THREE.Group();
+      group.position.set(x, 0, z);
 
-      // White Wooden / Lacquer Plinth Stand
-      const plinthH = 1.0;
+      // Solid White Museum Display Plinth
+      const plinthH = 0.95;
       const plinth = new THREE.Mesh(new THREE.BoxGeometry(w, plinthH, d), plinthMat);
       plinth.position.y = plinthH / 2;
       plinth.receiveShadow = true;
-      showcaseGroup.add(plinth);
+      group.add(plinth);
 
-      // Polished Metal Inset Base trim
+      // Brushed Aluminum Base Trim
       const trim = new THREE.Mesh(
-        new THREE.BoxGeometry(w + 0.04, 0.06, d + 0.04),
-        new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8, roughness: 0.2 })
+        new THREE.BoxGeometry(w + 0.04, 0.05, d + 0.04),
+        new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8, roughness: 0.2 })
       );
       trim.position.y = plinthH;
-      showcaseGroup.add(trim);
+      group.add(trim);
 
-      // Glass Enclosure Box
-      const glassH = h;
-      const glassBox = new THREE.Mesh(new THREE.BoxGeometry(w, glassH, d), caseGlassMat);
-      glassBox.position.y = plinthH + glassH / 2;
-      showcaseGroup.add(glassBox);
+      // Clear Glass Vitrine Cube
+      const glassBox = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), vitrineGlassMat);
+      glassBox.position.y = plinthH + h / 2;
+      group.add(glassBox);
 
-      // Spot light directly inside the glass case illuminating the artifact
-      const caseSpot = new THREE.PointLight(0xffffff, 1.6, 5);
-      caseSpot.position.set(0, plinthH + glassH - 0.2, 0);
-      showcaseGroup.add(caseSpot);
-
-      // Case Top Canopy with recessed metal frame
+      // Top Canopy with Recessed Museum Halogen Spot
       const canopy = new THREE.Mesh(
         new THREE.BoxGeometry(w + 0.02, 0.08, d + 0.02),
         new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 })
       );
-      canopy.position.y = plinthH + glassH;
-      showcaseGroup.add(canopy);
+      canopy.position.y = plinthH + h;
+      group.add(canopy);
 
-      scene.add(showcaseGroup);
-      return { group: showcaseGroup, plinthY: plinthH };
+      const spot = new THREE.PointLight(0xffffff, 1.8, 5);
+      spot.position.set(0, plinthH + h - 0.2, 0);
+      group.add(spot);
+
+      // Printed Slanted Exhibit Label Stand in front
+      const labelStand = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, 0.8, 0.04),
+        new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8 })
+      );
+      labelStand.position.set(0, 0.4, d / 2 + 0.4);
+      group.add(labelStand);
+
+      const labelPlate = new THREE.Mesh(
+        new THREE.BoxGeometry(0.48, 0.32, 0.02),
+        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 })
+      );
+      labelPlate.position.set(0, 0.8, d / 2 + 0.4);
+      labelPlate.rotation.x = -Math.PI / 6;
+      group.add(labelPlate);
+
+      // Optional Brass Barrier Stanchions around larger exhibits
+      if (addBarrier) {
+        [-w / 2 - 0.5, w / 2 + 0.5].forEach(bx => {
+          [-d / 2 - 0.5, d / 2 + 0.5].forEach(bz => {
+            const pole = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.04, 0.04, 0.95, 12),
+              new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.9, roughness: 0.1 })
+            );
+            pole.position.set(bx, 0.47, bz);
+            group.add(pole);
+
+            const ball = new THREE.Mesh(
+              new THREE.SphereGeometry(0.08, 12, 12),
+              new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.9 })
+            );
+            ball.position.set(bx, 0.95, bz);
+            group.add(ball);
+          });
+        });
+      }
+
+      scene.add(group);
+      return { group, plinthY: plinthH };
     }
 
     // -------------------------------------------------------------
-    // EXHIBIT 1: CE-20 CRYOGENIC ROCKET ENGINE (East Aerospace Wing)
+    // EXHIBIT 1: PHYSICAL ISRO CE-20 CRYOGENIC ROCKET ENGINE
     // -------------------------------------------------------------
-    const case1 = createGlassShowcase(3.2, 3.2, 3.2, 18, 0);
+    const case1 = createMuseumDisplay(3.2, 3.2, 3.2, 18, 0, true);
     const engineModel = new THREE.Group();
     engineModel.position.set(18, case1.plinthY + 0.1, 0);
 
-    // Rocket Bell Nozzle
-    const nozzle = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.45, 1.15, 1.6, 24, 1, true),
-      new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.9, roughness: 0.2, side: THREE.DoubleSide })
-    );
+    // Realistic Metallic Rocket Nozzle
+    const nozzleMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.95, roughness: 0.18, side: THREE.DoubleSide });
+    const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 1.15, 1.6, 24, 1, true), nozzleMat);
     nozzle.position.y = 0.8;
     engineModel.add(nozzle);
 
-    // Glowing Combustion Chamber
-    const chamber = new THREE.Mesh(
-      new THREE.SphereGeometry(0.6, 20, 20),
-      new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.85, roughness: 0.2 })
-    );
+    // Heat-stiffening rings on nozzle
+    [0.4, 0.8, 1.2].forEach(ry => {
+      const stiffRing = new THREE.Mesh(new THREE.TorusGeometry(0.45 + (ry * 0.45), 0.02, 8, 24), nozzleMat);
+      stiffRing.position.y = ry;
+      stiffRing.rotation.x = Math.PI / 2;
+      engineModel.add(stiffRing);
+    });
+
+    // Solid Painted Injector Combustion Chamber
+    const chamberMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8, roughness: 0.25 });
+    const chamber = new THREE.Mesh(new THREE.SphereGeometry(0.6, 20, 20), chamberMat);
     chamber.position.y = 1.85;
     engineModel.add(chamber);
 
-    // Turbopump Manifolds
+    // High-Pressure Turbopump & Stainless Fuel Lines
+    const pipeMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.15 });
     [-0.5, 0.5].forEach(ox => {
-      const pipe = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.09, 0.09, 1.2, 12),
-        new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9 })
-      );
+      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 1.2, 12), pipeMat);
       pipe.position.set(ox, 1.8, 0.3);
       engineModel.add(pipe);
     });
@@ -956,7 +932,7 @@
       room: 'EAST AEROSPACE WING',
       pos: new THREE.Vector3(18, 1.7, 0),
       camTarget: new THREE.Vector3(18, 1.8, 0),
-      desc: "Designed and tested at ISRO Propulsion Complex (IPRC) Mahendragiri, Tirunelveli district. As India's most powerful cryogenic engine, it powers the LVM3 launch vehicle carrying Chandrayaan and Gaganyaan missions into orbit.",
+      desc: "Physical scale engineering model of the CE-20 cryogenic rocket engine, designed and test-fired at the ISRO Propulsion Complex (IPRC) Mahendragiri in Tirunelveli district. It powers the upper stage of the LVM3 rocket carrying India's Moon and human spaceflight missions.",
       specs: [
         { name: 'Thrust (Vacuum)', val: '200 kN (20 Tons)' },
         { name: 'Propellants', val: 'LOX (-183°C) / LH2 (-253°C)' },
@@ -966,40 +942,55 @@
     });
 
     // -------------------------------------------------------------
-    // EXHIBIT 2: CHANDRAYAAN-3 LUNAR LANDER (East Aerospace Wing)
+    // EXHIBIT 2: PHYSICAL CHANDRAYAAN-3 VIKRAM LANDER
     // -------------------------------------------------------------
-    const case2 = createGlassShowcase(2.6, 2.6, 2.8, 18, 10);
+    const case2 = createMuseumDisplay(2.8, 2.8, 2.8, 18, 10, true);
     const landerModel = new THREE.Group();
     landerModel.position.set(18, case2.plinthY + 0.1, 10);
 
-    const landerBody = new THREE.Mesh(
-      new THREE.BoxGeometry(1.2, 1.0, 1.2),
-      new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.95, roughness: 0.15 }) // Gold foil
+    // Gray Lunar Regolith Sand Bed
+    const regolith = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.2, 1.25, 0.08, 24),
+      new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.95 })
     );
-    landerBody.position.y = 0.8;
+    regolith.position.y = 0.04;
+    landerModel.add(regolith);
+
+    // Gold Multi-Layer Insulation (MLI) Foil Body
+    const goldFoilMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.95, roughness: 0.2 });
+    const landerBody = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.9, 1.1), goldFoilMat);
+    landerBody.position.y = 0.75;
     landerModel.add(landerBody);
 
-    // Lander Legs
-    [-0.7, 0.7].forEach(lx => {
-      [-0.7, 0.7].forEach(lz => {
-        const leg = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.04, 0.04, 0.9, 8),
-          new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.8 })
-        );
+    // Solar Array Panels (Dark Blue Silicon)
+    const solarMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, metalness: 0.6, roughness: 0.1 });
+    const solarPanel = new THREE.Mesh(new THREE.BoxGeometry(1.12, 0.6, 0.04), solarMat);
+    solarPanel.position.set(0, 0.75, 0.56);
+    landerModel.add(solarPanel);
+
+    // 4 Landing Struts with Footpads
+    const strutMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.8 });
+    [-0.65, 0.65].forEach(lx => {
+      [-0.65, 0.65].forEach(lz => {
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.85, 8), strutMat);
         leg.position.set(lx, 0.35, lz);
-        leg.rotation.z = lx > 0 ? -0.3 : 0.3;
+        leg.rotation.z = lx > 0 ? -0.32 : 0.32;
         landerModel.add(leg);
+
+        const footpad = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.04, 12), strutMat);
+        footpad.position.set(lx * 1.2, 0.08, lz * 1.2);
+        landerModel.add(footpad);
       });
     });
 
     scene.add(landerModel);
     exhibits.push({
       id: 'ASM-AERO-02',
-      title: 'Chandrayaan-3 Lunar Lander Replica',
+      title: 'Chandrayaan-3 Vikram Lander & Lunar Regolith',
       room: 'EAST AEROSPACE WING',
       pos: new THREE.Vector3(18, 1.7, 10),
       camTarget: new THREE.Vector3(18, 1.6, 10),
-      desc: "Scale replica of the Vikram lander that achieved humanity's historic landing near the Moon's South Pole on August 23, 2023. Powered by throttleable liquid engines tested in Tamil Nadu.",
+      desc: "Scale replica of the Vikram lander on simulated lunar regolith. On August 23, 2023, it completed a historic soft landing near the Moon's South Pole, deploying the Pragyan rover.",
       specs: [
         { name: 'Landing Date', val: 'August 23, 2023' },
         { name: 'Landing Site', val: 'Lunar South Pole (Shiv Shakti)' },
@@ -1009,119 +1000,145 @@
     });
 
     // -------------------------------------------------------------
-    // EXHIBIT 3: AUTONOMOUS BIPEDAL HUMANOID (West Robotics Wing)
+    // EXHIBIT 3: PHYSICAL INDUSTRIAL 6-AXIS ROBOTIC WORKSTATION
     // -------------------------------------------------------------
-    const case3 = createGlassShowcase(2.6, 2.6, 3.2, -18, 0);
+    const case3 = createMuseumDisplay(2.8, 2.8, 3.2, -18, 0, true);
     const robotModel = new THREE.Group();
     robotModel.position.set(-18, case3.plinthY + 0.1, 0);
 
-    // Torso
-    const rTorso = new THREE.Mesh(
-      new THREE.BoxGeometry(0.7, 0.9, 0.4),
-      new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.2, metalness: 0.8 })
+    // Steel Workstation Base Plate
+    const basePlate = new THREE.Mesh(
+      new THREE.BoxGeometry(1.6, 0.12, 1.6),
+      new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9 })
     );
-    rTorso.position.y = 1.35;
-    robotModel.add(rTorso);
+    basePlate.position.y = 0.06;
+    robotModel.add(basePlate);
 
-    // Head with Cyan Sensor Visor
-    const rHead = new THREE.Mesh(
-      new THREE.BoxGeometry(0.35, 0.35, 0.35),
-      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.1 })
+    // Cast Industrial Arm Base (Gloss White & Orange)
+    const armMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.2, metalness: 0.6 });
+    const whiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+
+    const rBase = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 0.5, 16), armMat);
+    rBase.position.y = 0.35;
+    robotModel.add(rBase);
+
+    // Lower Articulated Link
+    const link1 = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.9, 0.28), whiteMat);
+    link1.position.set(0, 0.9, 0.15);
+    link1.rotation.x = 0.35;
+    robotModel.add(link1);
+
+    // Upper Articulated Link
+    const link2 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.8, 0.22), armMat);
+    link2.position.set(0, 1.5, -0.05);
+    link2.rotation.x = -0.6;
+    robotModel.add(link2);
+
+    // Two-Finger Robotic Gripper with Workpiece
+    const gripper = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.14, 0.28), whiteMat);
+    gripper.position.set(0, 1.85, 0.25);
+    robotModel.add(gripper);
+
+    const workpiece = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.08, 0.25, 12),
+      new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8 })
     );
-    rHead.position.y = 2.05;
-    robotModel.add(rHead);
-
-    const rVisor = new THREE.Mesh(
-      new THREE.BoxGeometry(0.38, 0.1, 0.1),
-      new THREE.MeshBasicMaterial({ color: 0x06b6d4 })
-    );
-    rVisor.position.set(0, 2.05, 0.18);
-    robotModel.add(rVisor);
-
-    // Articulated Arms
-    [-0.5, 0.5].forEach(ax => {
-      const arm = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.08, 0.08, 0.8, 12),
-        new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.8 })
-      );
-      arm.position.set(ax, 1.25, 0);
-      robotModel.add(arm);
-    });
+    workpiece.position.set(0, 1.72, 0.25);
+    robotModel.add(workpiece);
 
     scene.add(robotModel);
     exhibits.push({
       id: 'ASM-ROBO-01',
-      title: 'Autonomous Cognitive Humanoid Robot',
+      title: 'Precision 6-Axis Industrial Robotic Workstation',
       room: 'WEST ROBOTICS & AI LAB',
       pos: new THREE.Vector3(-18, 1.7, 0),
       camTarget: new THREE.Vector3(-18, 1.8, 0),
-      desc: "Demonstrates next-generation full-body balance kinematics, onboard neural tensor processing, edge SLAM spatial mapping, and human-collaborative safety systems.",
+      desc: "Physical articulated industrial cobot model demonstrating multi-axis kinematic control, precision servo actuation, optical safety light curtains, and factory automation.",
       specs: [
-        { name: 'Compute Node', val: '275 TOPS Neural Edge Engine' },
-        { name: 'Degrees of Freedom', val: '38 Articulated Joints' },
-        { name: 'Perception', val: 'Stereo Vision + Solid-State Lidar' },
-        { name: 'Applications', val: 'Disaster Search & Clean Rooms' }
+        { name: 'Payload Capacity', val: '10 kg Working Payload' },
+        { name: 'Reach', val: '1,300 mm Spherical Volume' },
+        { name: 'Repeatability', val: '±0.02 mm Precision' },
+        { name: 'Safety System', val: 'Force/Torque Collaborative Sensing' }
       ]
     });
 
     // -------------------------------------------------------------
-    // EXHIBIT 4: KUDANKULAM NUCLEAR REACTOR (North Energy Hall)
+    // EXHIBIT 4: ARCHITECTURAL SCALE MODEL OF KUDANKULAM NUCLEAR PLANT
     // -------------------------------------------------------------
-    const case4 = createGlassShowcase(3.2, 3.2, 2.8, -8, -26);
+    const case4 = createMuseumDisplay(3.4, 3.4, 2.6, -8, -26);
     const nuclearModel = new THREE.Group();
     nuclearModel.position.set(-8, case4.plinthY + 0.1, -26);
 
-    const vessel = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.7, 0.7, 1.4, 24),
-      new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9, roughness: 0.2 })
+    // Terrain Landscape Baseboard
+    const landscape = new THREE.Mesh(
+      new THREE.BoxGeometry(2.8, 0.08, 2.8),
+      new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.8 })
     );
-    vessel.position.y = 0.8;
-    nuclearModel.add(vessel);
+    landscape.position.y = 0.04;
+    nuclearModel.add(landscape);
 
-    const coreRing = new THREE.Mesh(
-      new THREE.TorusGeometry(0.85, 0.08, 16, 32),
-      new THREE.MeshBasicMaterial({ color: 0x06b6d4 })
+    // Concrete Containment Dome (VVER-1000)
+    const domeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.4 });
+    const domeCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 0.7, 24), domeMat);
+    domeCylinder.position.set(-0.4, 0.42, 0);
+    nuclearModel.add(domeCylinder);
+
+    const domeHemisphere = new THREE.Mesh(
+      new THREE.SphereGeometry(0.65, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2),
+      domeMat
     );
-    coreRing.position.y = 0.8;
-    coreRing.rotation.x = Math.PI / 2;
-    nuclearModel.add(coreRing);
+    domeHemisphere.position.set(-0.4, 0.77, 0);
+    nuclearModel.add(domeHemisphere);
+
+    // Turbine Generator Hall Building
+    const turbineBuilding = new THREE.Mesh(
+      new THREE.BoxGeometry(0.9, 0.45, 1.4),
+      new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.5 })
+    );
+    turbineBuilding.position.set(0.6, 0.3, 0);
+    nuclearModel.add(turbineBuilding);
 
     scene.add(nuclearModel);
     exhibits.push({
       id: 'ASM-NRG-01',
-      title: 'Kudankulam VVER-1000 Reactor Core Model',
+      title: 'Kudankulam Nuclear Power Plant Architectural Scale Model',
       room: 'NORTH CLEAN ENERGY HALL',
       pos: new THREE.Vector3(-8, 1.7, -26),
       camTarget: new THREE.Vector3(-8, 1.7, -26),
-      desc: "Cutaway engineering model of the Kudankulam Nuclear Power Plant located in Tirunelveli district—India's highest-capacity clean nuclear base-load generating station.",
+      desc: "Scale architectural tabletop model of the Kudankulam Nuclear Power Plant located in Tirunelveli district. Showcases the reinforced concrete containment dome and adjacent turbine island.",
       specs: [
         { name: 'Reactor Type', val: 'VVER-1000 Pressurized Water' },
         { name: 'Unit Capacity', val: '1,000 MW per Reactor' },
         { name: 'District', val: 'Radhapuram Taluk, Tirunelveli' },
-        { name: 'Safety Systems', val: 'Passive Heat Removal & Core Catcher' }
+        { name: 'Containment', val: 'Double Reinforced Concrete Shell' }
       ]
     });
 
     // -------------------------------------------------------------
-    // EXHIBIT 5: MUPPANDAL WIND TURBINE (North Energy Hall)
+    // EXHIBIT 5: PHYSICAL MUPPANDAL WIND TURBINE WORKING MODEL
     // -------------------------------------------------------------
-    const case5 = createGlassShowcase(2.6, 2.6, 3.2, 8, -26);
+    const case5 = createMuseumDisplay(2.6, 2.6, 3.2, 8, -26);
     const windModel = new THREE.Group();
     windModel.position.set(8, case5.plinthY + 0.1, -26);
 
-    const mast = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.06, 0.12, 1.8, 16),
-      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 })
-    );
+    const towerMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+    const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.12, 1.8, 16), towerMat);
     mast.position.y = 0.9;
     windModel.add(mast);
 
+    const nacelle = new THREE.Mesh(
+      new THREE.BoxGeometry(0.22, 0.2, 0.45),
+      towerMat
+    );
+    nacelle.position.set(0, 1.8, 0.05);
+    windModel.add(nacelle);
+
     const rotorGroup = new THREE.Group();
-    rotorGroup.position.set(0, 1.8, 0.1);
+    rotorGroup.position.set(0, 1.8, 0.28);
     for (let i = 0; i < 3; i++) {
       const blade = new THREE.Mesh(
         new THREE.BoxGeometry(0.08, 0.85, 0.02),
-        new THREE.MeshStandardMaterial({ color: 0xffffff })
+        towerMat
       );
       blade.rotation.z = (i / 3) * Math.PI * 2;
       blade.position.y = Math.sin((i / 3) * Math.PI * 2) * 0.42;
@@ -1134,55 +1151,64 @@
     scene.add(windModel);
     exhibits.push({
       id: 'ASM-NRG-02',
-      title: 'Muppandal High-Yield Wind Turbine',
+      title: 'Muppandal Wind Turbine Working Engineering Model',
       room: 'NORTH CLEAN ENERGY HALL',
       pos: new THREE.Vector3(8, 1.7, -26),
       camTarget: new THREE.Vector3(8, 1.8, -26),
-      desc: "Model of the massive wind farms spanning the Muppandal mountain pass near Tirunelveli, harnessing mountain gap winds to form one of the world's most productive onshore wind corridors.",
+      desc: "Working scale model of a high-yield 2 MW aerogenerator from the Muppandal Wind Farm near Tirunelveli. Features rotating aerodynamic pitch-controlled blades and nacelle gear-train.",
       specs: [
-        { name: 'Corridor Capacity', val: '1,500+ Megawatts' },
-        { name: 'Wind Mechanism', val: 'Western Ghats Palghat/Aralvaimozhi Gap' },
-        { name: 'Annual Generation', val: 'Clean Renewable Electricity' },
-        { name: 'Regional Impact', val: 'Powers Southern Grid' }
+        { name: 'Rotor Diameter', val: '80 Meters (Scale: 1:40)' },
+        { name: 'Hub Height', val: '75 Meters' },
+        { name: 'Capacity', val: '2,000 kW per Turbine' },
+        { name: 'Wind Region', val: 'Muppandal Pass Corridor' }
       ]
     });
 
     // -------------------------------------------------------------
-    // EXHIBIT 6: ANCIENT TAMIL WOOTZ STEEL (Lobby Centerpiece)
+    // EXHIBIT 6: ANCIENT TAMIL WOOTZ STEEL SWORD & VELVET DISPLAY
     // -------------------------------------------------------------
-    const case6 = createGlassShowcase(2.6, 2.6, 2.6, 0, -4);
+    const case6 = createMuseumDisplay(2.8, 2.8, 2.6, 0, -4, true);
     const wootzModel = new THREE.Group();
     wootzModel.position.set(0, case6.plinthY + 0.1, -4);
 
-    // Ancient Ceramic Crucible
-    const crucible = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.5, 0.35, 0.7, 16),
-      new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.85 })
-    );
-    crucible.position.y = 0.45;
-    wootzModel.add(crucible);
+    // Deep Maroon Velvet Exhibition Cushion
+    const velvetMat = new THREE.MeshStandardMaterial({ color: 0x881337, roughness: 0.9 });
+    const cushion = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.14, 0.7), velvetMat);
+    cushion.position.y = 0.07;
+    wootzModel.add(cushion);
 
-    // Damascus Blade on Stasis Stand
-    const sword = new THREE.Mesh(
-      new THREE.BoxGeometry(0.18, 1.4, 0.04),
-      new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.95, roughness: 0.2 })
-    );
-    sword.position.y = 1.35;
-    wootzModel.add(sword);
+    // Solid Damascus / Wootz Steel Blade with Inscribed Hilt
+    const steelMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.2 });
+    const bladeMesh = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.08, 0.03), steelMat);
+    bladeMesh.position.set(0, 0.18, 0);
+    bladeMesh.rotation.y = 0.15;
+    wootzModel.add(bladeMesh);
+
+    // Brass Pommel & Crossguard
+    const brassMat = new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.9, roughness: 0.15 });
+    const guard = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 0.06), brassMat);
+    guard.position.set(-0.55, 0.18, -0.08);
+    wootzModel.add(guard);
+
+    // Ancient Crucible Ingot beside sword
+    const crucibleMat = new THREE.MeshStandardMaterial({ color: 0x57534e, roughness: 0.85 });
+    const ingot = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.14, 0.22, 16), crucibleMat);
+    ingot.position.set(0.65, 0.18, 0.15);
+    wootzModel.add(ingot);
 
     scene.add(wootzModel);
     exhibits.push({
       id: 'ASM-HERITAGE-01',
-      title: 'Ancient Tamil Wootz Crucible Steel',
+      title: 'Tamil Heritage: Ancient Wootz Crucible Steel & Sword',
       room: 'CENTRAL ATRIUM & HERITAGE',
       pos: new THREE.Vector3(0, 1.7, -4),
       camTarget: new THREE.Vector3(0, 1.6, -4),
-      desc: "Wootz crucible steel originated in Tamil Nadu and was celebrated in Sangam literature and maritime trade through Korkai and Kodumanal. Known globally as Damascus steel, it was the world's first carbon-nanotube steel matrix.",
+      desc: "Physical artifact showcase displaying a high-carbon Wootz steel blade with its characteristic Damascus watermark pattern, alongside a fired clay smelting crucible. Originated in ancient Tamil Nadu and celebrated in Sangam literature.",
       specs: [
         { name: 'Era', val: '300 BCE (Sangam Classical Era)' },
-        { name: 'Metallurgy', val: 'High-Carbon Crucible Melting' },
+        { name: 'Metallurgy', val: 'Crucible Smelting Technique' },
         { name: 'Microstructure', val: 'Carbon Nanotubes & Cementite Wires' },
-        { name: 'Global Trade', val: 'Exported to Rome, Persia, & Arabia' }
+        { name: 'Global Trade', val: 'Exported from Korkai Port to Rome & Arabia' }
       ]
     });
 
@@ -1200,7 +1226,6 @@
     function startWalk(dir) { activeTouchDir = dir; }
     function stopWalk() { activeTouchDir = null; }
 
-    // Smooth Mouse / Touch Look
     let isMouseDown = false;
     let prevMouseX = 0;
     let prevMouseY = 0;
@@ -1231,7 +1256,6 @@
       updateCameraRotation();
     });
 
-    // Touch Drag Look for Mobile
     window.addEventListener('touchstart', (e) => {
       if (e.target === canvas && e.touches.length === 1) {
         isMouseDown = true;
@@ -1265,7 +1289,6 @@
       camera.lookAt(camera.position.clone().add(dir));
     }
 
-    // Walking Motion with Wall Boundaries & Collision
     function updateWalkMovement() {
       if (isWalkingSmoothly) return;
       const moveSpeed = 0.16;
@@ -1273,52 +1296,42 @@
       const forward = new THREE.Vector3(Math.sin(yaw), 0, -Math.cos(yaw)).normalize();
       const right = new THREE.Vector3(Math.cos(yaw), 0, Math.sin(yaw)).normalize();
 
-      let moved = false;
       const nextPos = camera.position.clone();
 
       if (keys['w'] || keys['arrowup'] || activeTouchDir === 'u') {
         nextPos.addScaledVector(forward, moveSpeed);
-        moved = true;
       }
       if (keys['s'] || keys['arrowdown'] || activeTouchDir === 'd') {
         nextPos.addScaledVector(forward, -moveSpeed);
-        moved = true;
       }
       if (keys['a'] || keys['arrowleft'] || activeTouchDir === 'l') {
         nextPos.addScaledVector(right, -moveSpeed);
-        moved = true;
       }
       if (keys['d'] || keys['arrowright'] || activeTouchDir === 'r') {
         nextPos.addScaledVector(right, moveSpeed);
-        moved = true;
       }
 
-      // Check Automatic Sliding Doors
+      // Automatic Sliding Doors trigger
       if (nextPos.z < 21 && nextPos.z > 15 && Math.abs(nextPos.x) < 4) {
-        // Open glass doors
         leftDoor.position.x = -3.8;
         rightDoor.position.x = 3.8;
       } else if (nextPos.z >= 22) {
-        // Close doors when far outside
         leftDoor.position.x = -1.4;
         rightDoor.position.x = 1.4;
       }
 
-      // Museum Outer Walls Collision Constraints
+      // Museum Outer Boundaries Collision
       if (nextPos.z <= 18) {
-        // Inside building bounds
         nextPos.x = Math.max(-28, Math.min(28, nextPos.x));
         nextPos.z = Math.max(-32, Math.min(18, nextPos.z));
       } else {
-        // Outside plaza bounds
         nextPos.x = Math.max(-25, Math.min(25, nextPos.x));
         nextPos.z = Math.max(18, Math.min(38, nextPos.z));
       }
 
       camera.position.copy(nextPos);
-      camera.position.y = 1.7; // Locked human eye level
+      camera.position.y = 1.7; // Locked human eye height
 
-      // Update Current Room Status Badge
       updateCurrentRoom();
     }
 
@@ -1367,7 +1380,6 @@
           requestAnimationFrame(step);
         } else {
           isWalkingSmoothly = false;
-          // Synchronize yaw and pitch to current forward direction
           const forward = new THREE.Vector3();
           camera.getWorldDirection(forward);
           yaw = Math.atan2(forward.x, -forward.z);
@@ -1380,10 +1392,8 @@
 
     function enterOrStepOutside() {
       if (isInside) {
-        // Step outside to plaza
         smoothGlideTo(new THREE.Vector3(0, 1.7, 26), new THREE.Vector3(0, 1.7, 18), 1.6);
       } else {
-        // Open doors and glide into the lobby
         leftDoor.position.x = -3.8;
         rightDoor.position.x = 3.8;
         smoothGlideTo(new THREE.Vector3(0, 1.7, 5), new THREE.Vector3(0, 1.7, -4), 1.8);
@@ -1431,8 +1441,6 @@
       raycaster.setFromCamera(mouse, camera);
 
       for (let ex of exhibits) {
-        // If clicking near the showcase
-        const dist = camera.position.distanceTo(ex.pos);
         const intersects = raycaster.intersectObjects(scene.children, true);
         if (intersects.length > 0) {
           const hitPoint = intersects[0].point;
@@ -1462,7 +1470,6 @@
       document.getElementById('plaqueModal').classList.add('open');
       document.getElementById('reticle').classList.add('active');
 
-      // Smooth camera framing
       const targetCam = ex.pos.clone().add(new THREE.Vector3(0, 0, 3.2));
       smoothGlideTo(targetCam, ex.camTarget, 1.2);
     }
@@ -1488,7 +1495,7 @@
     }
 
     /* ===============================================================
-       11. LANGUAGE TOGGLE (ENGLISH / TAMIL)
+       11. LANGUAGE LOCALIZATION (EN / TAMIL)
        =============================================================== */
     let isTamil = false;
     function toggleLanguage() {
@@ -1507,12 +1514,8 @@
 
     function animate() {
       requestAnimationFrame(animate);
-      const delta = clock.getDelta();
-
-      // First-person walking
       updateWalkMovement();
 
-      // Active exhibit animations
       if (windModel.userData.rotor) {
         windModel.userData.rotor.rotation.z += 0.03;
       }
@@ -1522,7 +1525,6 @@
 
     animate();
 
-    // Window Resize Handler
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
