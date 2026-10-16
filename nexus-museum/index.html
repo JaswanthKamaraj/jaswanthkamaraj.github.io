@@ -2,34 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced Science Museum: Tirunelveli | Interactive 3D Museum & Virtual Tour</title>
-  <meta name="description" content="Explore the Advanced Science Museum, Tirunelveli (District Science Centre). Interactive 3D exhibit models, architectural floor plan, real gallery photographs, and curator audio tours.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Advanced Science Museum: Tirunelveli | Walk Inside 3D Experience</title>
+  <meta name="description" content="Step right inside the Advanced Science Museum, Tirunelveli. Start in front of the grand campus facade and walk through the glass entrance doors into the futuristic science galleries.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@500;700&display=swap" rel="stylesheet">
 
-  <!-- Three.js + OrbitControls for 3D Exhibit Inspector -->
+  <!-- Three.js + OrbitControls for 3D Exhibit Inspection -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <style>
     :root {
-      --bg-dark: #080d1a;
+      --bg-dark: #070b16;
       --bg-surface: #0f172a;
       --bg-card: #131d35;
-      --bg-card-hover: #1a2747;
-      --border-subtle: rgba(255, 255, 255, 0.09);
-      --border-focus: #0284c7;
       --brand-blue: #0284c7;
       --brand-cyan: #38bdf8;
       --brand-gold: #f59e0b;
-      --brand-emerald: #10b981;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
+      --border-subtle: rgba(255, 255, 255, 0.12);
       --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
       --font-tamil: 'Noto Sans Tamil', sans-serif;
@@ -37,103 +31,282 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg-dark);
+      color: #ffffff;
       font-family: var(--font-sans);
-      line-height: 1.6;
-      overflow-x: hidden;
+      user-select: none;
     }
 
-    /* Container */
-    .container {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 0 24px;
+    /* Fullscreen Viewport Wrapper */
+    #experienceContainer {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    /* Top Sticky Navigation Bar */
-    .museum-navbar {
-      position: sticky;
+    /* ===============================================================
+       A. EXTERIOR VIEW ("LIKE IN THE IMAGE")
+       =============================================================== */
+    #exteriorView {
+      position: absolute;
       top: 0;
-      z-index: 100;
-      background: rgba(8, 13, 26, 0.94);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 14px 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      transition: transform 1.8s cubic-bezier(0.25, 1, 0.3, 1), opacity 0.8s ease;
+      transform-origin: 49% 64%; /* Zooms directly into center glass entrance doors */
     }
-    .nav-inner {
+
+    .facade-bg-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.95);
+    }
+
+    /* Ambient Subtle Vignette */
+    .facade-ambient-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(7, 11, 22, 0.6) 100%);
+      pointer-events: none;
+    }
+
+    /* Exterior Floating Interactive Pins on the building */
+    .facade-pin {
+      position: absolute;
+      z-index: 15;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 20px;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #ffffff;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      animation: pinFloat 3s ease-in-out infinite;
     }
-    .brand-link {
+    @keyframes pinFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    .facade-pin:hover {
+      background: #0284c7;
+      border-color: #38bdf8;
+      transform: translateY(-4px) scale(1.05);
+    }
+    .pin-planetarium { top: 22%; right: 22%; }
+    .pin-fountain    { bottom: 22%; left: 18%; }
+
+    /* The Center Entrance Door Waypoint Call-To-Action */
+    .entrance-door-hotspot {
+      position: absolute;
+      top: 64%;
+      left: 49%;
+      transform: translate(-50%, -50%);
+      z-index: 15;
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 12px;
-      text-decoration: none;
-      color: #ffffff;
+      cursor: pointer;
     }
-    .brand-badge {
-      width: 42px;
-      height: 42px;
-      background: linear-gradient(135deg, #0284c7, #38bdf8);
-      border-radius: 10px;
+
+    .door-waypoint-ring {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(2, 132, 199, 0.5);
+      border: 2.5px solid #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
-      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+      font-size: 1.6rem;
+      color: #ffffff;
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.9), inset 0 0 20px rgba(2, 132, 199, 0.7);
+      animation: doorPulse 2s infinite;
+      transition: all 0.25s ease;
     }
-    .brand-text-box {
-      display: flex;
-      flex-direction: column;
+    @keyframes doorPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 25px rgba(56, 189, 248, 0.8); }
+      50% { transform: scale(1.18); box-shadow: 0 0 50px rgba(56, 189, 248, 1); }
     }
-    .brand-name {
-      font-weight: 800;
-      font-size: 1.05rem;
-      letter-spacing: 0.04em;
-    }
-    .brand-subtext {
-      font-size: 0.72rem;
-      color: var(--brand-cyan);
-      font-family: var(--font-mono);
-      letter-spacing: 0.08em;
+    .entrance-door-hotspot:hover .door-waypoint-ring {
+      transform: scale(1.25);
+      background: #0284c7;
     }
 
-    .nav-links {
+    .enter-museum-cta-btn {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      border: 2px solid #ffffff;
+      color: #ffffff;
+      padding: 14px 30px;
+      border-radius: 999px;
+      font-size: 0.96rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 22px;
-      list-style: none;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 30px rgba(2, 132, 199, 0.6);
+      transition: all 0.25s ease;
+      white-space: nowrap;
     }
-    .nav-link {
-      color: #cbd5e1;
-      text-decoration: none;
-      font-size: 0.86rem;
-      font-weight: 600;
-      transition: color 0.2s;
+    .enter-museum-cta-btn:hover {
+      transform: translateY(-2px) scale(1.04);
+      background: #0ea5e9;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 45px rgba(56, 189, 248, 0.9);
     }
-    .nav-link:hover { color: var(--brand-cyan); }
 
-    .nav-actions {
+    /* Sliding Double Doors for Door Transition */
+    .sliding-doors-box {
+      position: absolute;
+      top: 52%;
+      left: 45%;
+      width: 8%;
+      height: 18%;
+      z-index: 12;
+      overflow: hidden;
+      display: flex;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .s-door {
+      width: 50%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      transition: transform 1.2s ease;
+    }
+    .s-door-left { transform: translateX(0); }
+    .s-door-right { transform: translateX(0); }
+
+    /* Flash Transition Overlay */
+    #flashOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 49% 64%, rgba(255, 255, 255, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+      z-index: 25;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    /* ===============================================================
+       B. INTERIOR MUSEUM EXPERIENCE (INSIDE THE BUILDING)
+       =============================================================== */
+    #interiorView {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+      background: #080d1a;
+    }
+    #interiorView.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Interior Top Navigation Bar */
+    .interior-nav {
+      position: relative;
+      z-index: 30;
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .interior-brand {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-    .btn-nav {
+    .interior-badge {
+      width: 38px;
+      height: 38px;
+      background: #0284c7;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .interior-brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .interior-brand-title {
+      font-weight: 800;
+      font-size: 0.98rem;
+    }
+    .interior-brand-sub {
+      font-size: 0.7rem;
+      color: var(--brand-cyan);
+      font-family: var(--font-mono);
+    }
+
+    .interior-hall-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(8, 13, 26, 0.7);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+    .active-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .interior-nav-btns {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-int {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--border-subtle);
-      color: #f8fafc;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.8rem;
+      color: #ffffff;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 0.76rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -141,269 +314,105 @@
       gap: 6px;
       transition: all 0.2s;
     }
-    .btn-nav:hover {
+    .btn-int:hover {
       background: rgba(255, 255, 255, 0.16);
       border-color: #ffffff;
     }
-    .btn-nav.btn-cta {
+    .btn-exit-outside {
       background: #0284c7;
       border-color: #38bdf8;
-      color: #ffffff;
-      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
     }
-    .btn-nav.btn-cta:hover { background: #0369a1; }
+    .btn-exit-outside:hover { background: #0369a1; }
 
-    /* Section Headers */
-    .section-head {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    .section-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(2, 132, 199, 0.15);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: var(--brand-cyan);
-      font-family: var(--font-mono);
-      font-size: 0.74rem;
-      font-weight: 700;
-      padding: 5px 14px;
-      border-radius: 999px;
-      margin-bottom: 12px;
-      letter-spacing: 0.08em;
-    }
-    .section-title {
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 10px;
-    }
-    .section-desc {
-      font-size: 1rem;
-      color: var(--text-muted);
-      max-width: 680px;
-      margin: 0 auto;
-    }
-
-    /* 1. HERO SECTION */
-    .hero-section {
-      padding: 50px 0 70px;
+    /* Main Interior Content Area */
+    .interior-stage {
+      flex: 1;
       position: relative;
-    }
-    .hero-banner-card {
-      position: relative;
-      border-radius: 20px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
       overflow: hidden;
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-      min-height: 480px;
-      display: flex;
-      align-items: flex-end;
     }
-    .hero-bg-img {
+
+    /* Left Stage: Real Gallery Photo & 3D Model Inspector Box */
+    .stage-visual-box {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #050811;
+      overflow: hidden;
+    }
+
+    .hall-photo-layer {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: brightness(0.75);
+      transition: opacity 0.5s ease;
     }
-    .hero-gradient {
+
+    /* 3D Canvas Box (Overlaid or Toggleable) */
+    #canvas3dBox {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(180deg, rgba(8, 13, 26, 0.2) 0%, rgba(8, 13, 26, 0.95) 90%);
+      z-index: 5;
+      display: none;
+      background: radial-gradient(circle at 50% 50%, #0d1527 0%, #050811 100%);
     }
-    .hero-content {
-      position: relative;
-      z-index: 10;
-      padding: 40px;
-      max-width: 800px;
-    }
-    .hero-badge-tag {
-      display: inline-block;
-      background: var(--brand-gold);
-      color: #0f172a;
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      font-weight: 800;
-      padding: 4px 12px;
-      border-radius: 6px;
-      margin-bottom: 14px;
-      letter-spacing: 0.08em;
-    }
-    .hero-h1 {
-      font-size: 2.8rem;
-      font-weight: 800;
-      line-height: 1.15;
-      margin-bottom: 14px;
-      color: #ffffff;
-    }
-    .hero-p {
-      font-size: 1.05rem;
-      color: #cbd5e1;
-      margin-bottom: 24px;
-      max-width: 660px;
-    }
-    .hero-actions-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 14px;
-    }
-    .btn-hero {
-      background: #0284c7;
-      color: #ffffff;
-      padding: 12px 24px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 0.92rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 18px rgba(2, 132, 199, 0.45);
-      transition: all 0.2s;
-      border: 1px solid #38bdf8;
-    }
-    .btn-hero:hover {
-      background: #0369a1;
-      transform: translateY(-2px);
-    }
-    .btn-hero.secondary {
-      background: rgba(15, 23, 42, 0.85);
-      border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: none;
-    }
-    .btn-hero.secondary:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: #ffffff;
-    }
+    #canvas3dBox.visible { display: block; }
 
-    /* 2. INTERACTIVE 3D EXHIBIT INSPECTOR SECTION (CORE FEATURE) */
-    .exhibit-section {
-      padding: 70px 0;
-      background: var(--bg-surface);
-      border-top: 1px solid var(--border-subtle);
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .exhibit-tabs-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 30px;
-    }
-    .exhibit-tab {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      color: #cbd5e1;
-      padding: 10px 18px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-    .exhibit-tab:hover {
-      background: var(--bg-card-hover);
-      color: #ffffff;
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-    .exhibit-tab.active {
-      background: #0284c7;
-      border-color: #38bdf8;
-      color: #ffffff;
-      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4);
-    }
-
-    .exhibit-inspector-grid {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 24px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    }
-
-    /* 3D Canvas Box */
-    .canvas-3d-box {
-      position: relative;
-      width: 100%;
-      height: 520px;
-      background: #080d1a;
-      overflow: hidden;
-    }
-    #exhibitCanvas3d {
+    #inspectCanvas3d {
       width: 100%;
       height: 100%;
       display: block;
       cursor: grab;
     }
-    #exhibitCanvas3d:active { cursor: grabbing; }
+    #inspectCanvas3d:active { cursor: grabbing; }
 
-    .canvas-overlay-controls {
+    /* 3D Mode Toggle Button on Visual Box */
+    .visual-toggle-bar {
       position: absolute;
-      bottom: 16px;
-      left: 16px;
-      right: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      pointer-events: none;
-    }
-    .canvas-overlay-controls * { pointer-events: auto; }
-
-    .canvas-hint {
-      background: rgba(8, 13, 26, 0.85);
-      border: 1px solid var(--border-subtle);
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      font-family: var(--font-mono);
-      color: #94a3b8;
-      backdrop-filter: blur(8px);
-    }
-    .canvas-btn-group {
+      top: 18px;
+      left: 18px;
+      z-index: 10;
       display: flex;
       gap: 8px;
     }
-    .c-btn {
-      background: rgba(15, 23, 42, 0.85);
+    .v-toggle-btn {
+      background: rgba(15, 23, 42, 0.88);
       border: 1px solid var(--border-subtle);
-      color: #ffffff;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      font-family: var(--font-mono);
+      color: #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.74rem;
       font-weight: 700;
       cursor: pointer;
+      backdrop-filter: blur(8px);
       transition: all 0.2s;
     }
-    .c-btn:hover {
+    .v-toggle-btn.active {
       background: #0284c7;
       border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.5);
     }
 
-    /* Exhibit Details Panel on Right */
-    .exhibit-info-panel {
-      padding: 32px 28px;
+    /* Right Stage: Exhibit Information & Audio Curator */
+    .stage-info-sidebar {
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      padding: 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      overflow-y: auto;
     }
-    .info-hall-badge {
+
+    .sidebar-hall-tag {
       font-family: var(--font-mono);
       font-size: 0.72rem;
       color: var(--brand-cyan);
@@ -412,812 +421,546 @@
       text-transform: uppercase;
       margin-bottom: 6px;
     }
-    .info-title {
-      font-size: 1.6rem;
+    .sidebar-title {
+      font-size: 1.4rem;
       font-weight: 800;
       color: #ffffff;
       line-height: 1.25;
       margin-bottom: 12px;
     }
-    .info-desc {
-      font-size: 0.92rem;
+    .sidebar-desc {
+      font-size: 0.88rem;
       color: #cbd5e1;
       line-height: 1.6;
       margin-bottom: 20px;
     }
 
-    /* Specs Grid */
-    .specs-grid {
+    .sidebar-specs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
       background: rgba(8, 13, 26, 0.6);
       border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 14px;
+      border-radius: 10px;
+      padding: 12px;
       margin-bottom: 20px;
     }
-    .spec-item {
-      display: flex;
-      flex-direction: column;
-    }
-    .spec-label {
-      font-size: 0.68rem;
-      font-family: var(--font-mono);
-      color: var(--text-dim);
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-    .spec-val {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
+    .spec-item { display: flex; flex-direction: column; }
+    .spec-label { font-size: 0.66rem; font-family: var(--font-mono); color: #94a3b8; text-transform: uppercase; }
+    .spec-val { font-size: 0.84rem; font-weight: 700; color: #ffffff; }
 
-    /* Audio Tour Player Box */
-    .audio-player-card {
+    /* Audio Player in Sidebar */
+    .curator-audio-box {
       background: rgba(2, 132, 199, 0.12);
       border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 12px;
-      padding: 12px 16px;
+      padding: 12px 14px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
-    .audio-play-btn {
-      width: 44px;
-      height: 44px;
+    .audio-play-circle {
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: #0284c7;
-      border: none;
       color: #ffffff;
-      font-size: 1.1rem;
+      border: none;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      flex-shrink: 0;
+      font-size: 1rem;
       transition: all 0.2s;
     }
-    .audio-play-btn:hover {
+    .audio-play-circle:hover {
       background: #0369a1;
       transform: scale(1.05);
     }
-    .audio-text-group {
+    .audio-desc-box {
       display: flex;
       flex-direction: column;
       flex: 1;
     }
-    .audio-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
-    .audio-sub {
-      font-size: 0.72rem;
-      color: var(--brand-cyan);
-      font-family: var(--font-mono);
-    }
+    .audio-head { font-size: 0.8rem; font-weight: 700; }
+    .audio-sub  { font-size: 0.7rem; color: var(--brand-cyan); font-family: var(--font-mono); }
 
-    /* 3. INTERACTIVE FLOOR PLAN SECTION */
-    .floorplan-section {
-      padding: 70px 0;
-    }
-    .floorplan-grid {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 24px;
+    /* Bottom Wing Navigation Carousel */
+    .bottom-hall-selector {
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid var(--border-subtle);
+      padding: 12px 24px;
+      display: flex;
       align-items: center;
+      gap: 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
-    .map-interactive-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-    }
-    .interactive-svg-map {
-      width: 100%;
-      height: 380px;
-      display: block;
-    }
-    .map-room-rect {
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-    .map-room-rect:hover {
-      filter: brightness(1.3);
-    }
-    .map-room-rect.active {
-      stroke: #38bdf8 !important;
-      stroke-width: 2.5 !important;
-      fill: #1e3a8a !important;
-    }
+    .bottom-hall-selector::-webkit-scrollbar { display: none; }
 
-    .room-preview-card {
-      background: var(--bg-card);
+    .hall-select-btn {
+      background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-    }
-    .room-img-box {
-      position: relative;
-      width: 100%;
-      height: 220px;
-      overflow: hidden;
-    }
-    .room-preview-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s ease;
-    }
-    .room-preview-card:hover .room-preview-img {
-      transform: scale(1.04);
-    }
-    .room-preview-content {
-      padding: 24px;
-    }
-    .room-preview-badge {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--brand-cyan);
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-    .room-preview-title {
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 10px;
-    }
-    .room-preview-desc {
-      font-size: 0.88rem;
       color: #cbd5e1;
-      line-height: 1.6;
-      margin-bottom: 18px;
-    }
-    .room-preview-btn {
-      display: inline-flex;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
       align-items: center;
       gap: 8px;
+      transition: all 0.2s;
+    }
+    .hall-select-btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+    }
+    .hall-select-btn.active {
       background: #0284c7;
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
+    }
+
+    /* 3D Explode Button in 3D Mode */
+    .c-3d-btn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 10;
+      background: #0284c7;
+      border: 1px solid #38bdf8;
       color: #ffffff;
       padding: 10px 18px;
       border-radius: 8px;
-      text-decoration: none;
-      font-size: 0.82rem;
-      font-weight: 700;
-      transition: background 0.2s;
-    }
-    .room-preview-btn:hover { background: #0369a1; }
-
-    /* 4. REAL PHOTO GALLERY GRID */
-    .gallery-section {
-      padding: 70px 0;
-      background: var(--bg-surface);
-      border-top: 1px solid var(--border-subtle);
-    }
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-      gap: 20px;
-    }
-    .gallery-card {
-      position: relative;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-card);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .gallery-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-    .gallery-img-box {
-      width: 100%;
-      height: 200px;
-      overflow: hidden;
-    }
-    .gallery-img-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s ease;
-    }
-    .gallery-card:hover .gallery-img-box img {
-      transform: scale(1.08);
-    }
-    .gallery-card-body {
-      padding: 16px;
-    }
-    .gallery-tag {
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      color: var(--brand-cyan);
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .gallery-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 6px;
-    }
-    .gallery-snippet {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    /* 5. DIGITAL VISITOR PASS GENERATOR */
-    .pass-section {
-      padding: 70px 0;
-    }
-    .pass-card-box {
-      max-width: 720px;
-      margin: 0 auto;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      padding: 36px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    }
-    .pass-form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .form-label {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: #94a3b8;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    .form-input, .form-select {
-      background: #080d1a;
-      border: 1px solid var(--border-subtle);
-      color: #ffffff;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      font-family: var(--font-sans);
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .form-input:focus, .form-select:focus {
-      border-color: var(--brand-cyan);
-    }
-    .btn-gen-pass {
-      width: 100%;
-      background: #0284c7;
-      color: #ffffff;
-      border: 1px solid #38bdf8;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4);
-      transition: background 0.2s;
-      margin-bottom: 24px;
-    }
-    .btn-gen-pass:hover { background: #0369a1; }
-
-    /* The Generated Ticket Result */
-    .ticket-result {
-      background: #080d1a;
-      border: 2px dashed rgba(56, 189, 248, 0.4);
-      border-radius: 14px;
-      padding: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-    }
-    .ticket-left {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .t-org {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--brand-cyan);
-      font-weight: 700;
-    }
-    .t-name {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #ffffff;
-    }
-    .t-meta {
       font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-    .t-code-box {
-      text-align: right;
-      font-family: var(--font-mono);
-    }
-    .t-code {
-      font-size: 0.92rem;
-      font-weight: 800;
-      color: var(--brand-gold);
-    }
-    .t-badge {
-      display: inline-block;
-      background: #15803d;
-      color: #ffffff;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 0.65rem;
-      font-weight: 800;
-      margin-top: 4px;
+      font-weight: 700;
+      cursor: pointer;
+      display: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
     }
 
-    /* Footer */
-    .museum-footer {
-      border-top: 1px solid var(--border-subtle);
-      padding: 40px 0;
-      background: #050811;
-      text-align: center;
-    }
-    .footer-desc {
-      font-size: 0.86rem;
-      color: var(--text-dim);
-      margin-top: 8px;
-    }
-
-    /* Responsive */
     @media (max-width: 900px) {
-      .nav-links { display: none; }
-      .exhibit-inspector-grid { grid-template-columns: 1fr; }
-      .canvas-3d-box { height: 380px; }
-      .floorplan-grid { grid-template-columns: 1fr; }
-      .hero-h1 { font-size: 2.1rem; }
+      .interior-stage { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+      .stage-info-sidebar { border-left: none; border-top: 1px solid var(--border-subtle); }
+      .pin-planetarium, .pin-fountain { display: none; }
+      .enter-museum-cta-btn { font-size: 0.85rem; padding: 12px 20px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Sticky Navigation Bar -->
-  <header class="museum-navbar">
-    <div class="container nav-inner">
-      <a href="../index.html" class="brand-link">
-        <div class="brand-badge">🏛️</div>
-        <div class="brand-text-box">
-          <span class="brand-name" data-en="ADVANCED SCIENCE MUSEUM" data-ta="மேம்பட்ட அறிவியல் அருங்காட்சியகம்">ADVANCED SCIENCE MUSEUM</span>
-          <span class="brand-subtext">TIRUNELVELI DISTRICT SCIENCE CENTRE</span>
-        </div>
-      </a>
+  <!-- Fullscreen Experience Wrapper -->
+  <div id="experienceContainer">
 
-      <ul class="nav-links">
-        <li><a href="#hero" class="nav-link" data-en="Overview" data-ta="முகப்பு">Overview</a></li>
-        <li><a href="#3d-exhibits" class="nav-link" data-en="3D Exhibit Models" data-ta="3D மாதிரிகள்">3D Exhibit Models</a></li>
-        <li><a href="#floorplan" class="nav-link" data-en="Floor Plan" data-ta="அரங்கு வரைபடம்">Floor Plan</a></li>
-        <li><a href="#gallery" class="nav-link" data-en="Real Photos" data-ta="புகைப்படங்கள்">Real Photos</a></li>
-        <li><a href="#pass" class="nav-link" data-en="Visitor Pass" data-ta="அனுமதிச்சீட்டு">Visitor Pass</a></li>
-      </ul>
+    <!-- Flash Overlay for Seamless Door Transition -->
+    <div id="flashOverlay"></div>
 
-      <div class="nav-actions">
-        <button class="btn-nav" onclick="toggleLanguage()" id="btnLang">
-          🌐 <span id="txtLang">EN / தமிழ்</span>
+    <!-- ===============================================================
+         1. EXTERIOR VIEW (LIKE IN THE IMAGE)
+         =============================================================== -->
+    <div id="exteriorView">
+      <img src="museum-facade.jpg" alt="Advanced Science Museum Tirunelveli Campus Facade" class="facade-bg-image">
+      <div class="facade-ambient-overlay"></div>
+
+      <!-- Sliding Doors Transition Layer -->
+      <div class="sliding-doors-box" id="doorAnimBox">
+        <div class="s-door s-door-left" id="sDoorL"></div>
+        <div class="s-door s-door-right" id="sDoorR"></div>
+      </div>
+
+      <!-- Interactive Pins on Building Features -->
+      <div class="facade-pin pin-planetarium" onclick="enterDirectlyTo('aerospace')">
+        <span>🪐 Geodesic Planetarium Dome</span>
+      </div>
+      <div class="facade-pin pin-fountain">
+        <span>🌊 Science Centre Fountain Plaza</span>
+      </div>
+
+      <!-- Central Entrance Door Waypoint Call-To-Action -->
+      <div class="entrance-door-hotspot" onclick="walkInsideMuseum()">
+        <div class="door-waypoint-ring">🚶</div>
+        <button class="enter-museum-cta-btn">
+          <span>STEP INSIDE THE MUSEUM ➔</span>
         </button>
-        <a href="#3d-exhibits" class="btn-nav btn-cta">
-          🚀 <span data-en="View 3D Exhibits" data-ta="3D மாதிரிகள்">View 3D Exhibits</span>
-        </a>
       </div>
     </div>
-  </header>
 
-  <!-- 1. HERO SECTION -->
-  <section class="hero-section" id="hero">
-    <div class="container">
-      <div class="hero-banner-card">
-        <img src="museum-facade.jpg" alt="Advanced Science Museum Tirunelveli Campus" class="hero-bg-img">
-        <div class="hero-gradient"></div>
-
-        <div class="hero-content">
-          <div class="hero-badge-tag">DISTRICT SCIENCE CENTRE • TIRUNELVELI</div>
-          <h1 class="hero-h1" data-en="Explore Real Science & Technology in Interactive 3D" data-ta="அறிவியல் உண்மைகளை 3D முறையில் ஆராயுங்கள்">
-            Explore Real Science & Technology in Interactive 3D
-          </h1>
-          <p class="hero-p" data-en="Discover ISRO rocket propulsion from Mahendragiri, Chandrayaan lunar missions, industrial robotics, Kudankulam nuclear energy, and 2,000-year-old Tamil metallurgy through an interactive virtual museum experience." data-ta="இஸ்ரோ ராக்கெட் எந்திரங்கள், சந்திரயான் நிலவுத் திட்டம், ரோபாட்டிக்ஸ் மற்றும் அணுசக்தி மாதிரிகளை நேரடியாக 3D முறையில் சுற்றிப் பாருங்கள்.">
-            Discover ISRO rocket propulsion from Mahendragiri, Chandrayaan lunar missions, industrial robotics, Kudankulam nuclear energy, and 2,000-year-old Tamil metallurgy through an interactive virtual museum experience.
-          </p>
-
-          <div class="hero-actions-row">
-            <a href="#3d-exhibits" class="btn-hero">
-              🚀 <span data-en="Launch 3D Model Inspector" data-ta="3D மாதிரியை தொடங்கு">Launch 3D Model Inspector</span>
-            </a>
-            <a href="#floorplan" class="btn-hero secondary">
-              🗺️ <span data-en="Explore Museum Floor Plan" data-ta="அரங்கு வரைபடம்">Explore Museum Floor Plan</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 2. INTERACTIVE 3D EXHIBIT INSPECTOR SECTION (CORE FEATURE) -->
-  <section class="exhibit-section" id="3d-exhibits">
-    <div class="container">
+    <!-- ===============================================================
+         2. INTERIOR MUSEUM EXPERIENCE (INSIDE THE BUILDING)
+         =============================================================== -->
+    <div id="interiorView">
       
-      <div class="section-head">
-        <div class="section-pill" data-en="INTERACTIVE 3D ARTIFACT VIEWER" data-ta="3D மாதிரி காட்சியகம்">INTERACTIVE 3D ARTIFACT VIEWER</div>
-        <h2 class="section-title" data-en="Inspect Real Museum Exhibits in 360°" data-ta="அறிவியல் மாதிரிகளை 360° சுற்றிப் பாருங்கள்">Inspect Real Museum Exhibits in 360°</h2>
-        <p class="section-desc" data-en="Click any exhibit below to inspect its 3D model, rotate 360°, explode assembly parts, and listen to the curator audio guide narration." data-ta="மாதிரியைத் தேர்வு செய்து 360° சுழற்றிப் பாருங்கள். பாகங்களைப் பிரித்துப் பார்க்கும் வசதியும் உண்டு.">
-          Click any exhibit below to inspect its 3D model, rotate 360°, explode assembly parts, and listen to the curator audio guide narration.
-        </p>
-      </div>
-
-      <!-- Exhibit Tabs -->
-      <div class="exhibit-tabs-row" id="exhibitTabs">
-        <button class="exhibit-tab active" onclick="switchExhibit(0)">🚀 ISRO CE-20 Rocket Engine</button>
-        <button class="exhibit-tab" onclick="switchExhibit(1)">🌕 Chandrayaan-3 Lander</button>
-        <button class="exhibit-tab" onclick="switchExhibit(2)">🦾 6-Axis Robotic Arm</button>
-        <button class="exhibit-tab" onclick="switchExhibit(3)">⚛️ Kudankulam Nuclear Model</button>
-        <button class="exhibit-tab" onclick="switchExhibit(4)">⚔️ Tamil Wootz Steel</button>
-      </div>
-
-      <!-- Inspector Split Grid -->
-      <div class="exhibit-inspector-grid">
-        
-        <!-- 3D Canvas Box on Left -->
-        <div class="canvas-3d-box">
-          <canvas id="exhibitCanvas3d"></canvas>
-
-          <div class="canvas-overlay-controls">
-            <div class="canvas-hint">Drag: Rotate 360° • Scroll: Zoom</div>
-            <div class="canvas-btn-group">
-              <button class="c-btn" onclick="toggleExplode()" id="btnExplode">💥 Explode Parts</button>
-              <button class="c-btn" onclick="reset3DCamera()">🔄 Reset View</button>
-            </div>
+      <!-- Top Interior Navigation Bar -->
+      <header class="interior-nav">
+        <div class="interior-brand">
+          <div class="interior-badge">🏛️</div>
+          <div class="interior-brand-text">
+            <span class="interior-brand-title">ADVANCED SCIENCE MUSEUM: TIRUNELVELI</span>
+            <span class="interior-brand-sub">District Science Centre • Interior Exhibition Galleries</span>
           </div>
         </div>
 
-        <!-- Exhibit Information on Right -->
-        <div class="exhibit-info-panel">
+        <div class="interior-hall-indicator">
+          <div class="active-dot"></div>
+          <span id="currentHallIndicatorText">LOCATION: GRAND ENTRANCE LOBBY</span>
+        </div>
+
+        <div class="interior-nav-btns">
+          <button class="btn-int" onclick="toggleLanguage()" id="btnLang">
+            🌐 <span id="txtLang">EN / தமிழ்</span>
+          </button>
+          <button class="btn-int btn-exit-outside" onclick="stepOutsideToPromenade()">
+            🚪 <span>EXIT OUTSIDE</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Stage Area -->
+      <div class="interior-stage">
+        
+        <!-- Left Stage: Real Photo & 3D Model Inspector Box -->
+        <div class="stage-visual-box">
+          
+          <!-- Mode Switcher: Real Photo vs Interactive 3D Model -->
+          <div class="visual-toggle-bar">
+            <button class="v-toggle-btn active" id="btnModePhoto" onclick="setVisualMode('photo')">
+              📷 Real Gallery Photo
+            </button>
+            <button class="v-toggle-btn" id="btnMode3D" onclick="setVisualMode('3d')">
+              🚀 Interactive 3D Model
+            </button>
+          </div>
+
+          <!-- Real Gallery Photo Layer -->
+          <img src="gallery-lobby.jpg" alt="Gallery View" id="hallPhotoImg" class="hall-photo-layer">
+
+          <!-- Interactive 3D Model Canvas Layer -->
+          <div id="canvas3dBox">
+            <canvas id="inspectCanvas3d"></canvas>
+            <button class="c-3d-btn" id="btnExplodeParts" onclick="toggleExplodeAssembly()">
+              💥 Explode Parts
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Right Stage: Sidebar Information & Audio Tour -->
+        <aside class="stage-info-sidebar">
           <div>
-            <div class="info-hall-badge" id="infoHall">EAST AEROSPACE WING • IPRC MAHENDRAGIRI</div>
-            <h3 class="info-title" id="infoTitle">ISRO CE-20 Cryogenic Rocket Engine</h3>
-            <p class="info-desc" id="infoDesc">
-              India's most powerful cryogenic rocket engine, designed and test-fired at the ISRO Propulsion Complex (IPRC) Mahendragiri in Tirunelveli district. Powers the LVM3 upper stage for Chandrayaan-3 and Gaganyaan.
+            <div class="sidebar-hall-tag" id="sidebarHallTag">MAIN ATRIUM & RECEPTION</div>
+            <h2 class="sidebar-title" id="sidebarTitle">Grand Entrance Lobby & Atrium</h2>
+            <p class="sidebar-desc" id="sidebarDesc">
+              The high glass-skylight atrium welcoming visitors inside the Advanced Science Museum. Features the visitor reception desk, Apollo EVA space suit, and planetary science demonstrations.
             </p>
 
-            <div class="specs-grid" id="specsBox">
+            <div class="sidebar-specs-grid" id="sidebarSpecs">
               <div class="spec-item">
-                <span class="spec-label">Thrust (Vacuum)</span>
-                <span class="spec-val">200 kN (20 Tons)</span>
+                <span class="spec-label">Architecture</span>
+                <span class="spec-val">Double Glass Skylight</span>
               </div>
               <div class="spec-item">
-                <span class="spec-label">Specific Impulse</span>
-                <span class="spec-val">443 Seconds</span>
+                <span class="spec-label">Key Display</span>
+                <span class="spec-val">Apollo EVA Space Suit</span>
               </div>
               <div class="spec-item">
-                <span class="spec-label">Propellants</span>
-                <span class="spec-val">LOX (-183°C) / LH2 (-253°C)</span>
+                <span class="spec-label">Visitor Hub</span>
+                <span class="spec-val">Information & Tickets</span>
               </div>
               <div class="spec-item">
-                <span class="spec-label">Origin Facility</span>
-                <span class="spec-val">IPRC Mahendragiri, TN</span>
+                <span class="spec-label">Galleries</span>
+                <span class="spec-val">Direct Access to 4 Wings</span>
               </div>
             </div>
           </div>
 
-          <!-- Curator Audio Tour Bar -->
-          <div class="audio-player-card">
-            <button class="audio-play-btn" onclick="toggleAudioSpeech()" id="btnPlaySpeech">▶</button>
-            <div class="audio-text-group">
-              <span class="audio-title" id="audioCuratorTitle">Curator Audio Guide (English / Tamil)</span>
-              <span class="audio-sub" id="audioCuratorStatus">Click to play spoken technical narration</span>
+          <!-- Curator Audio Tour Box -->
+          <div>
+            <div class="curator-audio-box">
+              <button class="audio-play-circle" onclick="toggleCuratorAudio()" id="btnAudioPlay">▶</button>
+              <div class="audio-desc-box">
+                <span class="audio-head" id="audioCuratorHead">Curator Audio Guide</span>
+                <span class="audio-sub" id="audioCuratorStatus">Click to play spoken technical narration</span>
+              </div>
             </div>
           </div>
-
-        </div>
-
-      </div>
-
-    </div>
-  </section>
-
-  <!-- 3. INTERACTIVE FLOOR PLAN SECTION -->
-  <section class="floorplan-section" id="floorplan">
-    <div class="container">
-      
-      <div class="section-head">
-        <div class="section-pill" data-en="MUSEUM ARCHITECTURAL MAP" data-ta="அரங்கு வரைபடம்">MUSEUM ARCHITECTURAL MAP</div>
-        <h2 class="section-title" data-en="Interactive Museum Floor Plan" data-ta="ஊடாடும் அரங்கு வரைபடம்">Interactive Museum Floor Plan</h2>
-        <p class="section-desc" data-en="Click on any hall in the architectural map below to preview its real gallery photograph, exhibition roster, and highlights." data-ta="வரைபடத்தில் உள்ள அறைகளைக் கிளிக் செய்து அங்கே உள்ள கண்காட்சிகளைப் பார்வையிடுங்கள்.">
-          Click on any hall in the architectural map below to preview its real gallery photograph, exhibition roster, and highlights.
-        </p>
-      </div>
-
-      <div class="floorplan-grid">
-        
-        <!-- Interactive Architectural SVG Floor Map -->
-        <div class="map-interactive-card">
-          <svg class="interactive-svg-map" viewBox="0 0 500 360">
-            <!-- Outer Wall Shell -->
-            <rect x="20" y="20" width="460" height="320" rx="14" fill="#080d1a" stroke="#334155" stroke-width="2" />
-            
-            <!-- Room 1: Entrance Promenade -->
-            <rect id="map-room-entrance" class="map-room-rect active" x="180" y="250" width="140" height="80" rx="6" fill="#1e293b" stroke="#0284c7" stroke-width="2" onclick="selectFloorRoom('entrance')" />
-            <text x="250" y="295" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">🏛️ ENTRANCE PROMENADE</text>
-            
-            <!-- Room 2: Grand Lobby -->
-            <rect id="map-room-lobby" class="map-room-rect" x="150" y="110" width="200" height="120" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1.5" onclick="selectFloorRoom('lobby')" />
-            <text x="250" y="175" fill="#38bdf8" font-size="13" font-weight="700" text-anchor="middle">🏢 GRAND ATRIUM & LOBBY</text>
-            
-            <!-- Room 3: East Aerospace Wing -->
-            <rect id="map-room-aerospace" class="map-room-rect" x="365" y="50" width="105" height="200" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1.5" onclick="selectFloorRoom('aerospace')" />
-            <text x="417" y="155" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">🚀 AEROSPACE WING</text>
-            
-            <!-- Room 4: West Robotics Lab -->
-            <rect id="map-room-robotics" class="map-room-rect" x="30" y="50" width="105" height="200" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1.5" onclick="selectFloorRoom('robotics')" />
-            <text x="82" y="155" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">🤖 ROBOTICS LAB</text>
-            
-            <!-- Room 5: North Energy Hall -->
-            <rect id="map-room-energy" class="map-room-rect" x="150" y="30" width="200" height="70" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1.5" onclick="selectFloorRoom('energy')" />
-            <text x="250" y="70" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">⚡ CLEAN ENERGY HALL</text>
-          </svg>
-        </div>
-
-        <!-- Room Preview Card on Right -->
-        <div class="room-preview-card">
-          <div class="room-img-box">
-            <img src="museum-facade.jpg" alt="Room Preview" id="roomPreviewImg" class="room-preview-img">
-          </div>
-          <div class="room-preview-content">
-            <div class="room-preview-badge" id="roomPreviewBadge">CAMPUS EXTERIOR • OUTDOOR SCIENCE PARK</div>
-            <h3 class="room-preview-title" id="roomPreviewTitle">Entrance Promenade & Campus Portico</h3>
-            <p class="room-preview-desc" id="roomPreviewDesc">
-              The grand entrance to the Advanced Science Museum Tirunelveli. Surrounded by landscaped botanical lawns, physical science park demonstrations, and the main visitor reception portico.
-            </p>
-            <a href="#3d-exhibits" class="room-preview-btn">
-              🔍 <span>Inspect Hall Exhibits</span>
-            </a>
-          </div>
-        </div>
+        </aside>
 
       </div>
 
-    </div>
-  </section>
-
-  <!-- 4. REAL PHOTO GALLERY GRID -->
-  <section class="gallery-section" id="gallery">
-    <div class="container">
-      
-      <div class="section-head">
-        <div class="section-pill" data-en="REAL EXHIBITION PHOTOGRAPHY" data-ta="உண்மை புகைப்படங்கள்">REAL EXHIBITION PHOTOGRAPHY</div>
-        <h2 class="section-title" data-en="Photographs from Museum Halls" data-ta="அரங்கின் உண்மை புகைப்படங்கள்">Photographs from Museum Halls</h2>
-        <p class="section-desc" data-en="View authentic high-resolution photographs documenting the real galleries, full-scale hardware, and visitor interactive stations." data-ta="அருங்காட்சியகத்தின் உண்மையான அரங்குகள் மற்றும் மாதிரிகளின் புகைப்படங்கள்.">
-          View authentic high-resolution photographs documenting the real galleries, full-scale hardware, and visitor interactive stations.
-        </p>
-      </div>
-
-      <div class="gallery-grid">
-        
-        <div class="gallery-card">
-          <div class="gallery-img-box">
-            <img src="museum-facade.jpg" alt="Museum Facade">
-          </div>
-          <div class="gallery-card-body">
-            <div class="gallery-tag">EXTERIOR ARCHITECTURE</div>
-            <h4 class="gallery-title">Campus Facade & Main Entrance</h4>
-            <p class="gallery-snippet">The grand entrance rotunda and outdoor science park welcoming visitors to the Tirunelveli science centre.</p>
-          </div>
-        </div>
-
-        <div class="gallery-card">
-          <div class="gallery-img-box">
-            <img src="gallery-lobby.jpg" alt="Grand Lobby">
-          </div>
-          <div class="gallery-card-body">
-            <div class="gallery-tag">MAIN ATRIUM</div>
-            <h4 class="gallery-title">Grand Entrance Lobby & Atrium</h4>
-            <p class="gallery-snippet">High glass skylight atrium with visitor information desk, Apollo EVA space suit, and planetary display.</p>
-          </div>
-        </div>
-
-        <div class="gallery-card">
-          <div class="gallery-img-box">
-            <img src="gallery-aerospace.jpg" alt="Aerospace Hall">
-          </div>
-          <div class="gallery-card-body">
-            <div class="gallery-tag">ISRO SPACE HALL</div>
-            <h4 class="gallery-title">Aerospace & Rocket Propulsion</h4>
-            <p class="gallery-snippet">Heavy liquid rocket engines, turbopump cutaways, and satellite models celebrating India's space achievements.</p>
-          </div>
-        </div>
-
-        <div class="gallery-card">
-          <div class="gallery-img-box">
-            <img src="gallery-robotics.jpg" alt="Robotics Lab">
-          </div>
-          <div class="gallery-card-body">
-            <div class="gallery-tag">AI INNOVATION</div>
-            <h4 class="gallery-title">Robotics & Cybernetics Gallery</h4>
-            <p class="gallery-snippet">Industrial robotic arms on worktables, bipedal humanoid androids, and visitor touchscreen terminals.</p>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  </section>
-
-  <!-- 5. DIGITAL VISITOR PASS GENERATOR -->
-  <section class="pass-section" id="pass">
-    <div class="container">
-      
-      <div class="section-head">
-        <div class="section-pill" data-en="VISITOR EXPERIENCE" data-ta="பார்வையாளர் அனுமதி">VISITOR EXPERIENCE</div>
-        <h2 class="section-title" data-en="Generate Your Digital Visitor Pass" data-ta="அனுமதிச்சீட்டு பெறுக">Generate Your Digital Visitor Pass</h2>
-        <p class="section-desc" data-en="Personalize and generate a digital souvenir pass with a verified museum barcode to complete your virtual visit." data-ta="உங்கள் பெயரைப் பதிவு செய்து அருங்காட்சியக அனுமதிச் சீட்டைப் பெற்றுக் கொள்ளுங்கள்.">
-          Personalize and generate a digital souvenir pass with a verified museum barcode to complete your virtual visit.
-        </p>
-      </div>
-
-      <div class="pass-card-box">
-        <div class="pass-form-grid">
-          <div class="form-group">
-            <label class="form-label">Visitor Full Name</label>
-            <input type="text" class="form-input" id="passNameInput" value="Jaswanth Kamaraj">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Visitor Category</label>
-            <select class="form-select" id="passCategoryInput">
-              <option value="AI & Data Science Student">AI & Data Science Student</option>
-              <option value="Research Scholar">Research Scholar</option>
-              <option value="General Public / Family">General Public / Family</option>
-              <option value="School Student Group">School Student Group</option>
-            </select>
-          </div>
-        </div>
-
-        <button class="btn-gen-pass" onclick="generateSouvenirPass()">
-          🎟️ <span>Generate Official Digital Pass</span>
+      <!-- Bottom Gallery Wing Teleport Selector -->
+      <nav class="bottom-hall-selector">
+        <button class="hall-select-btn active" onclick="switchInteriorHall('lobby')" id="btn-hall-lobby">
+          🏢 <span>1. Grand Lobby & Atrium</span>
         </button>
-
-        <div class="ticket-result" id="ticketResult">
-          <div class="ticket-left">
-            <span class="t-org">ADVANCED SCIENCE MUSEUM • TIRUNELVELI</span>
-            <span class="t-name" id="tName">JASWANTH KAMARAJ</span>
-            <span class="t-meta" id="tMeta">AI & DATA SCIENCE STUDENT • VALID TODAY</span>
-          </div>
-          <div class="t-code-box">
-            <div class="t-code" id="tCode">ASM-TN-849201</div>
-            <span class="t-badge">VERIFIED PASS</span>
-          </div>
-        </div>
-
-      </div>
+        <button class="hall-select-btn" onclick="switchInteriorHall('aerospace')" id="btn-hall-aerospace">
+          🚀 <span>2. Aerospace & ISRO Hall</span>
+        </button>
+        <button class="hall-select-btn" onclick="switchInteriorHall('robotics')" id="btn-hall-robotics">
+          🤖 <span>3. Robotics & AI Lab</span>
+        </button>
+        <button class="hall-select-btn" onclick="switchInteriorHall('energy')" id="btn-hall-energy">
+          ⚡ <span>4. Clean Energy Hall</span>
+        </button>
+        <button class="hall-select-btn" onclick="switchInteriorHall('heritage')" id="btn-hall-heritage">
+          ⚔️ <span>5. Tamil Wootz Metallurgy</span>
+        </button>
+      </nav>
 
     </div>
-  </section>
 
-  <!-- Footer -->
-  <footer class="museum-footer">
-    <div class="container">
-      <div class="brand-link" style="justify-content: center; margin-bottom: 12px;">
-        <div class="brand-badge" style="width: 36px; height: 36px; font-size: 1.1rem;">🏛️</div>
-        <span class="brand-name" style="font-size: 1rem;">ADVANCED SCIENCE MUSEUM: TIRUNELVELI</span>
-      </div>
-      <p class="footer-desc">
-        District Science Centre, Kokkirakulam, Tirunelveli - 627 009, Tamil Nadu, India.<br>
-        A flagship portfolio project created by Jaswanth Kamaraj J. Built with HTML, CSS, JavaScript, and Three.js.
-      </p>
-    </div>
-  </footer>
+  </div>
 
   <!-- ===================================================================
-       THREE.JS SCRIPT: 3D EXHIBIT MODEL RENDERING & INTERACTIVITY
+       THREE.JS & WALK-IN ENGINE SCRIPT
        =================================================================== -->
   <script>
     /* ===============================================================
-       1. EXHIBIT DATA DEFINITION (5 DETAILED PHYSICAL MODELS)
+       1. DATA FOR ALL INTERIOR EXHIBITION HALLS
        =============================================================== */
-    const exhibitsData = [
-      {
-        id: 0,
-        hall: "EAST AEROSPACE WING • IPRC MAHENDRAGIRI",
-        title: "ISRO CE-20 Cryogenic Rocket Engine",
-        desc: "Physical scale engineering model of the CE-20 cryogenic rocket engine, designed and test-fired at the ISRO Propulsion Complex (IPRC) Mahendragiri in Tirunelveli district. It powers the upper stage of the LVM3 rocket carrying India's Moon and human spaceflight missions.",
+    const hallsData = {
+      lobby: {
+        id: 'lobby',
+        tag: 'MAIN ATRIUM & RECEPTION',
+        title: 'Grand Entrance Lobby & Atrium',
+        desc: "The soaring glass-skylight atrium welcoming visitors inside the Advanced Science Museum. Features the visitor reception desk, Apollo EVA space suit vitrine, and cartographic planetary science exhibits.",
+        photo: 'gallery-lobby.jpg',
         specs: [
-          { k: "Thrust (Vacuum)", v: "200 kN (20 Tons)" },
-          { k: "Specific Impulse", v: "443 Seconds" },
-          { k: "Propellants", v: "LOX (-183°C) / LH2 (-253°C)" },
-          { k: "Origin Facility", v: "IPRC Mahendragiri, TN" }
+          { k: 'Architecture', v: 'Double Glass Skylight' },
+          { k: 'Key Display', v: 'Apollo EVA Space Suit' },
+          { k: 'Visitor Hub', v: 'Information & Tickets' },
+          { k: 'Access', v: 'Direct Access to 4 Wings' }
         ],
-        camDistance: 4.8
+        modelIndex: 0
       },
-      {
-        id: 1,
-        hall: "EAST AEROSPACE WING • LUNAR EXPLORATION",
-        title: "Chandrayaan-3 Vikram Lunar Lander",
-        desc: "Scale replica of the Vikram lander on simulated lunar regolith. On August 23, 2023, it completed a historic soft landing near the Moon's South Pole, deploying the Pragyan rover.",
+      aerospace: {
+        id: 'aerospace',
+        tag: 'EAST AEROSPACE WING • IPRC MAHENDRAGIRI',
+        title: 'ISRO CE-20 Cryogenic Rocket Engine',
+        desc: "India's heavy cryogenic engine developed and test-fired at ISRO Propulsion Complex (IPRC) Mahendragiri in Tirunelveli district. Generates 200 kN of thrust using liquid oxygen and liquid hydrogen to lift LVM3 and Chandrayaan missions into orbit.",
+        photo: 'gallery-aerospace.jpg',
         specs: [
-          { k: "Landing Date", v: "August 23, 2023" },
-          { k: "Landing Site", v: "Shiv Shakti (Lunar South)" },
-          { k: "Rover Deployed", v: "Pragyan 6-Wheel Rover" },
-          { k: "Propulsion", v: "Liquid Throttleable Engines" }
+          { k: 'Thrust (Vacuum)', v: '200 kN (20 Tons)' },
+          { k: 'Specific Impulse', v: '443 Seconds' },
+          { k: 'Propellants', v: 'LOX (-183°C) / LH2 (-253°C)' },
+          { k: 'Test Facility', v: 'IPRC Mahendragiri, TN' }
         ],
-        camDistance: 4.5
+        modelIndex: 1
       },
-      {
-        id: 2,
-        hall: "WEST ROBOTICS & ARTIFICIAL INTELLIGENCE LAB",
-        title: "Precision 6-Axis Industrial Robotic Arm",
+      robotics: {
+        id: 'robotics',
+        tag: 'WEST ROBOTICS & ARTIFICIAL INTELLIGENCE LAB',
+        title: 'Precision 6-Axis Industrial Robotic Arm',
         desc: "Physical articulated industrial cobot model demonstrating multi-axis kinematic control, precision servo actuation, optical safety light curtains, and factory automation.",
+        photo: 'gallery-robotics.jpg',
         specs: [
-          { k: "Payload Capacity", v: "10 kg Working Payload" },
-          { k: "Degrees of Freedom", v: "6 Articulated Servo Axes" },
-          { k: "Repeatability", v: "±0.02 mm Precision" },
-          { k: "Safety System", v: "Force/Torque Collaborative Sensing" }
+          { k: 'Payload Capacity', v: '10 kg Working Payload' },
+          { k: 'Degrees of Freedom', v: '6 Articulated Servo Axes' },
+          { k: 'Repeatability', v: '±0.02 mm Precision' },
+          { k: 'Safety System', v: 'Force/Torque Collaborative Sensing' }
         ],
-        camDistance: 4.6
+        modelIndex: 2
       },
-      {
-        id: 3,
-        hall: "NORTH CLEAN ENERGY & NUCLEAR SCIENCE HALL",
-        title: "Kudankulam Nuclear & Muppandal Wind Model",
+      energy: {
+        id: 'energy',
+        tag: 'NORTH CLEAN ENERGY & NUCLEAR SCIENCE HALL',
+        title: 'Kudankulam Nuclear & Muppandal Wind Model',
         desc: "Engineering scale tabletop model of the Kudankulam Nuclear Power Plant (KKNPP) and adjacent Muppandal wind turbines in Tirunelveli, generating clean base-load renewable power.",
+        photo: 'gallery-lobby.jpg',
         specs: [
-          { k: "Reactor Type", v: "VVER-1000 Pressurized Water" },
-          { k: "Plant Capacity", v: "2 x 1,000 MW Nuclear Units" },
-          { k: "Wind Corridor", v: "Muppandal Pass (1.5+ GW)" },
-          { k: "District", v: "Tirunelveli, Tamil Nadu" }
+          { k: 'Reactor Type', v: 'VVER-1000 Pressurized Water' },
+          { k: 'Plant Capacity', v: '2 x 1,000 MW Nuclear Units' },
+          { k: 'Wind Corridor', v: 'Muppandal Pass (1.5+ GW)' },
+          { k: 'District', v: 'Tirunelveli, Tamil Nadu' }
         ],
-        camDistance: 4.8
+        modelIndex: 3
       },
-      {
-        id: 4,
-        hall: "CENTRAL ATRIUM & TAMIL HERITAGE SCIENCE",
-        title: "Ancient Tamil Wootz Crucible Steel Sword",
+      heritage: {
+        id: 'heritage',
+        tag: 'CENTRAL ATRIUM & TAMIL HERITAGE SCIENCE',
+        title: 'Ancient Tamil Wootz Crucible Steel Sword',
         desc: "Physical artifact showcase displaying a high-carbon Wootz steel blade with its characteristic Damascus watermark pattern, alongside a fired clay smelting crucible. Originated in ancient Tamil Nadu.",
         specs: [
-          { k: "Origin Era", v: "300 BCE (Sangam Classical Era)" },
-          { k: "Metallurgy", v: "Crucible Smelting Technique" },
-          { k: "Microstructure", v: "Carbon Nanotubes & Cementite Wires" },
-          { k: "Maritime Trade", v: "Exported from Korkai to Rome & Arabia" }
+          { k: 'Origin Era', v: '300 BCE (Sangam Classical Era)' },
+          { k: 'Metallurgy', v: 'Crucible Smelting Technique' },
+          { k: 'Microstructure', v: 'Carbon Nanotubes & Cementite Wires' },
+          { k: 'Maritime Trade', v: 'Exported from Korkai to Rome & Arabia' }
         ],
-        camDistance: 4.2
+        modelIndex: 4
       }
-    ];
+    };
+
+    let currentHallKey = 'lobby';
 
     /* ===============================================================
-       2. THREE.JS SCENE SETUP
+       2. CINEMATIC WALK-IN ENTRY FLOW
        =============================================================== */
-    const canvas = document.getElementById('exhibitCanvas3d');
-    const container = canvas.parentElement;
+    let isTransitioning = false;
+
+    // STEP INSIDE (WALK THROUGH THE ENTRANCE DOORS OF THE IMAGE)
+    function walkInsideMuseum() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+
+      // 1. Zoom exterior view directly into center glass entrance doors (49% 64%)
+      const extView = document.getElementById('exteriorView');
+      extView.style.transform = 'scale(4.2)';
+
+      // 2. Play door whoosh audio
+      playPneumaticDoorSound();
+
+      // 3. Trigger Flash & Door Transition
+      const flash = document.getElementById('flashOverlay');
+      setTimeout(() => {
+        flash.style.opacity = '1';
+      }, 900);
+
+      setTimeout(() => {
+        // Switch to interior view
+        document.getElementById('interiorView').classList.add('active');
+        extView.style.display = 'none';
+
+        // Switch to lobby
+        switchInteriorHall('lobby');
+
+        // Fade out flash
+        setTimeout(() => {
+          flash.style.opacity = '0';
+          isTransitioning = false;
+        }, 150);
+      }, 1400);
+    }
+
+    function enterDirectlyTo(hallKey) {
+      walkInsideMuseum();
+      setTimeout(() => {
+        switchInteriorHall(hallKey);
+      }, 1500);
+    }
+
+    // EXIT OUTSIDE TO CAMPUS PROMENADE
+    function stepOutsideToPromenade() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+
+      playPneumaticDoorSound();
+      const flash = document.getElementById('flashOverlay');
+      flash.style.opacity = '1';
+
+      setTimeout(() => {
+        document.getElementById('interiorView').classList.remove('active');
+        const extView = document.getElementById('exteriorView');
+        extView.style.display = 'block';
+        extView.style.transform = 'scale(1)';
+
+        setTimeout(() => {
+          flash.style.opacity = '0';
+          isTransitioning = false;
+        }, 200);
+      }, 600);
+    }
+
+    // Procedural Pneumatic Door Audio
+    function playPneumaticDoorSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(140, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.01, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.75);
+      } catch (e) {}
+    }
+
+    /* ===============================================================
+       3. INTERIOR HALL NAVIGATION & DATA UPDATE
+       =============================================================== */
+    function switchInteriorHall(hallKey) {
+      if (!hallsData[hallKey]) return;
+      currentHallKey = hallKey;
+      const data = hallsData[hallKey];
+
+      // Update Active Navigation Tab
+      document.querySelectorAll('.hall-select-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.id === 'btn-hall-' + hallKey);
+      });
+
+      // Update Header Indicator
+      document.getElementById('currentHallIndicatorText').innerText = 'LOCATION: ' + data.title.toUpperCase();
+
+      // Update Sidebar Info
+      document.getElementById('sidebarHallTag').innerText = data.tag;
+      document.getElementById('sidebarTitle').innerText = data.title;
+      document.getElementById('sidebarDesc').innerText = data.desc;
+
+      const specsBox = document.getElementById('sidebarSpecs');
+      specsBox.innerHTML = '';
+      data.specs.forEach(s => {
+        const cell = document.createElement('div');
+        cell.className = 'spec-item';
+        cell.innerHTML = '<span class="spec-label">' + s.k + '</span><span class="spec-val">' + s.v + '</span>';
+        specsBox.appendChild(cell);
+      });
+
+      // Update Photo
+      document.getElementById('hallPhotoImg').src = data.photo;
+
+      // Switch 3D Model
+      switch3DModel(data.modelIndex);
+
+      // Reset speech
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      document.getElementById('btnAudioPlay').innerText = '▶';
+      document.getElementById('audioCuratorStatus').innerText = 'Click to play spoken technical narration';
+    }
+
+    /* ===============================================================
+       4. VISUAL MODE TOGGLE: REAL PHOTO VS INTERACTIVE 3D MODEL
+       =============================================================== */
+    let currentMode = 'photo';
+
+    function setVisualMode(mode) {
+      currentMode = mode;
+      document.getElementById('btnModePhoto').classList.toggle('active', mode === 'photo');
+      document.getElementById('btnMode3D').classList.toggle('active', mode === '3d');
+
+      const canvasBox = document.getElementById('canvas3dBox');
+      const explodeBtn = document.getElementById('btnExplodeParts');
+
+      if (mode === '3d') {
+        canvasBox.classList.add('visible');
+        explodeBtn.style.display = 'block';
+        onResizeCanvas();
+      } else {
+        canvasBox.classList.remove('visible');
+        explodeBtn.style.display = 'none';
+      }
+    }
+
+    /* ===============================================================
+       5. THREE.JS 3D EXHIBIT INSPECTOR SETUP & MODELS
+       =============================================================== */
+    const inspectCanvas = document.getElementById('inspectCanvas3d');
+    const stageBox = document.getElementById('canvas3dBox');
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a101f);
+    scene.background = new THREE.Color(0x070c18);
 
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.set(0, 1.8, 4.8);
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
+    const renderer = new THREE.WebGLRenderer({ canvas: inspectCanvas, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
 
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -1226,8 +969,8 @@
     controls.maxDistance = 8.0;
     controls.target.set(0, 0.8, 0);
 
-    // Studio Lighting for Clear Exhibit Inspection
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+    // Studio Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
     scene.add(ambientLight);
 
     const keyLight = new THREE.DirectionalLight(0xfffbeb, 1.6);
@@ -1238,7 +981,7 @@
     fillLight.position.set(-5, 4, -3);
     scene.add(fillLight);
 
-    // Showcase Pedestal Table
+    // Showcase Table
     const pedestalGroup = new THREE.Group();
     const tableTop = new THREE.Mesh(
       new THREE.CylinderGeometry(2.2, 2.3, 0.3, 32),
@@ -1246,107 +989,78 @@
     );
     tableTop.position.y = -0.15;
     pedestalGroup.add(tableTop);
-
-    const tableRim = new THREE.Mesh(
-      new THREE.TorusGeometry(2.22, 0.03, 16, 64),
-      new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8 })
-    );
-    tableRim.position.y = 0.0;
-    tableRim.rotation.x = Math.PI / 2;
-    pedestalGroup.add(tableRim);
-
     scene.add(pedestalGroup);
 
-    /* ===============================================================
-       3. BUILD THE 5 TANGIBLE 3D MODELS
-       =============================================================== */
+    // Build the 5 3D Models
     const models = [];
-    let currentModelIndex = 0;
-    let isExploded = false;
+    let currentModelIdx = 0;
+    let isAssemblyExploded = false;
 
-    // --- MODEL 0: ISRO CE-20 CRYOGENIC ENGINE ---
+    // Model 0: Apollo Space Suit (Lobby)
     const m0 = new THREE.Group();
+    const suitMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.3 });
+    const suitTorso = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.4, 1.2, 16), suitMat);
+    suitTorso.position.y = 1.2;
+    m0.add(suitTorso);
+    const suitHelmet = new THREE.Mesh(new THREE.SphereGeometry(0.38, 20, 20), suitMat);
+    suitHelmet.position.y = 2.0;
+    m0.add(suitHelmet);
+    const suitVisor = new THREE.Mesh(
+      new THREE.SphereGeometry(0.32, 16, 16, 0, Math.PI),
+      new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.95, roughness: 0.1 })
+    );
+    suitVisor.position.set(0, 2.0, 0.1);
+    m0.add(suitVisor);
+    models.push(m0);
+
+    // Model 1: ISRO CE-20 Cryogenic Rocket Engine (Aerospace)
+    const m1 = new THREE.Group();
     const nozzleMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.95, roughness: 0.2, side: THREE.DoubleSide });
     const nozzleMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 1.0, 1.5, 32, 1, true), nozzleMat);
     nozzleMesh.position.y = 0.75;
-    m0.add(nozzleMesh);
-
-    const chamberMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8, roughness: 0.3 });
-    const chamberMesh = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), chamberMat);
+    m1.add(nozzleMesh);
+    const chamberMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.5, 24, 24),
+      new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8, roughness: 0.3 })
+    );
     chamberMesh.position.y = 1.7;
-    m0.add(chamberMesh);
-
-    const manifoldMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9 });
+    m1.add(chamberMesh);
     [-0.45, 0.45].forEach(ox => {
-      const p = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.1, 16), manifoldMat);
+      const p = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.1, 16), new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9 }));
       p.position.set(ox, 1.6, 0.2);
-      m0.add(p);
-    });
-    models.push(m0);
-
-    // --- MODEL 1: CHANDRAYAAN-3 VIKRAM LANDER ---
-    const m1 = new THREE.Group();
-    const foilMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.95, roughness: 0.2 });
-    const landerBody = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.8, 1.0), foilMat);
-    landerBody.position.y = 0.75;
-    m1.add(landerBody);
-
-    const solarMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, metalness: 0.7, roughness: 0.1 });
-    const solarWing = new THREE.Mesh(new THREE.BoxGeometry(1.04, 0.55, 0.04), solarMat);
-    solarWing.position.set(0, 0.75, 0.52);
-    m1.add(solarWing);
-
-    const legMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.8 });
-    [-0.6, 0.6].forEach(lx => {
-      [-0.6, 0.6].forEach(lz => {
-        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.8, 8), legMat);
-        leg.position.set(lx, 0.35, lz);
-        leg.rotation.z = lx > 0 ? -0.3 : 0.3;
-        m1.add(leg);
-      });
+      m1.add(p);
     });
     models.push(m1);
 
-    // --- MODEL 2: 6-AXIS INDUSTRIAL ROBOT ARM ---
+    // Model 2: 6-Axis Industrial Robot Arm (Robotics)
     const m2 = new THREE.Group();
     const orangeMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.2, metalness: 0.6 });
     const whiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
-
     const baseCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 0.45, 16), orangeMat);
     baseCyl.position.y = 0.25;
     m2.add(baseCyl);
-
     const arm1 = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.85, 0.24), whiteMat);
     arm1.position.set(0, 0.85, 0.12);
     arm1.rotation.x = 0.3;
     m2.add(arm1);
-
     const arm2 = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.75, 0.2), orangeMat);
     arm2.position.set(0, 1.45, -0.05);
     arm2.rotation.x = -0.55;
     m2.add(arm2);
-
-    const grip = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.12, 0.25), whiteMat);
-    grip.position.set(0, 1.8, 0.22);
-    m2.add(grip);
     models.push(m2);
 
-    // --- MODEL 3: KUDANKULAM NUCLEAR & WIND TURBINE ---
+    // Model 3: Kudankulam Nuclear & Wind Turbine (Energy)
     const m3 = new THREE.Group();
     const concMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.4 });
     const domeCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 0.65, 24), concMat);
     domeCyl.position.set(-0.4, 0.35, 0);
     m3.add(domeCyl);
-
     const domeHem = new THREE.Mesh(new THREE.SphereGeometry(0.65, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2), concMat);
     domeHem.position.set(-0.4, 0.68, 0);
     m3.add(domeHem);
-
-    // Working Wind Turbine beside reactor
     const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.09, 1.6, 16), whiteMat);
     mast.position.set(0.7, 0.8, 0);
     m3.add(mast);
-
     const turbineRotor = new THREE.Group();
     turbineRotor.position.set(0.7, 1.6, 0.1);
     for (let i = 0; i < 3; i++) {
@@ -1360,199 +1074,93 @@
     m3.userData.rotor = turbineRotor;
     models.push(m3);
 
-    // --- MODEL 4: TAMIL WOOTZ CRUCIBLE STEEL SWORD ---
+    // Model 4: Tamil Wootz Crucible Steel Sword (Heritage)
     const m4 = new THREE.Group();
     const velvetMat = new THREE.MeshStandardMaterial({ color: 0x881337, roughness: 0.9 });
     const cushion = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.12, 0.7), velvetMat);
     cushion.position.y = 0.08;
     m4.add(cushion);
-
     const steelMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.18 });
-    const blade = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.08, 0.03), steelMat);
-    blade.position.set(0, 0.18, 0);
-    blade.rotation.y = 0.15;
-    m4.add(blade);
-
-    const brassMat = new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.9 });
-    const guard = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 0.06), brassMat);
-    guard.position.set(-0.55, 0.18, -0.08);
-    m4.add(guard);
-
+    const bladeMesh = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.08, 0.03), steelMat);
+    bladeMesh.position.set(0, 0.18, 0);
+    bladeMesh.rotation.y = 0.15;
+    m4.add(bladeMesh);
     const crucible = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.14, 0.22, 16), new THREE.MeshStandardMaterial({ color: 0x57534e, roughness: 0.85 }));
     crucible.position.set(0.65, 0.18, 0.15);
     m4.add(crucible);
     models.push(m4);
 
-    // Add only the first model initially
+    // Add first model
     scene.add(models[0]);
 
-    /* ===============================================================
-       4. SWITCH EXHIBIT CONTROLS
-       =============================================================== */
-    function switchExhibit(index) {
-      if (index === currentModelIndex) return;
+    function switch3DModel(index) {
+      if (index === currentModelIdx) return;
+      if (isAssemblyExploded) toggleExplodeAssembly();
 
-      // Reset explode state
-      if (isExploded) toggleExplode();
+      scene.remove(models[currentModelIdx]);
+      currentModelIdx = index;
+      scene.add(models[currentModelIdx]);
 
-      // Remove current model
-      scene.remove(models[currentModelIndex]);
-
-      currentModelIndex = index;
-      scene.add(models[currentModelIndex]);
-
-      // Update Tabs
-      document.querySelectorAll('.exhibit-tab').forEach((tab, i) => {
-        tab.classList.toggle('active', i === index);
-      });
-
-      // Update Info Panel
-      const ex = exhibitsData[index];
-      document.getElementById('infoHall').innerText = ex.hall;
-      document.getElementById('infoTitle').innerText = ex.title;
-      document.getElementById('infoDesc').innerText = ex.desc;
-
-      const specsBox = document.getElementById('specsBox');
-      specsBox.innerHTML = '';
-      ex.specs.forEach(s => {
-        const item = document.createElement('div');
-        item.className = 'spec-item';
-        item.innerHTML = '<span class="spec-label">' + s.k + '</span><span class="spec-val">' + s.v + '</span>';
-        specsBox.appendChild(item);
-      });
-
-      // Reset camera
-      camera.position.set(0, 1.8, ex.camDistance);
+      camera.position.set(0, 1.8, 4.8);
       controls.target.set(0, 0.8, 0);
       controls.update();
-
-      // Cancel any ongoing speech
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      document.getElementById('btnPlaySpeech').innerText = '▶';
-      document.getElementById('audioCuratorStatus').innerText = 'Click to play spoken technical narration';
     }
 
-    function toggleExplode() {
-      isExploded = !isExploded;
-      document.getElementById('btnExplode').innerText = isExploded ? '🔄 Assemble' : '💥 Explode Parts';
+    function toggleExplodeAssembly() {
+      isAssemblyExploded = !isAssemblyExploded;
+      document.getElementById('btnExplodeParts').innerText = isAssemblyExploded ? '🔄 Assemble' : '💥 Explode Parts';
 
-      const model = models[currentModelIndex];
+      const model = models[currentModelIdx];
       model.children.forEach((child, idx) => {
         if (!child.userData.origY) child.userData.origY = child.position.y;
-        child.position.y = isExploded ? child.userData.origY + (idx % 2 === 0 ? 0.6 : -0.3) : child.userData.origY;
+        child.position.y = isAssemblyExploded ? child.userData.origY + (idx % 2 === 0 ? 0.6 : -0.3) : child.userData.origY;
       });
     }
 
-    function reset3DCamera() {
-      const ex = exhibitsData[currentModelIndex];
-      camera.position.set(0, 1.8, ex.camDistance);
-      controls.target.set(0, 0.8, 0);
-      controls.update();
+    function onResizeCanvas() {
+      const w = stageBox.clientWidth || window.innerWidth * 0.6;
+      const h = stageBox.clientHeight || window.innerHeight * 0.8;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
     }
 
     /* ===============================================================
-       5. CURATOR AUDIO SPEECH SYNTHESIS
+       6. CURATOR AUDIO SPEECH GUIDE
        =============================================================== */
     let isSpeaking = false;
 
-    function toggleAudioSpeech() {
+    function toggleCuratorAudio() {
       if (!('speechSynthesis' in window)) return;
 
       if (isSpeaking) {
         window.speechSynthesis.cancel();
         isSpeaking = false;
-        document.getElementById('btnPlaySpeech').innerText = '▶';
+        document.getElementById('btnAudioPlay').innerText = '▶';
         document.getElementById('audioCuratorStatus').innerText = 'Paused';
       } else {
         window.speechSynthesis.cancel();
-        const ex = exhibitsData[currentModelIndex];
-        const text = isTamil ? ex.title + ". " + ex.desc : ex.title + ". " + ex.desc;
+        const data = hallsData[currentHallKey];
+        const text = isTamil ? data.title + ". " + data.desc : data.title + ". " + data.desc;
         const utter = new SpeechSynthesisUtterance(text);
         utter.rate = 1.0;
         utter.pitch = 1.05;
 
         utter.onend = () => {
           isSpeaking = false;
-          document.getElementById('btnPlaySpeech').innerText = '▶';
+          document.getElementById('btnAudioPlay').innerText = '▶';
           document.getElementById('audioCuratorStatus').innerText = 'Completed narration';
         };
 
         window.speechSynthesis.speak(utter);
         isSpeaking = true;
-        document.getElementById('btnPlaySpeech').innerText = '⏸';
+        document.getElementById('btnAudioPlay').innerText = '⏸';
         document.getElementById('audioCuratorStatus').innerText = 'Playing curator audio guide...';
       }
     }
 
     /* ===============================================================
-       6. INTERACTIVE FLOOR PLAN NAVIGATION
-       =============================================================== */
-    const floorRooms = {
-      entrance: {
-        badge: "CAMPUS EXTERIOR • OUTDOOR SCIENCE PARK",
-        title: "Entrance Promenade & Campus Portico",
-        desc: "The grand entrance to the Advanced Science Museum Tirunelveli. Surrounded by landscaped botanical lawns, physical science park demonstrations, and the main visitor reception portico.",
-        img: "museum-facade.jpg"
-      },
-      lobby: {
-        badge: "MAIN ATRIUM & VISITOR SERVICES",
-        title: "Grand Entrance Lobby & Atrium",
-        desc: "High glass-skylight reception atrium with visitor services, Apollo EVA space suit vitrine, cartographic science globe, and exhibition galleries directory.",
-        img: "gallery-lobby.jpg"
-      },
-      aerospace: {
-        badge: "ISRO SPACE PROPULSION COMPLEX",
-        title: "Aerospace & Rocket Propulsion Hall",
-        desc: "Dedicated hall featuring the massive CE-20 cryogenic rocket engine tested at Mahendragiri, Chandrayaan-3 Moon lander, and orbital satellites.",
-        img: "gallery-aerospace.jpg"
-      },
-      robotics: {
-        badge: "ROBOTICS & ARTIFICIAL INTELLIGENCE",
-        title: "Robotics & Cybernetics Innovation Lab",
-        desc: "Industrial articulated robot arms on assembly workbenches, bipedal humanoid androids, and interactive AI perception demonstration terminals.",
-        img: "gallery-robotics.jpg"
-      },
-      energy: {
-        badge: "CLEAN ENERGY & ENVIRONMENTAL SCIENCE",
-        title: "Clean Nuclear & Wind Energy Hall",
-        desc: "Showcases the Kudankulam Nuclear Power Plant engineering cross-section and the Muppandal onshore wind power generation corridor.",
-        img: "gallery-lobby.jpg"
-      }
-    };
-
-    function selectFloorRoom(roomKey) {
-      if (!floorRooms[roomKey]) return;
-      const data = floorRooms[roomKey];
-
-      // Highlight active SVG room
-      document.querySelectorAll('.map-room-rect').forEach(rect => {
-        rect.classList.remove('active');
-      });
-      const activeRect = document.getElementById('map-room-' + roomKey);
-      if (activeRect) activeRect.classList.add('active');
-
-      // Update preview card
-      document.getElementById('roomPreviewImg').src = data.img;
-      document.getElementById('roomPreviewBadge').innerText = data.badge;
-      document.getElementById('roomPreviewTitle').innerText = data.title;
-      document.getElementById('roomPreviewDesc').innerText = data.desc;
-    }
-
-    /* ===============================================================
-       7. VISITOR PASS GENERATOR
-       =============================================================== */
-    function generateSouvenirPass() {
-      const name = document.getElementById('passNameInput').value.trim() || 'Jaswanth Kamaraj';
-      const cat = document.getElementById('passCategoryInput').value;
-      const randomCode = 'ASM-TN-' + Math.floor(100000 + Math.random() * 900000);
-
-      document.getElementById('tName').innerText = name.toUpperCase();
-      document.getElementById('tMeta').innerText = cat.toUpperCase() + ' • VALID TODAY';
-      document.getElementById('tCode').innerText = randomCode;
-    }
-
-    /* ===============================================================
-       8. BILINGUAL LANGUAGE LOCALIZATION
+       7. BILINGUAL LANGUAGE LOCALIZATION (EN / TAMIL)
        =============================================================== */
     let isTamil = false;
     function toggleLanguage() {
@@ -1565,17 +1173,30 @@
     }
 
     /* ===============================================================
+       8. KEYBOARD SHORTCUTS
+       =============================================================== */
+    window.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'w' || e.key === 'ArrowUp') {
+        const extView = document.getElementById('exteriorView');
+        if (extView.style.display !== 'none') {
+          walkInsideMuseum();
+        }
+      } else if (e.key === 'Escape') {
+        stepOutsideToPromenade();
+      }
+    });
+
+    /* ===============================================================
        9. 60 FPS RENDER LOOP
        =============================================================== */
     function animate() {
       requestAnimationFrame(animate);
 
-      // Slow elegant turntable rotation of exhibit model
-      if (!isExploded) {
-        models[currentModelIndex].rotation.y += 0.005;
+      // Slow turntable rotation in 3D mode
+      if (currentMode === '3d' && !isAssemblyExploded) {
+        models[currentModelIdx].rotation.y += 0.005;
       }
 
-      // Rotate wind turbine blades in Model 3
       if (m3.userData.rotor) {
         m3.userData.rotor.rotation.z += 0.035;
       }
@@ -1586,13 +1207,8 @@
 
     animate();
 
-    // Window Resize Handler
     window.addEventListener('resize', () => {
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      onResizeCanvas();
     });
   </script>
 </body>
