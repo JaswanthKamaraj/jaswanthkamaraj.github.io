@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Advanced Science Museum: Tirunelveli | Realistic 3D Virtual Walkthrough</title>
-  <meta name="description" content="A realistic 3D walk-through building of the Advanced Science Museum, Tirunelveli. Explore bright modern galleries with real physical models, display vitrines, ISRO propulsion, robotics, and clean energy.">
+  <title>Advanced Science Museum: Tirunelveli | 360° Photorealistic Virtual Tour</title>
+  <meta name="description" content="Official 360° virtual tour of the Advanced Science Museum, Tirunelveli. Step inside the campus entrance into real museum halls featuring ISRO aerospace, robotics, and interactive exhibits.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@500;700&display=swap" rel="stylesheet">
 
-  <!-- Three.js -->
+  <!-- Three.js Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
     :root {
-      --bg-museum: #f8fafc;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
+      --bg-dark: #090d16;
       --brand-blue: #0284c7;
-      --panel-glass: rgba(255, 255, 255, 0.96);
-      --border-subtle: #e2e8f0;
+      --brand-cyan: #38bdf8;
+      --brand-amber: #f59e0b;
+      --panel-glass: rgba(15, 23, 42, 0.88);
+      --panel-border: rgba(255, 255, 255, 0.14);
       --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
       --font-tamil: 'Noto Sans Tamil', sans-serif;
@@ -33,14 +33,14 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background: #0f172a;
+      background: var(--bg-dark);
       font-family: var(--font-sans);
-      color: var(--text-main);
+      color: #ffffff;
       user-select: none;
     }
 
-    /* 3D Canvas */
-    #canvas3d {
+    /* 360 Canvas */
+    #canvas360 {
       position: absolute;
       top: 0;
       left: 0;
@@ -48,33 +48,12 @@
       height: 100%;
       display: block;
       z-index: 1;
-      cursor: crosshair;
+      cursor: grab;
     }
+    #canvas360:active { cursor: grabbing; }
 
-    /* Crosshair Reticle */
-    .center-reticle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 6px;
-      height: 6px;
-      border: 1.5px solid rgba(255, 255, 255, 0.9);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 10;
-      box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
-      transition: all 0.2s ease;
-    }
-    .center-reticle.active {
-      width: 18px;
-      height: 18px;
-      border-color: #0284c7;
-      background: rgba(2, 132, 199, 0.2);
-    }
-
-    /* Top Contemporary Museum HUD Bar */
-    .top-hud {
+    /* Top Contemporary Header */
+    .tour-header {
       position: absolute;
       top: 0;
       left: 0;
@@ -84,10 +63,10 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px 28px;
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 75%, transparent 100%);
+      background: linear-gradient(180deg, rgba(9, 13, 22, 0.95) 0%, rgba(9, 13, 22, 0.5) 75%, transparent 100%);
       pointer-events: none;
     }
-    .top-hud * { pointer-events: auto; }
+    .tour-header * { pointer-events: auto; }
 
     .brand-link {
       display: flex;
@@ -97,69 +76,74 @@
       color: #ffffff;
     }
 
-    .brand-logo-badge {
-      width: 42px;
-      height: 42px;
+    .brand-badge {
+      width: 44px;
+      height: 44px;
       background: #ffffff;
-      border-radius: 10px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
-      font-size: 1.25rem;
-      color: #0284c7;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      font-size: 1.35rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     }
 
-    .brand-title-box {
+    .brand-text-box {
       display: flex;
       flex-direction: column;
     }
     .brand-name {
       font-weight: 800;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       letter-spacing: 0.04em;
-      color: #ffffff;
+      line-height: 1.2;
     }
-    .brand-location {
+    .brand-subtitle {
       font-size: 0.72rem;
-      color: #38bdf8;
+      color: var(--brand-cyan);
       font-family: var(--font-mono);
-      letter-spacing: 0.12em;
+      letter-spacing: 0.1em;
       font-weight: 600;
     }
 
-    .current-room-badge {
+    .room-badge {
       display: flex;
       align-items: center;
       gap: 10px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 8px 18px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--panel-border);
+      padding: 8px 20px;
       border-radius: 999px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
       font-family: var(--font-mono);
-      font-size: 0.78rem;
+      font-size: 0.82rem;
       font-weight: 700;
-      color: #0f172a;
+      letter-spacing: 0.06em;
     }
-    .room-pulse-dot {
+    .pulse-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 8px #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulseAnim 2s infinite;
+    }
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
     }
 
-    .hud-actions {
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .hud-btn {
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      color: #0f172a;
+    .tour-btn {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--panel-border);
+      color: #ffffff;
       padding: 8px 14px;
       border-radius: 8px;
       font-size: 0.78rem;
@@ -169,178 +153,282 @@
       align-items: center;
       gap: 6px;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      backdrop-filter: blur(8px);
     }
-    .hud-btn:hover {
-      background: #ffffff;
-      color: #0284c7;
+    .tour-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: #ffffff;
       transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
     }
-    .hud-btn.btn-primary {
+    .tour-btn.btn-cta {
       background: #0284c7;
-      color: #ffffff;
-      border-color: #0284c7;
+      border-color: #38bdf8;
     }
-    .hud-btn.btn-primary:hover {
-      background: #0369a1;
-      color: #ffffff;
+    .tour-btn.btn-cta:hover { background: #0369a1; }
+
+    /* Interactive Floor Plan Mini-Map in Top Right */
+    .mini-map-box {
+      position: absolute;
+      top: 85px;
+      right: 28px;
+      z-index: 20;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 12px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 170px;
+    }
+    .mini-map-title {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .map-svg {
+      width: 100%;
+      height: 95px;
+      background: rgba(2, 6, 23, 0.6);
+      border-radius: 8px;
     }
 
-    /* Bottom Museum Wing Quick-Teleport Bar */
-    .bottom-dock {
+    /* Bottom Room Carousel Bar (Matterport-style thumbnails) */
+    .bottom-carousel {
       position: absolute;
-      bottom: 22px;
+      bottom: 24px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 20;
       display: flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 8px 14px;
-      border-radius: 999px;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid var(--panel-border);
+      padding: 10px 16px;
+      border-radius: 18px;
       backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
       max-width: calc(100vw - 32px);
       overflow-x: auto;
       scrollbar-width: none;
     }
-    .bottom-dock::-webkit-scrollbar { display: none; }
+    .bottom-carousel::-webkit-scrollbar { display: none; }
 
-    .wing-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      color: #cbd5e1;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 0.76rem;
-      font-weight: 600;
+    .room-thumb-card {
+      position: relative;
+      width: 110px;
+      height: 68px;
+      border-radius: 10px;
+      overflow: hidden;
       cursor: pointer;
+      border: 2px solid transparent;
+      flex-shrink: 0;
+      transition: all 0.25s ease;
+    }
+    .room-thumb-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    .room-thumb-card:hover img {
+      transform: scale(1.08);
+    }
+    .room-thumb-card:hover {
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: translateY(-2px);
+    }
+    .room-thumb-card.active {
+      border-color: #38bdf8;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.6);
+    }
+    .thumb-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(180deg, transparent 0%, rgba(2, 6, 23, 0.95) 100%);
+      font-size: 0.66rem;
+      font-weight: 700;
+      padding: 4px 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    /* Floating Navigation Chevrons on Floor */
+    .nav-floor-marker {
+      position: absolute;
+      z-index: 10;
+      transform: translate(-50%, -50%);
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 6px;
-      white-space: nowrap;
-      transition: all 0.2s ease;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      animation: floatHop 2.4s ease-in-out infinite;
     }
-    .wing-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
+    @keyframes floatHop {
+      0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+      50% { transform: translate(-50%, -50%) translateY(-8px); }
     }
-    .wing-btn.active {
-      background: #ffffff;
-      color: #0f172a;
-      font-weight: 700;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    .nav-floor-marker:hover {
+      transform: translate(-50%, -50%) scale(1.15) !important;
     }
-
-    /* Guidance Hint Pill */
-    .walk-tips-pill {
-      position: absolute;
-      top: 84px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 15;
-      background: rgba(15, 23, 42, 0.85);
-      color: #e2e8f0;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(8px);
-      padding: 6px 18px;
-      border-radius: 999px;
-      font-size: 0.74rem;
-      font-family: var(--font-mono);
-      letter-spacing: 0.04em;
-      pointer-events: none;
-    }
-
-    /* On-Screen Mobile Walk Pad */
-    .mobile-walkpad {
-      position: absolute;
-      bottom: 85px;
-      left: 24px;
-      z-index: 20;
-      display: grid;
-      grid-template-columns: repeat(3, 42px);
-      grid-template-rows: repeat(3, 42px);
-      gap: 6px;
-      opacity: 0.85;
-    }
-    .pad-btn {
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      color: #0f172a;
-      font-size: 1.1rem;
+    .nav-ring-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(2, 132, 199, 0.45);
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.8), inset 0 0 15px rgba(2, 132, 199, 0.6);
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      user-select: none;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    }
-    .pad-btn:active {
-      background: #0284c7;
+      font-size: 1.4rem;
       color: #ffffff;
+      backdrop-filter: blur(4px);
     }
-    .pad-u { grid-column: 2; grid-row: 1; }
-    .pad-l { grid-column: 1; grid-row: 2; }
-    .pad-d { grid-column: 2; grid-row: 3; }
-    .pad-r { grid-column: 3; grid-row: 2; }
+    .nav-pill-text {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+    }
 
-    /* Museum Exhibit Info Plaque Modal */
-    .museum-plaque {
+    /* Pulsing Exhibit Hotspots */
+    .exhibit-pin-marker {
+      position: absolute;
+      z-index: 10;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .exhibit-pin-marker:hover {
+      transform: translate(-50%, -50%) scale(1.15);
+    }
+    .pin-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #f59e0b;
+      border: 2px solid #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: #0f172a;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
+      animation: pinPulse 2s infinite;
+    }
+    @keyframes pinPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.6); }
+      50% { box-shadow: 0 0 30px rgba(245, 158, 11, 1); }
+    }
+    .pin-label {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transform: translateX(-5px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+    }
+    .exhibit-pin-marker:hover .pin-label {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Transition Fade Overlay */
+    #crossfadeOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #090d16;
+      z-index: 15;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    /* Exhibit Information Modal Card */
+    .exhibit-modal {
       position: absolute;
       top: 50%;
       right: 32px;
       transform: translateY(-50%) scale(0.96);
       width: 440px;
       max-width: calc(100vw - 40px);
-      background: var(--panel-glass);
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
       padding: 24px;
       z-index: 30;
-      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(56, 189, 248, 0.2);
+      backdrop-filter: blur(20px);
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .museum-plaque.open {
+    .exhibit-modal.open {
       opacity: 1;
       pointer-events: auto;
       transform: translateY(-50%) scale(1);
     }
 
-    .plaque-header {
+    .modal-head {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 12px;
       padding-bottom: 10px;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .plaque-catalog {
+    .catalog-tag {
       font-family: var(--font-mono);
       font-size: 0.72rem;
-      color: #0284c7;
+      color: var(--brand-cyan);
       font-weight: 700;
       letter-spacing: 0.08em;
     }
-    .plaque-title {
+    .modal-title {
       font-size: 1.3rem;
       font-weight: 800;
-      color: #0f172a;
+      color: #ffffff;
       margin-top: 4px;
       line-height: 1.25;
     }
-    .plaque-close-btn {
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      color: #475569;
+    .modal-close {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #cbd5e1;
       width: 32px;
       height: 32px;
       border-radius: 50%;
@@ -351,48 +439,34 @@
       font-size: 1rem;
       transition: all 0.2s;
     }
-    .plaque-close-btn:hover {
-      background: #fee2e2;
+    .modal-close:hover {
+      background: rgba(239, 68, 68, 0.25);
       color: #ef4444;
-      border-color: #fca5a5;
+      border-color: #ef4444;
     }
 
-    .plaque-desc {
-      font-size: 0.9rem;
-      color: #334155;
+    .modal-desc {
+      font-size: 0.88rem;
+      color: #cbd5e1;
       line-height: 1.6;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
-    .plaque-specs-table {
-      width: 100%;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 18px;
+    .specs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
+      background: rgba(2, 6, 23, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 16px;
     }
-    .spec-cell {
-      display: flex;
-      flex-direction: column;
-    }
-    .spec-name {
-      font-size: 0.68rem;
-      font-family: var(--font-mono);
-      color: #64748b;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-    .spec-value {
-      font-size: 0.86rem;
-      font-weight: 700;
-      color: #0f172a;
-    }
+    .spec-item { display: flex; flex-direction: column; }
+    .spec-k { font-size: 0.68rem; font-family: var(--font-mono); color: #94a3b8; text-transform: uppercase; }
+    .spec-v { font-size: 0.84rem; font-weight: 700; color: #38bdf8; }
 
-    .plaque-audio-btn {
+    .modal-audio-btn {
       width: 100%;
       background: #0284c7;
       color: #ffffff;
@@ -408,1080 +482,609 @@
       gap: 8px;
       transition: background 0.2s;
     }
-    .plaque-audio-btn:hover { background: #0369a1; }
+    .modal-audio-btn:hover { background: #0369a1; }
 
     @media (max-width: 768px) {
-      .top-hud { padding: 12px 16px; }
-      .brand-location { display: none; }
-      .current-room-badge { font-size: 0.7rem; padding: 6px 12px; }
-      .walk-tips-pill { display: none; }
-      .museum-plaque {
+      .tour-header { padding: 12px 16px; }
+      .brand-subtitle { display: none; }
+      .mini-map-box { display: none; }
+      .exhibit-modal {
         right: 14px;
         left: 14px;
         width: auto;
         max-width: none;
-        bottom: 80px;
+        bottom: 95px;
         top: auto;
         transform: none;
       }
-      .museum-plaque.open { transform: none; }
+      .exhibit-modal.open { transform: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Fullscreen WebGL 3D Canvas -->
-  <canvas id="canvas3d"></canvas>
+  <!-- Fullscreen 360 WebGL Canvas -->
+  <canvas id="canvas360"></canvas>
 
-  <!-- Crosshair Pointer -->
-  <div class="center-reticle" id="reticle"></div>
+  <!-- Crossfade Screen Transition Overlay -->
+  <div id="crossfadeOverlay"></div>
 
-  <!-- Top Contemporary Museum Header -->
-  <header class="top-hud">
+  <!-- Interactive Floor & Exhibit Hotspot Overlay Layer -->
+  <div id="hotspotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;"></div>
+
+  <!-- Top Contemporary Tour Header -->
+  <header class="tour-header">
     <div class="brand-link">
-      <div class="brand-logo-badge">🏛️</div>
-      <div class="brand-title-box">
+      <div class="brand-badge">🏛️</div>
+      <div class="brand-text-box">
         <span class="brand-name" data-en="ADVANCED SCIENCE MUSEUM" data-ta="மேம்பட்ட அறிவியல் அருங்காட்சியகம்">ADVANCED SCIENCE MUSEUM</span>
-        <span class="brand-location">TIRUNELVELI DISTRICT SCIENCE CENTRE</span>
+        <span class="brand-subtitle">TIRUNELVELI DISTRICT SCIENCE CENTRE • 360° TOUR</span>
       </div>
     </div>
 
-    <div class="current-room-badge">
-      <div class="room-pulse-dot"></div>
-      <span id="currentRoomText">CAMPUS ENTRANCE PROMENADE</span>
+    <div class="room-badge">
+      <div class="pulse-dot"></div>
+      <span id="roomTitleText">CAMPUS ENTRANCE PROMENADE</span>
     </div>
 
-    <div class="hud-actions">
-      <button class="hud-btn" onclick="toggleLanguage()" id="btnLang">
+    <div class="header-actions">
+      <button class="tour-btn" onclick="toggleLanguage()" id="btnLang">
         🌐 <span id="txtLang">EN / தமிழ்</span>
       </button>
-      <button class="hud-btn btn-primary" onclick="enterOrStepOutside()" id="btnAction">
-        🚪 <span id="txtAction">STEP INSIDE</span>
+      <button class="tour-btn btn-cta" onclick="stepInsideOrOutside()" id="btnStepInside">
+        🚶 <span id="txtStepInside">STEP INSIDE</span>
       </button>
     </div>
   </header>
 
-  <!-- Guidance Hints -->
-  <div class="walk-tips-pill" id="walkTips">
-    [WASD / Arrow Keys: Walk] • [Mouse Drag: Look 360°] • [Click Display Cases to Inspect]
-  </div>
+  <!-- Interactive Floor Plan Mini-Map in Top Right -->
+  <aside class="mini-map-box">
+    <div class="mini-map-title">
+      <span>MUSEUM MAP</span>
+      <span id="mapLevel" style="color: #38bdf8;">LEVEL 1</span>
+    </div>
+    <svg class="map-svg" viewBox="0 0 160 100">
+      <!-- Outer Building Outline -->
+      <rect x="10" y="10" width="140" height="80" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+      <!-- Entrance Zone -->
+      <rect x="60" y="70" width="40" height="20" rx="3" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="80" y="83" fill="#94a3b8" font-size="7" text-anchor="middle" font-family="sans-serif">ENTRANCE</text>
+      <!-- Grand Lobby -->
+      <rect x="50" y="30" width="60" height="35" rx="3" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="80" y="50" fill="#94a3b8" font-size="7" text-anchor="middle" font-family="sans-serif">LOBBY</text>
+      <!-- East Aerospace Wing -->
+      <rect x="115" y="25" width="30" height="45" rx="3" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="130" y="50" fill="#38bdf8" font-size="6" text-anchor="middle" font-family="sans-serif">AERO</text>
+      <!-- West Robotics Wing -->
+      <rect x="15" y="25" width="30" height="45" rx="3" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="30" y="50" fill="#f59e0b" font-size="6" text-anchor="middle" font-family="sans-serif">ROBOT</text>
+      <!-- Active Player Marker -->
+      <circle id="playerMapDot" cx="80" cy="80" r="4.5" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />
+    </svg>
+  </aside>
 
-  <!-- Bottom Navigation Wings Teleport Bar -->
-  <nav class="bottom-dock">
-    <button class="wing-btn active" onclick="teleportTo('entrance')">🏛️ <span data-en="Entrance" data-ta="முகப்பு">Entrance</span></button>
-    <button class="wing-btn" onclick="teleportTo('lobby')">🏢 <span data-en="Main Lobby" data-ta="வரவேற்பறை">Main Lobby</span></button>
-    <button class="wing-btn" onclick="teleportTo('space')">🚀 <span data-en="Aerospace Wing" data-ta="விண்வெளி பிரிவு">Aerospace Wing</span></button>
-    <button class="wing-btn" onclick="teleportTo('robotics')">🤖 <span data-en="Robotics Lab" data-ta="ரோபாட்டிக்ஸ் கூடம்">Robotics Lab</span></button>
-    <button class="wing-btn" onclick="teleportTo('energy')">⚡ <span data-en="Energy Hall" data-ta="ஆற்றல் அரங்கம்">Energy Hall</span></button>
-    <button class="wing-btn" onclick="teleportTo('heritage')">⚔️ <span data-en="Tamil Heritage" data-ta="தமிழர் அறிவியல்">Tamil Heritage</span></button>
+  <!-- Bottom Room Thumbnails Carousel (Matterport style) -->
+  <nav class="bottom-carousel" id="bottomCarousel">
+    <div class="room-thumb-card active" onclick="loadRoom('entrance')" id="thumb-entrance">
+      <img src="museum-facade.jpg" alt="Entrance Facade">
+      <span class="thumb-label" data-en="1. Campus Entrance" data-ta="1. முகப்பு">1. Campus Entrance</span>
+    </div>
+    <div class="room-thumb-card" onclick="loadRoom('lobby')" id="thumb-lobby">
+      <img src="gallery-lobby.jpg" alt="Grand Lobby">
+      <span class="thumb-label" data-en="2. Grand Lobby" data-ta="2. வரவேற்பறை">2. Grand Lobby</span>
+    </div>
+    <div class="room-thumb-card" onclick="loadRoom('aerospace')" id="thumb-aerospace">
+      <img src="gallery-aerospace.jpg" alt="Aerospace Wing">
+      <span class="thumb-label" data-en="3. Aerospace ISRO" data-ta="3. விண்வெளி">3. Aerospace ISRO</span>
+    </div>
+    <div class="room-thumb-card" onclick="loadRoom('robotics')" id="thumb-robotics">
+      <img src="gallery-robotics.jpg" alt="Robotics Lab">
+      <span class="thumb-label" data-en="4. Robotics & AI" data-ta="4. ரோபாட்டிக்ஸ்">4. Robotics & AI</span>
+    </div>
   </nav>
 
-  <!-- Mobile On-Screen D-Pad Walk Controls -->
-  <div class="mobile-walkpad" id="mobilePad">
-    <button class="pad-btn pad-u" onpointerdown="startWalk('u')" onpointerup="stopWalk()" onpointerleave="stopWalk()">▲</button>
-    <button class="pad-btn pad-l" onpointerdown="startWalk('l')" onpointerup="stopWalk()" onpointerleave="stopWalk()">◄</button>
-    <button class="pad-btn pad-d" onpointerdown="startWalk('d')" onpointerup="stopWalk()" onpointerleave="stopWalk()">▼</button>
-    <button class="pad-btn pad-r" onpointerdown="startWalk('r')" onpointerup="stopWalk()" onpointerleave="stopWalk()">►</button>
-  </div>
-
-  <!-- Museum Exhibit Information Plaque Modal -->
-  <aside class="museum-plaque" id="plaqueModal">
-    <div class="plaque-header">
+  <!-- Exhibit Information Modal -->
+  <aside class="exhibit-modal" id="exhibitModal">
+    <div class="modal-head">
       <div>
-        <div class="plaque-catalog" id="plaqueCatalog">CATALOG: ASM-TN-01</div>
-        <h3 class="plaque-title" id="plaqueTitle">ISRO CE-20 Cryogenic Rocket Engine</h3>
+        <div class="catalog-tag" id="modalTag">CATALOG: ASM-TN-01</div>
+        <h3 class="modal-title" id="modalTitle">ISRO CE-20 Cryogenic Rocket Engine</h3>
       </div>
-      <button class="plaque-close-btn" onclick="closePlaque()" title="Close">✕</button>
+      <button class="modal-close" onclick="closeExhibitModal()" title="Close">✕</button>
     </div>
 
-    <p class="plaque-desc" id="plaqueDesc">
-      The CE-20 cryogenic rocket engine was designed and validated at the ISRO Propulsion Complex (IPRC) Mahendragiri in Tirunelveli district. It powers the upper stage of the LVM3 launch vehicle.
+    <p class="modal-desc" id="modalDesc">
+      The CE-20 is India's most powerful cryogenic rocket engine, designed and test-fired at ISRO Propulsion Complex (IPRC) Mahendragiri in Tirunelveli district. Powers the upper stage of LVM3.
     </p>
 
-    <div class="plaque-specs-table" id="plaqueSpecs">
-      <div class="spec-cell">
-        <span class="spec-name">Propellant</span>
-        <span class="spec-value">LOX / LH2 (-253°C)</span>
+    <div class="specs-grid" id="modalSpecs">
+      <div class="spec-item">
+        <span class="spec-k">Thrust (Vacuum)</span>
+        <span class="spec-v">200 kN (20 Tons)</span>
       </div>
-      <div class="spec-cell">
-        <span class="spec-name">Thrust</span>
-        <span class="spec-value">200 kN (20 Tons)</span>
+      <div class="spec-item">
+        <span class="spec-k">Specific Impulse</span>
+        <span class="spec-v">443 Seconds</span>
       </div>
-      <div class="spec-cell">
-        <span class="spec-name">Testing Complex</span>
-        <span class="spec-value">IPRC Mahendragiri, TN</span>
+      <div class="spec-item">
+        <span class="spec-k">Testing Complex</span>
+        <span class="spec-v">IPRC Mahendragiri, TN</span>
       </div>
-      <div class="spec-cell">
-        <span class="spec-name">Launch Missions</span>
-        <span class="spec-value">Chandrayaan-3, Gaganyaan</span>
+      <div class="spec-item">
+        <span class="spec-k">Launch Missions</span>
+        <span class="spec-v">Chandrayaan-3, Gaganyaan</span>
       </div>
     </div>
 
-    <button class="plaque-audio-btn" onclick="playCuratorSpeech()">
-      🔊 <span id="txtAudioGuide">Listen to Curator Audio Guide</span>
+    <button class="modal-audio-btn" onclick="playSpeech()">
+      🔊 <span id="txtAudioGuide">Listen to Curator Audio Narration</span>
     </button>
   </aside>
 
   <!-- ===================================================================
-       THREE.JS SCRIPT: PHYSICAL REALISTIC SCIENCE MUSEUM
+       THREE.JS PHOTOREALISTIC 360 PANORAMA TOUR SCRIPT
        =================================================================== -->
   <script>
     /* ===============================================================
-       1. SCENE SETUP & ARCHITECTURAL ENVIRONMENT
+       1. DATA DEFINITIONS FOR REAL 360° MUSEUM ROOMS
        =============================================================== */
-    const canvas = document.getElementById('canvas3d');
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xdbeafe); // Bright sky
-    scene.fog = new THREE.FogExp2(0xdbeafe, 0.012);
+    const rooms = {
+      entrance: {
+        id: 'entrance',
+        title: 'CAMPUS ENTRANCE PROMENADE (EXTERIOR)',
+        image: 'museum-facade.jpg',
+        mapPos: { cx: 80, cy: 80 },
+        initialYaw: 0,
+        initialPitch: 0,
+        navMarkers: [
+          {
+            targetRoom: 'lobby',
+            label: 'STEP INSIDE THE LOBBY',
+            yaw: 0,
+            pitch: -0.15,
+            icon: '🚶 ➔'
+          }
+        ],
+        exhibits: [
+          {
+            id: 'ASM-EXT-01',
+            title: 'Advanced Science Museum Campus Architecture',
+            yaw: 0.25,
+            pitch: 0.12,
+            desc: "The District Science Centre, Tirunelveli (Advanced Science Museum) was established to foster scientific temper. It features interactive halls, outdoor science park exhibits, and space propulsion galleries.",
+            specs: [
+              { k: 'Location', v: 'Tirunelveli, Tamil Nadu' },
+              { k: 'Network', v: 'National Council of Science Museums' },
+              { k: 'Specialty', v: 'Aerospace & Energy Exhibits' },
+              { k: 'Visitor Type', v: 'Open to Public & Students' }
+            ]
+          }
+        ]
+      },
 
-    const camera = new THREE.PerspectiveCamera(54, window.innerWidth / window.innerHeight, 0.1, 150);
-    camera.position.set(0, 1.7, 26); // Real human eye-level height = 1.7m
+      lobby: {
+        id: 'lobby',
+        title: 'GRAND ENTRANCE LOBBY & RECEPTION',
+        image: 'gallery-lobby.jpg',
+        mapPos: { cx: 80, cy: 48 },
+        initialYaw: 0,
+        initialPitch: 0,
+        navMarkers: [
+          {
+            targetRoom: 'aerospace',
+            label: '➔ AEROSPACE & ISRO PROPULSION WING',
+            yaw: 0.55,
+            pitch: -0.18,
+            icon: '🚀'
+          },
+          {
+            targetRoom: 'robotics',
+            label: '➔ ROBOTICS & ARTIFICIAL INTELLIGENCE LAB',
+            yaw: -0.55,
+            pitch: -0.18,
+            icon: '🤖'
+          },
+          {
+            targetRoom: 'entrance',
+            label: '➔ EXIT OUTSIDE TO CAMPUS PROMENADE',
+            yaw: Math.PI,
+            pitch: -0.22,
+            icon: '🚪'
+          }
+        ],
+        exhibits: [
+          {
+            id: 'ASM-LOB-01',
+            title: 'Apollo Space Suit & Life-Support Vitrine',
+            yaw: 0.42,
+            pitch: -0.05,
+            desc: "Authentic pressurized extravehicular activity (EVA) space suit display. Shows the thermal micrometeoroid garment, helmet gold visor, and portable life support system.",
+            specs: [
+              { k: 'Pressure', v: '4.3 PSI Pure Oxygen' },
+              { k: 'Layers', v: '14 Synthetic Composite Layers' },
+              { k: 'Visor Coating', v: 'Optical 24k Gold Reflection' },
+              { k: 'Thermal Range', v: '-150°C to +120°C' }
+            ]
+          },
+          {
+            id: 'ASM-LOB-02',
+            title: 'International Space Station (ISS) Scale Model',
+            yaw: 0.72,
+            pitch: -0.04,
+            desc: "1:50 scale model of the International Space Station, orbiting 400 km above Earth at 28,000 km/h. Featuring modular research laboratories and large solar array wings.",
+            specs: [
+              { k: 'Orbital Speed', v: '7.66 km/second' },
+              { k: 'Mass', v: '420,000 kg' },
+              { k: 'Solar Wing Span', v: '73 Meters' },
+              { k: 'Orbits / Day', v: '16 Sunrises & Sunsets' }
+            ]
+          },
+          {
+            id: 'ASM-LOB-03',
+            title: 'Illuminated Planetary Earth & Atmospheric Globe',
+            yaw: 0.95,
+            pitch: -0.18,
+            desc: "High-resolution cartographic science globe demonstrating tectonic plates, ocean currents, and climate simulation systems.",
+            specs: [
+              { k: 'Diameter', v: '1.8-Meter Spherical Display' },
+              { k: 'Data Feeds', v: 'Satellite Cloud Imagery' },
+              { k: 'Resolution', v: 'Real-time Global Topography' },
+              { k: 'Outreach', v: 'Geophysical Science Education' }
+            ]
+          }
+        ]
+      },
+
+      aerospace: {
+        id: 'aerospace',
+        title: 'AEROSPACE & ISRO PROPULSION GALLERY',
+        image: 'gallery-aerospace.jpg',
+        mapPos: { cx: 130, cy: 45 },
+        initialYaw: 0,
+        initialPitch: 0,
+        navMarkers: [
+          {
+            targetRoom: 'lobby',
+            label: '➔ RETURN TO GRAND LOBBY',
+            yaw: -Math.PI / 2,
+            pitch: -0.22,
+            icon: '🏢'
+          },
+          {
+            targetRoom: 'robotics',
+            label: '➔ STEP INTO ROBOTICS & AI LAB',
+            yaw: 0.1,
+            pitch: -0.24,
+            icon: '🤖'
+          }
+        ],
+        exhibits: [
+          {
+            id: 'ASM-AERO-01',
+            title: 'ISRO CE-20 Cryogenic Rocket Engine',
+            yaw: 0.65,
+            pitch: 0.05,
+            desc: "India's heavy cryogenic engine developed and tested at ISRO Propulsion Complex (IPRC) Mahendragiri in Tirunelveli district. Generates 200 kN of thrust using liquid oxygen and liquid hydrogen to lift LVM3 into orbit.",
+            specs: [
+              { k: 'Thrust (Vacuum)', v: '200 kN (20 Metric Tons)' },
+              { k: 'Propellants', v: 'LOX (-183°C) / LH2 (-253°C)' },
+              { k: 'Specific Impulse', v: '443 Seconds' },
+              { k: 'Test Facility', v: 'IPRC Mahendragiri, TN' }
+            ]
+          },
+          {
+            id: 'ASM-AERO-02',
+            title: 'Rocket Engine Cutaway & Turbopump Injector',
+            yaw: 0.95,
+            pitch: -0.05,
+            desc: "Exhibition cutaway model displaying internal fuel turbopumps, regeneratively cooled combustion chamber walls, and spark-torch ignition assemblies.",
+            specs: [
+              { k: 'Pump Speed', v: '36,000 RPM' },
+              { k: 'Chamber Pressure', v: '6.0 MPa' },
+              { k: 'Cooling', v: 'Regenerative Hydrogen Flow' },
+              { k: 'Nozzle Ratio', v: '100:1 Expansion' }
+            ]
+          },
+          {
+            id: 'ASM-AERO-03',
+            title: 'Chandrayaan Lunar Lander & Surface Rover',
+            yaw: -0.42,
+            pitch: -0.08,
+            desc: "Scale replica of the Vikram lander and Pragyan rover that completed India's historic landing at the Moon's South Pole on August 23, 2023.",
+            specs: [
+              { k: 'Landing Date', v: 'August 23, 2023' },
+              { k: 'Landing Site', v: 'Shiv Shakti Point (Lunar South)' },
+              { k: 'Rover', v: '6-Wheel Solar Pragyan' },
+              { k: 'Propulsion', v: 'Liquid Throttleable Engines' }
+            ]
+          },
+          {
+            id: 'ASM-AERO-04',
+            title: 'Deep Space Satellite in Glass Showcase',
+            yaw: -0.85,
+            pitch: -0.15,
+            desc: "Gold-shielded astronomical space telescope model showcasing deployable solar wings, star-tracking reaction wheels, and communication dish antennae.",
+            specs: [
+              { k: 'Optics', v: 'Cassegrain Reflector' },
+              { k: 'Telemetry', v: 'Deep Space S-Band & X-Band' },
+              { k: 'Power System', v: 'Triple-Junction GaAs Solar' },
+              { k: 'Orbit', v: 'Sun-Earth L2 Lagrange Point' }
+            ]
+          }
+        ]
+      },
+
+      robotics: {
+        id: 'robotics',
+        title: 'ROBOTICS & ARTIFICIAL INTELLIGENCE LAB',
+        image: 'gallery-robotics.jpg',
+        mapPos: { cx: 30, cy: 45 },
+        initialYaw: 0,
+        initialPitch: 0,
+        navMarkers: [
+          {
+            targetRoom: 'lobby',
+            label: '➔ RETURN TO GRAND LOBBY',
+            yaw: Math.PI / 2,
+            pitch: -0.22,
+            icon: '🏢'
+          },
+          {
+            targetRoom: 'aerospace',
+            label: '➔ STEP INTO AEROSPACE WING',
+            yaw: -0.1,
+            pitch: -0.24,
+            icon: '🚀'
+          }
+        ],
+        exhibits: [
+          {
+            id: 'ASM-ROBO-01',
+            title: 'Industrial 6-Axis Robotic Arm on Workbench',
+            yaw: -0.85,
+            pitch: -0.15,
+            desc: "Articulated industrial robot arm used in smart manufacturing, automated automotive assembly, and high-precision scientific testing.",
+            specs: [
+              { k: 'Payload', v: '12 kg Payload' },
+              { k: 'Repeatability', v: '±0.02 mm Precision' },
+              { k: 'Axes', v: '6 Articulated Servo Degrees' },
+              { k: 'Drive System', v: 'Harmonic Drive Gearboxes' }
+            ]
+          },
+          {
+            id: 'ASM-ROBO-02',
+            title: 'Bipedal Autonomous Humanoid Android',
+            yaw: 0.85,
+            pitch: -0.05,
+            desc: "Full-scale bipedal humanoid robotics exhibit in an illuminated glass vitrine, demonstrating whole-body dynamic balance and neural edge computation.",
+            specs: [
+              { k: 'Height & Weight', v: '1.75 m / 70 kg' },
+              { k: 'Actuation', v: 'Integrated BLDC Motors' },
+              { k: 'Compute', v: 'Dual AI Tensor Processors' },
+              { k: 'Perception', v: 'Real-Time Spatial Lidar' }
+            ]
+          },
+          {
+            id: 'ASM-ROBO-03',
+            title: 'Interactive AI Kiosks & Touch Terminals',
+            yaw: 0.35,
+            pitch: -0.18,
+            desc: "Hands-on touchscreen demonstration kiosks where visitors interact with computer vision models, speech synthesis, and robot simulation software.",
+            specs: [
+              { k: 'Display', v: '32-inch 4K Multi-touch' },
+              { k: 'Demos', v: 'Object Classification & Pathfinding' },
+              { k: 'Language', v: 'Bilingual (English / Tamil)' },
+              { k: 'Input', v: 'Gesture & Touch Interface' }
+            ]
+          }
+        ]
+      }
+    };
+
+    /* ===============================================================
+       2. THREE.JS 360 PANORAMA SCENE SETUP
+       =============================================================== */
+    const canvas = document.getElementById('canvas360');
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 500);
+    camera.position.set(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    // Spherical Mesh for 360 Equirectangular Panoramic View
+    const sphereGeo = new THREE.SphereGeometry(60, 60, 40);
+    sphereGeo.scale(-1, 1, 1); // Invert so panorama renders inside
+    const sphereMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const panoramaSphere = new THREE.Mesh(sphereGeo, sphereMat);
+    scene.add(panoramaSphere);
+
+    // Texture Loader with Cache
+    const textureLoader = new THREE.TextureLoader();
+    const loadedTextures = {};
+
+    let currentRoom = null;
 
     /* ===============================================================
-       2. REALISTIC MUSEUM LIGHTING (NATURAL DAYLIGHT & SPOTLIGHTS)
+       3. ROOM LOADER & CROSSFADE ENGINE
        =============================================================== */
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
-    scene.add(ambientLight);
+    function loadRoom(roomId) {
+      if (!rooms[roomId]) return;
+      const room = rooms[roomId];
+      currentRoom = room;
 
-    const sunLight = new THREE.DirectionalLight(0xfffbeb, 1.3);
-    sunLight.position.set(16, 28, 22);
-    sunLight.castShadow = true;
-    scene.add(sunLight);
+      closeExhibitModal();
 
-    // Warm gallery recessed ceiling downlights
-    function addCeilingDownlight(x, y, z, color = 0xffffff, intensity = 1.6, distance = 16) {
-      const spot = new THREE.SpotLight(color, intensity, distance, Math.PI / 4, 0.35);
-      spot.position.set(x, y, z);
-      spot.target.position.set(x, 0, z);
-      scene.add(spot);
-      scene.add(spot.target);
+      // Update Active Thumbnail
+      document.querySelectorAll('.room-thumb-card').forEach(c => c.classList.remove('active'));
+      const activeThumb = document.getElementById('thumb-' + roomId);
+      if (activeThumb) activeThumb.classList.add('active');
 
-      const fixture = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.35, 0.35, 0.08, 16),
-        new THREE.MeshBasicMaterial({ color: 0xffffff })
-      );
-      fixture.position.set(x, y - 0.04, z);
-      scene.add(fixture);
-    }
+      // Update Header Text & Map
+      document.getElementById('roomTitleText').innerText = room.title;
+      document.getElementById('playerMapDot').setAttribute('cx', room.mapPos.cx);
+      document.getElementById('playerMapDot').setAttribute('cy', room.mapPos.cy);
 
-    addCeilingDownlight(0, 5.8, 8);
-    addCeilingDownlight(0, 5.8, 0);
-    addCeilingDownlight(0, 5.8, -8);
-    addCeilingDownlight(18, 5.8, 0);  // East Aerospace Wing
-    addCeilingDownlight(-18, 5.8, 0); // West Robotics Wing
-    addCeilingDownlight(0, 5.8, -24); // North Energy Hall
-
-    /* ===============================================================
-       3. REALISTIC MATERIALS (NO HOLOGRAPHY)
-       =============================================================== */
-    function createMarbleCanvas() {
-      const c = document.createElement('canvas');
-      c.width = 512;
-      c.height = 512;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#f8fafc';
-      ctx.fillRect(0, 0, 512, 512);
-      ctx.strokeStyle = '#e2e8f0';
-      ctx.lineWidth = 3;
-      for (let x = 0; x <= 512; x += 128) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 512); ctx.stroke();
+      if (roomId === 'entrance') {
+        document.getElementById('txtStepInside').innerText = 'STEP INSIDE';
+      } else {
+        document.getElementById('txtStepInside').innerText = 'EXIT OUTSIDE';
       }
-      for (let y = 0; y <= 512; y += 128) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke();
-      }
-      return new THREE.CanvasTexture(c);
-    }
 
-    const marbleTex = createMarbleCanvas();
-    marbleTex.wrapS = THREE.RepeatWrapping;
-    marbleTex.wrapT = THREE.RepeatWrapping;
-    marbleTex.repeat.set(12, 12);
+      // Crossfade transition
+      const overlay = document.getElementById('crossfadeOverlay');
+      overlay.style.opacity = '1';
 
-    const marbleFloorMat = new THREE.MeshStandardMaterial({
-      map: marbleTex,
-      roughness: 0.16,
-      metalness: 0.1,
-      color: 0xffffff
-    });
-
-    const whiteWallMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.5 });
-    const baseboardMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.3 });
-    const ceilingMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.7 });
-
-    const vitrineGlassMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.22,
-      roughness: 0.05,
-      metalness: 0.9,
-      side: THREE.DoubleSide
-    });
-
-    const plinthMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
-
-    /* ===============================================================
-       4. EXTERIOR PROMENADE & FACADE (z >= 18)
-       =============================================================== */
-    const plazaFloor = new THREE.Mesh(
-      new THREE.BoxGeometry(60, 0.4, 30),
-      new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.6 })
-    );
-    plazaFloor.position.set(0, -0.2, 32);
-    plazaFloor.receiveShadow = true;
-    scene.add(plazaFloor);
-
-    // Green Lawns
-    const lawnMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.9 });
-    const leftLawn = new THREE.Mesh(new THREE.BoxGeometry(25, 0.45, 30), lawnMat);
-    leftLawn.position.set(-36, -0.18, 32);
-    scene.add(leftLawn);
-
-    const rightLawn = new THREE.Mesh(new THREE.BoxGeometry(25, 0.45, 30), lawnMat);
-    rightLawn.position.set(36, -0.18, 32);
-    scene.add(rightLawn);
-
-    // Museum Front Entrance Facade Wall (at z = 18)
-    const facadeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
-    const leftFrontWall = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 1.2), facadeMat);
-    leftFrontWall.position.set(-15, 4.5, 18);
-    scene.add(leftFrontWall);
-
-    const rightFrontWall = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 1.2), facadeMat);
-    rightFrontWall.position.set(15, 4.5, 18);
-    scene.add(rightFrontWall);
-
-    const topFrontArch = new THREE.Mesh(new THREE.BoxGeometry(8, 3.5, 1.2), facadeMat);
-    topFrontArch.position.set(0, 7.25, 18);
-    scene.add(topFrontArch);
-
-    // Physical Signboard above Entrance
-    const signCanvas = document.createElement('canvas');
-    signCanvas.width = 1024;
-    signCanvas.height = 256;
-    const sctx = signCanvas.getContext('2d');
-    sctx.fillStyle = '#0f172a';
-    sctx.fillRect(0, 0, 1024, 256);
-    sctx.fillStyle = '#ffffff';
-    sctx.font = 'bold 50px sans-serif';
-    sctx.textAlign = 'center';
-    sctx.fillText('ADVANCED SCIENCE MUSEUM', 512, 100);
-    sctx.fillStyle = '#38bdf8';
-    sctx.font = 'bold 36px monospace';
-    sctx.fillText('DISTRICT SCIENCE CENTRE • TIRUNELVELI', 512, 175);
-
-    const signMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(7.2, 1.8),
-      new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(signCanvas) })
-    );
-    signMesh.position.set(0, 7.2, 18.62);
-    scene.add(signMesh);
-
-    // Glass Entrance Sliding Doors
-    const leftDoor = new THREE.Mesh(new THREE.BoxGeometry(2.8, 5.4, 0.1), vitrineGlassMat);
-    leftDoor.position.set(-1.4, 2.7, 18);
-    scene.add(leftDoor);
-
-    const rightDoor = new THREE.Mesh(new THREE.BoxGeometry(2.8, 5.4, 0.1), vitrineGlassMat);
-    rightDoor.position.set(1.4, 2.7, 18);
-    scene.add(rightDoor);
-
-    /* ===============================================================
-       5. INTERIOR ROOMS & WALLS
-       =============================================================== */
-    const interiorFloor = new THREE.Mesh(new THREE.BoxGeometry(60, 0.4, 52), marbleFloorMat);
-    interiorFloor.position.set(0, -0.2, -8);
-    interiorFloor.receiveShadow = true;
-    scene.add(interiorFloor);
-
-    const mainCeiling = new THREE.Mesh(new THREE.BoxGeometry(60, 0.4, 52), ceilingMat);
-    mainCeiling.position.set(0, 6.2, -8);
-    scene.add(mainCeiling);
-
-    // Natural Skylight Strip
-    const skylight = new THREE.Mesh(
-      new THREE.BoxGeometry(8, 0.2, 28),
-      new THREE.MeshStandardMaterial({ color: 0x93c5fd, transparent: true, opacity: 0.55 })
-    );
-    skylight.position.set(0, 6.3, 0);
-    scene.add(skylight);
-
-    function buildWall(w, h, d, x, y, z) {
-      const wall = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), whiteWallMat);
-      wall.position.set(x, y, z);
-      scene.add(wall);
-
-      const trim = new THREE.Mesh(new THREE.BoxGeometry(w + 0.04, 0.18, d + 0.04), baseboardMat);
-      trim.position.set(x, 0.09, z);
-      scene.add(trim);
-    }
-
-    // Outer Perimeter Walls
-    buildWall(60, 6, 0.8, 0, 3, -34); // North back wall
-    buildWall(0.8, 6, 52, -30, 3, -8); // West wall
-    buildWall(0.8, 6, 52, 30, 3, -8);  // East wall
-
-    // Internal Partition Walls
-    buildWall(0.6, 6, 12, 8, 3, 12);
-    buildWall(0.6, 6, 14, 8, 3, -15);
-    buildWall(0.6, 1.8, 6, 8, 5.1, -1);
-
-    buildWall(0.6, 6, 12, -8, 3, 12);
-    buildWall(0.6, 6, 14, -8, 3, -15);
-    buildWall(0.6, 1.8, 6, -8, 5.1, -1);
-
-    buildWall(11, 6, 0.6, -13.5, 3, -18);
-    buildWall(11, 6, 0.6, 13.5, 3, -18);
-    buildWall(6, 1.8, 0.6, 0, 5.1, -18);
-
-    /* ===============================================================
-       6. RECEPTION DESK, BENCHES & POSTERS
-       =============================================================== */
-    const receptionDesk = new THREE.Mesh(
-      new THREE.BoxGeometry(4.8, 1.15, 1.4),
-      new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.2 })
-    );
-    receptionDesk.position.set(0, 0.58, 8.5);
-    scene.add(receptionDesk);
-
-    const deskTop = new THREE.Mesh(
-      new THREE.BoxGeometry(5.0, 0.08, 1.6),
-      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.1 })
-    );
-    deskTop.position.set(0, 1.18, 8.5);
-    scene.add(deskTop);
-
-    function addBench(x, z, rotY = 0) {
-      const bench = new THREE.Mesh(
-        new THREE.BoxGeometry(2.4, 0.45, 0.8),
-        new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.3 })
-      );
-      bench.position.set(x, 0.22, z);
-      bench.rotation.y = rotY;
-      scene.add(bench);
-    }
-    addBench(-4.5, 0, Math.PI / 2);
-    addBench(4.5, 0, Math.PI / 2);
-
-    function addWallPoster(w, h, x, y, z, rotY, title, subtitle) {
-      const c = document.createElement('canvas');
-      c.width = 512;
-      c.height = 384;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(0, 0, 512, 384);
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = 'bold 34px sans-serif';
-      ctx.fillText(title, 36, 80);
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = '22px sans-serif';
-      ctx.fillText(subtitle, 36, 130);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '16px monospace';
-      ctx.fillText('Advanced Science Centre Tirunelveli', 36, 340);
-
-      const frame = new THREE.Mesh(
-        new THREE.BoxGeometry(w + 0.1, h + 0.1, 0.05),
-        new THREE.MeshStandardMaterial({ color: 0x1e293b })
-      );
-      frame.position.set(x, y, z);
-      frame.rotation.y = rotY;
-
-      const poster = new THREE.Mesh(
-        new THREE.PlaneGeometry(w, h),
-        new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c) })
-      );
-      poster.position.z = 0.03;
-      frame.add(poster);
-      scene.add(frame);
-    }
-
-    addWallPoster(2.4, 1.6, 7.68, 3.2, 10, -Math.PI / 2, 'ISRO PROPULSION', 'Liquid Propulsion at Mahendragiri');
-    addWallPoster(2.4, 1.6, -7.68, 3.2, 10, Math.PI / 2, 'AI & ROBOTICS', 'Autonomous Cognitive Cybernetics');
-    addWallPoster(3.0, 1.8, 0, 3.4, -33.58, 0, 'KUDANKULAM GRID', 'Clean Nuclear & Wind Energy Corridor');
-
-    /* ===============================================================
-       7. REAL PHYSICAL EXHIBITS & DISPLAY VITRINES (NO HOLOGRAPHY)
-       =============================================================== */
-    const exhibits = [];
-
-    // Helper: Build a Clean Museum Glass Display Vitrine with Velvet Barrier Stanchions
-    function createMuseumDisplay(w, d, h, x, z, addBarrier = false) {
-      const group = new THREE.Group();
-      group.position.set(x, 0, z);
-
-      // Solid White Museum Display Plinth
-      const plinthH = 0.95;
-      const plinth = new THREE.Mesh(new THREE.BoxGeometry(w, plinthH, d), plinthMat);
-      plinth.position.y = plinthH / 2;
-      plinth.receiveShadow = true;
-      group.add(plinth);
-
-      // Brushed Aluminum Base Trim
-      const trim = new THREE.Mesh(
-        new THREE.BoxGeometry(w + 0.04, 0.05, d + 0.04),
-        new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8, roughness: 0.2 })
-      );
-      trim.position.y = plinthH;
-      group.add(trim);
-
-      // Clear Glass Vitrine Cube
-      const glassBox = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), vitrineGlassMat);
-      glassBox.position.y = plinthH + h / 2;
-      group.add(glassBox);
-
-      // Top Canopy with Recessed Museum Halogen Spot
-      const canopy = new THREE.Mesh(
-        new THREE.BoxGeometry(w + 0.02, 0.08, d + 0.02),
-        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 })
-      );
-      canopy.position.y = plinthH + h;
-      group.add(canopy);
-
-      const spot = new THREE.PointLight(0xffffff, 1.8, 5);
-      spot.position.set(0, plinthH + h - 0.2, 0);
-      group.add(spot);
-
-      // Printed Slanted Exhibit Label Stand in front
-      const labelStand = new THREE.Mesh(
-        new THREE.BoxGeometry(0.5, 0.8, 0.04),
-        new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8 })
-      );
-      labelStand.position.set(0, 0.4, d / 2 + 0.4);
-      group.add(labelStand);
-
-      const labelPlate = new THREE.Mesh(
-        new THREE.BoxGeometry(0.48, 0.32, 0.02),
-        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 })
-      );
-      labelPlate.position.set(0, 0.8, d / 2 + 0.4);
-      labelPlate.rotation.x = -Math.PI / 6;
-      group.add(labelPlate);
-
-      // Optional Brass Barrier Stanchions around larger exhibits
-      if (addBarrier) {
-        [-w / 2 - 0.5, w / 2 + 0.5].forEach(bx => {
-          [-d / 2 - 0.5, d / 2 + 0.5].forEach(bz => {
-            const pole = new THREE.Mesh(
-              new THREE.CylinderGeometry(0.04, 0.04, 0.95, 12),
-              new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.9, roughness: 0.1 })
-            );
-            pole.position.set(bx, 0.47, bz);
-            group.add(pole);
-
-            const ball = new THREE.Mesh(
-              new THREE.SphereGeometry(0.08, 12, 12),
-              new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.9 })
-            );
-            ball.position.set(bx, 0.95, bz);
-            group.add(ball);
-          });
+      if (loadedTextures[room.image]) {
+        applyRoomTexture(loadedTextures[room.image], room);
+      } else {
+        textureLoader.load(room.image, (tex) => {
+          loadedTextures[room.image] = tex;
+          applyRoomTexture(tex, room);
         });
       }
-
-      scene.add(group);
-      return { group, plinthY: plinthH };
     }
 
-    // -------------------------------------------------------------
-    // EXHIBIT 1: PHYSICAL ISRO CE-20 CRYOGENIC ROCKET ENGINE
-    // -------------------------------------------------------------
-    const case1 = createMuseumDisplay(3.2, 3.2, 3.2, 18, 0, true);
-    const engineModel = new THREE.Group();
-    engineModel.position.set(18, case1.plinthY + 0.1, 0);
+    function applyRoomTexture(tex, room) {
+      sphereMat.map = tex;
+      sphereMat.needsUpdate = true;
 
-    // Realistic Metallic Rocket Nozzle
-    const nozzleMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.95, roughness: 0.18, side: THREE.DoubleSide });
-    const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 1.15, 1.6, 24, 1, true), nozzleMat);
-    nozzle.position.y = 0.8;
-    engineModel.add(nozzle);
+      // Reset camera orientation for new room
+      yaw = room.initialYaw;
+      pitch = room.initialPitch;
+      targetYaw = yaw;
+      targetPitch = pitch;
 
-    // Heat-stiffening rings on nozzle
-    [0.4, 0.8, 1.2].forEach(ry => {
-      const stiffRing = new THREE.Mesh(new THREE.TorusGeometry(0.45 + (ry * 0.45), 0.02, 8, 24), nozzleMat);
-      stiffRing.position.y = ry;
-      stiffRing.rotation.x = Math.PI / 2;
-      engineModel.add(stiffRing);
-    });
+      setTimeout(() => {
+        const overlay = document.getElementById('crossfadeOverlay');
+        overlay.style.opacity = '0';
+        renderHotspots(room);
+      }, 250);
+    }
 
-    // Solid Painted Injector Combustion Chamber
-    const chamberMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8, roughness: 0.25 });
-    const chamber = new THREE.Mesh(new THREE.SphereGeometry(0.6, 20, 20), chamberMat);
-    chamber.position.y = 1.85;
-    engineModel.add(chamber);
+    function stepInsideOrOutside() {
+      if (currentRoom && currentRoom.id === 'entrance') {
+        loadRoom('lobby');
+      } else {
+        loadRoom('entrance');
+      }
+    }
 
-    // High-Pressure Turbopump & Stainless Fuel Lines
-    const pipeMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.15 });
-    [-0.5, 0.5].forEach(ox => {
-      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 1.2, 12), pipeMat);
-      pipe.position.set(ox, 1.8, 0.3);
-      engineModel.add(pipe);
-    });
+    /* ===============================================================
+       4. INTERACTIVE HOTSPOTS & FLOOR NAVIGATION MARKERS
+       =============================================================== */
+    const hotspotsContainer = document.getElementById('hotspotsContainer');
 
-    scene.add(engineModel);
-    exhibits.push({
-      id: 'ASM-AERO-01',
-      title: 'ISRO CE-20 Cryogenic Rocket Engine',
-      room: 'EAST AEROSPACE WING',
-      pos: new THREE.Vector3(18, 1.7, 0),
-      camTarget: new THREE.Vector3(18, 1.8, 0),
-      desc: "Physical scale engineering model of the CE-20 cryogenic rocket engine, designed and test-fired at the ISRO Propulsion Complex (IPRC) Mahendragiri in Tirunelveli district. It powers the upper stage of the LVM3 rocket carrying India's Moon and human spaceflight missions.",
-      specs: [
-        { name: 'Thrust (Vacuum)', val: '200 kN (20 Tons)' },
-        { name: 'Propellants', val: 'LOX (-183°C) / LH2 (-253°C)' },
-        { name: 'Specific Impulse', val: '443 Seconds' },
-        { name: 'Testing Complex', val: 'IPRC Mahendragiri, TN' }
-      ]
-    });
+    function renderHotspots(room) {
+      hotspotsContainer.innerHTML = '';
 
-    // -------------------------------------------------------------
-    // EXHIBIT 2: PHYSICAL CHANDRAYAAN-3 VIKRAM LANDER
-    // -------------------------------------------------------------
-    const case2 = createMuseumDisplay(2.8, 2.8, 2.8, 18, 10, true);
-    const landerModel = new THREE.Group();
-    landerModel.position.set(18, case2.plinthY + 0.1, 10);
-
-    // Gray Lunar Regolith Sand Bed
-    const regolith = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.2, 1.25, 0.08, 24),
-      new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.95 })
-    );
-    regolith.position.y = 0.04;
-    landerModel.add(regolith);
-
-    // Gold Multi-Layer Insulation (MLI) Foil Body
-    const goldFoilMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.95, roughness: 0.2 });
-    const landerBody = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.9, 1.1), goldFoilMat);
-    landerBody.position.y = 0.75;
-    landerModel.add(landerBody);
-
-    // Solar Array Panels (Dark Blue Silicon)
-    const solarMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, metalness: 0.6, roughness: 0.1 });
-    const solarPanel = new THREE.Mesh(new THREE.BoxGeometry(1.12, 0.6, 0.04), solarMat);
-    solarPanel.position.set(0, 0.75, 0.56);
-    landerModel.add(solarPanel);
-
-    // 4 Landing Struts with Footpads
-    const strutMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.8 });
-    [-0.65, 0.65].forEach(lx => {
-      [-0.65, 0.65].forEach(lz => {
-        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.85, 8), strutMat);
-        leg.position.set(lx, 0.35, lz);
-        leg.rotation.z = lx > 0 ? -0.32 : 0.32;
-        landerModel.add(leg);
-
-        const footpad = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.04, 12), strutMat);
-        footpad.position.set(lx * 1.2, 0.08, lz * 1.2);
-        landerModel.add(footpad);
+      // 1. Floor Navigation Markers (Matterport arrows)
+      room.navMarkers.forEach(nav => {
+        const marker = document.createElement('div');
+        marker.className = 'nav-floor-marker';
+        marker.style.pointerEvents = 'auto';
+        marker.innerHTML = `
+          <div class="nav-ring-circle">${nav.icon}</div>
+          <div class="nav-pill-text">${nav.label}</div>
+        `;
+        marker.onclick = () => {
+          loadRoom(nav.targetRoom);
+        };
+        marker.dataset.yaw = nav.yaw;
+        marker.dataset.pitch = nav.pitch;
+        hotspotsContainer.appendChild(marker);
       });
-    });
 
-    scene.add(landerModel);
-    exhibits.push({
-      id: 'ASM-AERO-02',
-      title: 'Chandrayaan-3 Vikram Lander & Lunar Regolith',
-      room: 'EAST AEROSPACE WING',
-      pos: new THREE.Vector3(18, 1.7, 10),
-      camTarget: new THREE.Vector3(18, 1.6, 10),
-      desc: "Scale replica of the Vikram lander on simulated lunar regolith. On August 23, 2023, it completed a historic soft landing near the Moon's South Pole, deploying the Pragyan rover.",
-      specs: [
-        { name: 'Landing Date', val: 'August 23, 2023' },
-        { name: 'Landing Site', val: 'Lunar South Pole (Shiv Shakti)' },
-        { name: 'Rover Deployed', val: 'Pragyan 6-Wheel Rover' },
-        { name: 'Payload', val: 'ChaSTE, ILSA, RAMBHA' }
-      ]
-    });
+      // 2. Pulsing Exhibit Hotspots (+)
+      room.exhibits.forEach(ex => {
+        const pin = document.createElement('div');
+        pin.className = 'exhibit-pin-marker';
+        pin.style.pointerEvents = 'auto';
+        pin.innerHTML = `
+          <div class="pin-circle">+</div>
+          <div class="pin-label">${ex.title}</div>
+        `;
+        pin.onclick = () => {
+          openExhibitModal(ex);
+        };
+        pin.dataset.yaw = ex.yaw;
+        pin.dataset.pitch = ex.pitch;
+        hotspotsContainer.appendChild(pin);
+      });
 
-    // -------------------------------------------------------------
-    // EXHIBIT 3: PHYSICAL INDUSTRIAL 6-AXIS ROBOTIC WORKSTATION
-    // -------------------------------------------------------------
-    const case3 = createMuseumDisplay(2.8, 2.8, 3.2, -18, 0, true);
-    const robotModel = new THREE.Group();
-    robotModel.position.set(-18, case3.plinthY + 0.1, 0);
-
-    // Steel Workstation Base Plate
-    const basePlate = new THREE.Mesh(
-      new THREE.BoxGeometry(1.6, 0.12, 1.6),
-      new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9 })
-    );
-    basePlate.position.y = 0.06;
-    robotModel.add(basePlate);
-
-    // Cast Industrial Arm Base (Gloss White & Orange)
-    const armMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.2, metalness: 0.6 });
-    const whiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
-
-    const rBase = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 0.5, 16), armMat);
-    rBase.position.y = 0.35;
-    robotModel.add(rBase);
-
-    // Lower Articulated Link
-    const link1 = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.9, 0.28), whiteMat);
-    link1.position.set(0, 0.9, 0.15);
-    link1.rotation.x = 0.35;
-    robotModel.add(link1);
-
-    // Upper Articulated Link
-    const link2 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.8, 0.22), armMat);
-    link2.position.set(0, 1.5, -0.05);
-    link2.rotation.x = -0.6;
-    robotModel.add(link2);
-
-    // Two-Finger Robotic Gripper with Workpiece
-    const gripper = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.14, 0.28), whiteMat);
-    gripper.position.set(0, 1.85, 0.25);
-    robotModel.add(gripper);
-
-    const workpiece = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.08, 0.08, 0.25, 12),
-      new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8 })
-    );
-    workpiece.position.set(0, 1.72, 0.25);
-    robotModel.add(workpiece);
-
-    scene.add(robotModel);
-    exhibits.push({
-      id: 'ASM-ROBO-01',
-      title: 'Precision 6-Axis Industrial Robotic Workstation',
-      room: 'WEST ROBOTICS & AI LAB',
-      pos: new THREE.Vector3(-18, 1.7, 0),
-      camTarget: new THREE.Vector3(-18, 1.8, 0),
-      desc: "Physical articulated industrial cobot model demonstrating multi-axis kinematic control, precision servo actuation, optical safety light curtains, and factory automation.",
-      specs: [
-        { name: 'Payload Capacity', val: '10 kg Working Payload' },
-        { name: 'Reach', val: '1,300 mm Spherical Volume' },
-        { name: 'Repeatability', val: '±0.02 mm Precision' },
-        { name: 'Safety System', val: 'Force/Torque Collaborative Sensing' }
-      ]
-    });
-
-    // -------------------------------------------------------------
-    // EXHIBIT 4: ARCHITECTURAL SCALE MODEL OF KUDANKULAM NUCLEAR PLANT
-    // -------------------------------------------------------------
-    const case4 = createMuseumDisplay(3.4, 3.4, 2.6, -8, -26);
-    const nuclearModel = new THREE.Group();
-    nuclearModel.position.set(-8, case4.plinthY + 0.1, -26);
-
-    // Terrain Landscape Baseboard
-    const landscape = new THREE.Mesh(
-      new THREE.BoxGeometry(2.8, 0.08, 2.8),
-      new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.8 })
-    );
-    landscape.position.y = 0.04;
-    nuclearModel.add(landscape);
-
-    // Concrete Containment Dome (VVER-1000)
-    const domeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.4 });
-    const domeCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 0.7, 24), domeMat);
-    domeCylinder.position.set(-0.4, 0.42, 0);
-    nuclearModel.add(domeCylinder);
-
-    const domeHemisphere = new THREE.Mesh(
-      new THREE.SphereGeometry(0.65, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2),
-      domeMat
-    );
-    domeHemisphere.position.set(-0.4, 0.77, 0);
-    nuclearModel.add(domeHemisphere);
-
-    // Turbine Generator Hall Building
-    const turbineBuilding = new THREE.Mesh(
-      new THREE.BoxGeometry(0.9, 0.45, 1.4),
-      new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.5 })
-    );
-    turbineBuilding.position.set(0.6, 0.3, 0);
-    nuclearModel.add(turbineBuilding);
-
-    scene.add(nuclearModel);
-    exhibits.push({
-      id: 'ASM-NRG-01',
-      title: 'Kudankulam Nuclear Power Plant Architectural Scale Model',
-      room: 'NORTH CLEAN ENERGY HALL',
-      pos: new THREE.Vector3(-8, 1.7, -26),
-      camTarget: new THREE.Vector3(-8, 1.7, -26),
-      desc: "Scale architectural tabletop model of the Kudankulam Nuclear Power Plant located in Tirunelveli district. Showcases the reinforced concrete containment dome and adjacent turbine island.",
-      specs: [
-        { name: 'Reactor Type', val: 'VVER-1000 Pressurized Water' },
-        { name: 'Unit Capacity', val: '1,000 MW per Reactor' },
-        { name: 'District', val: 'Radhapuram Taluk, Tirunelveli' },
-        { name: 'Containment', val: 'Double Reinforced Concrete Shell' }
-      ]
-    });
-
-    // -------------------------------------------------------------
-    // EXHIBIT 5: PHYSICAL MUPPANDAL WIND TURBINE WORKING MODEL
-    // -------------------------------------------------------------
-    const case5 = createMuseumDisplay(2.6, 2.6, 3.2, 8, -26);
-    const windModel = new THREE.Group();
-    windModel.position.set(8, case5.plinthY + 0.1, -26);
-
-    const towerMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
-    const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.12, 1.8, 16), towerMat);
-    mast.position.y = 0.9;
-    windModel.add(mast);
-
-    const nacelle = new THREE.Mesh(
-      new THREE.BoxGeometry(0.22, 0.2, 0.45),
-      towerMat
-    );
-    nacelle.position.set(0, 1.8, 0.05);
-    windModel.add(nacelle);
-
-    const rotorGroup = new THREE.Group();
-    rotorGroup.position.set(0, 1.8, 0.28);
-    for (let i = 0; i < 3; i++) {
-      const blade = new THREE.Mesh(
-        new THREE.BoxGeometry(0.08, 0.85, 0.02),
-        towerMat
-      );
-      blade.rotation.z = (i / 3) * Math.PI * 2;
-      blade.position.y = Math.sin((i / 3) * Math.PI * 2) * 0.42;
-      blade.position.x = Math.cos((i / 3) * Math.PI * 2) * 0.42;
-      rotorGroup.add(blade);
-    }
-    windModel.add(rotorGroup);
-    windModel.userData.rotor = rotorGroup;
-
-    scene.add(windModel);
-    exhibits.push({
-      id: 'ASM-NRG-02',
-      title: 'Muppandal Wind Turbine Working Engineering Model',
-      room: 'NORTH CLEAN ENERGY HALL',
-      pos: new THREE.Vector3(8, 1.7, -26),
-      camTarget: new THREE.Vector3(8, 1.8, -26),
-      desc: "Working scale model of a high-yield 2 MW aerogenerator from the Muppandal Wind Farm near Tirunelveli. Features rotating aerodynamic pitch-controlled blades and nacelle gear-train.",
-      specs: [
-        { name: 'Rotor Diameter', val: '80 Meters (Scale: 1:40)' },
-        { name: 'Hub Height', val: '75 Meters' },
-        { name: 'Capacity', val: '2,000 kW per Turbine' },
-        { name: 'Wind Region', val: 'Muppandal Pass Corridor' }
-      ]
-    });
-
-    // -------------------------------------------------------------
-    // EXHIBIT 6: ANCIENT TAMIL WOOTZ STEEL SWORD & VELVET DISPLAY
-    // -------------------------------------------------------------
-    const case6 = createMuseumDisplay(2.8, 2.8, 2.6, 0, -4, true);
-    const wootzModel = new THREE.Group();
-    wootzModel.position.set(0, case6.plinthY + 0.1, -4);
-
-    // Deep Maroon Velvet Exhibition Cushion
-    const velvetMat = new THREE.MeshStandardMaterial({ color: 0x881337, roughness: 0.9 });
-    const cushion = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.14, 0.7), velvetMat);
-    cushion.position.y = 0.07;
-    wootzModel.add(cushion);
-
-    // Solid Damascus / Wootz Steel Blade with Inscribed Hilt
-    const steelMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.2 });
-    const bladeMesh = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.08, 0.03), steelMat);
-    bladeMesh.position.set(0, 0.18, 0);
-    bladeMesh.rotation.y = 0.15;
-    wootzModel.add(bladeMesh);
-
-    // Brass Pommel & Crossguard
-    const brassMat = new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.9, roughness: 0.15 });
-    const guard = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 0.06), brassMat);
-    guard.position.set(-0.55, 0.18, -0.08);
-    wootzModel.add(guard);
-
-    // Ancient Crucible Ingot beside sword
-    const crucibleMat = new THREE.MeshStandardMaterial({ color: 0x57534e, roughness: 0.85 });
-    const ingot = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.14, 0.22, 16), crucibleMat);
-    ingot.position.set(0.65, 0.18, 0.15);
-    wootzModel.add(ingot);
-
-    scene.add(wootzModel);
-    exhibits.push({
-      id: 'ASM-HERITAGE-01',
-      title: 'Tamil Heritage: Ancient Wootz Crucible Steel & Sword',
-      room: 'CENTRAL ATRIUM & HERITAGE',
-      pos: new THREE.Vector3(0, 1.7, -4),
-      camTarget: new THREE.Vector3(0, 1.6, -4),
-      desc: "Physical artifact showcase displaying a high-carbon Wootz steel blade with its characteristic Damascus watermark pattern, alongside a fired clay smelting crucible. Originated in ancient Tamil Nadu and celebrated in Sangam literature.",
-      specs: [
-        { name: 'Era', val: '300 BCE (Sangam Classical Era)' },
-        { name: 'Metallurgy', val: 'Crucible Smelting Technique' },
-        { name: 'Microstructure', val: 'Carbon Nanotubes & Cementite Wires' },
-        { name: 'Global Trade', val: 'Exported from Korkai Port to Rome & Arabia' }
-      ]
-    });
-
-    /* ===============================================================
-       8. FIRST-PERSON WALKING & SMOOTH MOUSE LOOK CONTROLS
-       =============================================================== */
-    let isInside = false;
-    let isWalkingSmoothly = false;
-    const keys = {};
-
-    window.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
-    window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
-
-    let activeTouchDir = null;
-    function startWalk(dir) { activeTouchDir = dir; }
-    function stopWalk() { activeTouchDir = null; }
-
-    let isMouseDown = false;
-    let prevMouseX = 0;
-    let prevMouseY = 0;
-    let yaw = 0;
-    let pitch = 0;
-
-    window.addEventListener('mousedown', (e) => {
-      if (e.target === canvas) {
-        isMouseDown = true;
-        prevMouseX = e.clientX;
-        prevMouseY = e.clientY;
-      }
-    });
-
-    window.addEventListener('mouseup', () => { isMouseDown = false; });
-
-    window.addEventListener('mousemove', (e) => {
-      if (!isMouseDown) return;
-      const deltaX = e.clientX - prevMouseX;
-      const deltaY = e.clientY - prevMouseY;
-      prevMouseX = e.clientX;
-      prevMouseY = e.clientY;
-
-      yaw -= deltaX * 0.0035;
-      pitch -= deltaY * 0.0035;
-      pitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, pitch));
-
-      updateCameraRotation();
-    });
-
-    window.addEventListener('touchstart', (e) => {
-      if (e.target === canvas && e.touches.length === 1) {
-        isMouseDown = true;
-        prevMouseX = e.touches[0].clientX;
-        prevMouseY = e.touches[0].clientY;
-      }
-    }, { passive: true });
-
-    window.addEventListener('touchend', () => { isMouseDown = false; });
-
-    window.addEventListener('touchmove', (e) => {
-      if (!isMouseDown || e.touches.length !== 1) return;
-      const deltaX = e.touches[0].clientX - prevMouseX;
-      const deltaY = e.touches[0].clientY - prevMouseY;
-      prevMouseX = e.touches[0].clientX;
-      prevMouseY = e.touches[0].clientY;
-
-      yaw -= deltaX * 0.0045;
-      pitch -= deltaY * 0.0045;
-      pitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, pitch));
-
-      updateCameraRotation();
-    }, { passive: true });
-
-    function updateCameraRotation() {
-      const dir = new THREE.Vector3(
-        Math.sin(yaw) * Math.cos(pitch),
-        Math.sin(pitch),
-        -Math.cos(yaw) * Math.cos(pitch)
-      );
-      camera.lookAt(camera.position.clone().add(dir));
+      updateHotspotPositions();
     }
 
-    function updateWalkMovement() {
-      if (isWalkingSmoothly) return;
-      const moveSpeed = 0.16;
+    // Project 3D spherical angles (yaw/pitch) onto 2D screen coordinates
+    function updateHotspotPositions() {
+      const markers = hotspotsContainer.querySelectorAll('.nav-floor-marker, .exhibit-pin-marker');
+      const width = window.innerWidth;
+      const height = window.innerHeight;
 
-      const forward = new THREE.Vector3(Math.sin(yaw), 0, -Math.cos(yaw)).normalize();
-      const right = new THREE.Vector3(Math.cos(yaw), 0, Math.sin(yaw)).normalize();
+      markers.forEach(el => {
+        const markerYaw = parseFloat(el.dataset.yaw);
+        const markerPitch = parseFloat(el.dataset.pitch);
 
-      const nextPos = camera.position.clone();
+        const pos = new THREE.Vector3(
+          Math.sin(markerYaw) * Math.cos(markerPitch),
+          Math.sin(markerPitch),
+          -Math.cos(markerYaw) * Math.cos(markerPitch)
+        );
 
-      if (keys['w'] || keys['arrowup'] || activeTouchDir === 'u') {
-        nextPos.addScaledVector(forward, moveSpeed);
-      }
-      if (keys['s'] || keys['arrowdown'] || activeTouchDir === 'd') {
-        nextPos.addScaledVector(forward, -moveSpeed);
-      }
-      if (keys['a'] || keys['arrowleft'] || activeTouchDir === 'l') {
-        nextPos.addScaledVector(right, -moveSpeed);
-      }
-      if (keys['d'] || keys['arrowright'] || activeTouchDir === 'r') {
-        nextPos.addScaledVector(right, moveSpeed);
-      }
+        // Project onto 2D camera screen
+        pos.project(camera);
 
-      // Automatic Sliding Doors trigger
-      if (nextPos.z < 21 && nextPos.z > 15 && Math.abs(nextPos.x) < 4) {
-        leftDoor.position.x = -3.8;
-        rightDoor.position.x = 3.8;
-      } else if (nextPos.z >= 22) {
-        leftDoor.position.x = -1.4;
-        rightDoor.position.x = 1.4;
-      }
-
-      // Museum Outer Boundaries Collision
-      if (nextPos.z <= 18) {
-        nextPos.x = Math.max(-28, Math.min(28, nextPos.x));
-        nextPos.z = Math.max(-32, Math.min(18, nextPos.z));
-      } else {
-        nextPos.x = Math.max(-25, Math.min(25, nextPos.x));
-        nextPos.z = Math.max(18, Math.min(38, nextPos.z));
-      }
-
-      camera.position.copy(nextPos);
-      camera.position.y = 1.7; // Locked human eye height
-
-      updateCurrentRoom();
-    }
-
-    function updateCurrentRoom() {
-      const z = camera.position.z;
-      const x = camera.position.x;
-      let room = 'CAMPUS ENTRANCE PROMENADE';
-
-      if (z > 18) {
-        room = 'CAMPUS ENTRANCE PROMENADE';
-        isInside = false;
-        document.getElementById('txtAction').innerText = 'STEP INSIDE';
-      } else {
-        isInside = true;
-        document.getElementById('txtAction').innerText = 'EXIT OUTSIDE';
-
-        if (z > -16) {
-          if (x > 8) room = 'EAST AEROSPACE WING';
-          else if (x < -8) room = 'WEST ROBOTICS & AI LAB';
-          else room = 'MAIN RECEPTION LOBBY & ATRIUM';
-        } else {
-          room = 'NORTH CLEAN ENERGY & PHYSICS HALL';
+        // If behind camera, hide marker
+        if (pos.z > 1) {
+          el.style.display = 'none';
+          return;
         }
-      }
 
-      document.getElementById('currentRoomText').innerText = room;
+        el.style.display = 'flex';
+        const screenX = (pos.x * 0.5 + 0.5) * width;
+        const screenY = (-(pos.y * 0.5) + 0.5) * height;
+
+        el.style.left = screenX + 'px';
+        el.style.top = screenY + 'px';
+      });
     }
 
     /* ===============================================================
-       9. CINEMATIC GLIDE & QUICK TELEPORT
+       5. EXHIBIT MODAL INSPECTOR & AUDIO CURATOR GUIDE
        =============================================================== */
-    function smoothGlideTo(targetCam, targetLook, duration = 1.6, onComplete) {
-      isWalkingSmoothly = true;
-      const startCam = camera.position.clone();
-      const startTime = performance.now();
-
-      function step(now) {
-        const elapsed = (now - startTime) / 1000;
-        const p = Math.min(elapsed / duration, 1);
-        const ease = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
-
-        camera.position.lerpVectors(startCam, targetCam, ease);
-        camera.lookAt(targetLook);
-
-        if (p < 1) {
-          requestAnimationFrame(step);
-        } else {
-          isWalkingSmoothly = false;
-          const forward = new THREE.Vector3();
-          camera.getWorldDirection(forward);
-          yaw = Math.atan2(forward.x, -forward.z);
-          pitch = Math.asin(forward.y);
-          if (onComplete) onComplete();
-        }
-      }
-      requestAnimationFrame(step);
-    }
-
-    function enterOrStepOutside() {
-      if (isInside) {
-        smoothGlideTo(new THREE.Vector3(0, 1.7, 26), new THREE.Vector3(0, 1.7, 18), 1.6);
-      } else {
-        leftDoor.position.x = -3.8;
-        rightDoor.position.x = 3.8;
-        smoothGlideTo(new THREE.Vector3(0, 1.7, 5), new THREE.Vector3(0, 1.7, -4), 1.8);
-      }
-    }
-
-    function teleportTo(wingKey) {
-      closePlaque();
-      document.querySelectorAll('.wing-btn').forEach(b => b.classList.remove('active'));
-      if (event && event.currentTarget) event.currentTarget.classList.add('active');
-
-      if (wingKey === 'entrance') {
-        smoothGlideTo(new THREE.Vector3(0, 1.7, 26), new THREE.Vector3(0, 1.7, 18));
-      } else if (wingKey === 'lobby') {
-        leftDoor.position.x = -3.8;
-        rightDoor.position.x = 3.8;
-        smoothGlideTo(new THREE.Vector3(0, 1.7, 6), new THREE.Vector3(0, 1.7, -4));
-      } else if (wingKey === 'space') {
-        smoothGlideTo(new THREE.Vector3(14, 1.7, 0), new THREE.Vector3(18, 1.7, 0));
-      } else if (wingKey === 'robotics') {
-        smoothGlideTo(new THREE.Vector3(-14, 1.7, 0), new THREE.Vector3(-18, 1.7, 0));
-      } else if (wingKey === 'energy') {
-        smoothGlideTo(new THREE.Vector3(0, 1.7, -24), new THREE.Vector3(8, 1.7, -26));
-      } else if (wingKey === 'heritage') {
-        smoothGlideTo(new THREE.Vector3(0, 1.7, 0), new THREE.Vector3(0, 1.7, -4));
-      }
-    }
-
-    /* ===============================================================
-       10. CLICK INTERACTION: INSPECT DISPLAY CASES
-       =============================================================== */
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
     let currentOpenExhibit = null;
 
-    window.addEventListener('click', (e) => {
-      if (e.target.closest('.top-hud') || e.target.closest('.bottom-dock') ||
-          e.target.closest('.museum-plaque') || e.target.closest('.mobile-walkpad')) {
-        return;
-      }
-
-      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-
-      for (let ex of exhibits) {
-        const intersects = raycaster.intersectObjects(scene.children, true);
-        if (intersects.length > 0) {
-          const hitPoint = intersects[0].point;
-          if (hitPoint.distanceTo(ex.pos) < 3.2) {
-            openPlaque(ex);
-            return;
-          }
-        }
-      }
-    });
-
-    function openPlaque(ex) {
+    function openExhibitModal(ex) {
       currentOpenExhibit = ex;
-      document.getElementById('plaqueCatalog').innerText = 'CATALOG: ' + ex.id;
-      document.getElementById('plaqueTitle').innerText = ex.title;
-      document.getElementById('plaqueDesc').innerText = ex.desc;
+      document.getElementById('modalTag').innerText = 'CATALOG: ' + ex.id;
+      document.getElementById('modalTitle').innerText = ex.title;
+      document.getElementById('modalDesc').innerText = ex.desc;
 
-      const specsBox = document.getElementById('plaqueSpecs');
+      const specsBox = document.getElementById('modalSpecs');
       specsBox.innerHTML = '';
       ex.specs.forEach(s => {
-        const cell = document.createElement('div');
-        cell.className = 'spec-cell';
-        cell.innerHTML = '<span class="spec-name">' + s.name + '</span><span class="spec-value">' + s.val + '</span>';
-        specsBox.appendChild(cell);
+        const item = document.createElement('div');
+        item.className = 'spec-item';
+        item.innerHTML = '<span class="spec-k">' + s.k + '</span><span class="spec-v">' + s.v + '</span>';
+        specsBox.appendChild(item);
       });
 
-      document.getElementById('plaqueModal').classList.add('open');
-      document.getElementById('reticle').classList.add('active');
+      document.getElementById('exhibitModal').classList.add('open');
 
-      const targetCam = ex.pos.clone().add(new THREE.Vector3(0, 0, 3.2));
-      smoothGlideTo(targetCam, ex.camTarget, 1.2);
+      // Smoothly rotate camera toward exhibit
+      targetYaw = ex.yaw;
+      targetPitch = ex.pitch;
     }
 
-    function closePlaque() {
-      document.getElementById('plaqueModal').classList.remove('open');
-      document.getElementById('reticle').classList.remove('active');
+    function closeExhibitModal() {
+      document.getElementById('exhibitModal').classList.remove('open');
       currentOpenExhibit = null;
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     }
 
-    function playCuratorSpeech() {
+    function playSpeech() {
       if (!currentOpenExhibit) return;
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
@@ -1495,7 +1098,69 @@
     }
 
     /* ===============================================================
-       11. LANGUAGE LOCALIZATION (EN / TAMIL)
+       6. 360° MOUSE LOOK, TOUCH SWIPE & FOV ZOOM CONTROLS
+       =============================================================== */
+    let isDragging = false;
+    let prevMouseX = 0;
+    let prevMouseY = 0;
+    let yaw = 0;
+    let pitch = 0;
+    let targetYaw = 0;
+    let targetPitch = 0;
+
+    window.addEventListener('mousedown', (e) => {
+      if (e.target === canvas || e.target === hotspotsContainer) {
+        isDragging = true;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      }
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - prevMouseX;
+      const dy = e.clientY - prevMouseY;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+
+      targetYaw -= dx * 0.0035;
+      targetPitch -= dy * 0.0035;
+      targetPitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, targetPitch));
+    });
+
+    // Touch controls for mobile phones
+    window.addEventListener('touchstart', (e) => {
+      if ((e.target === canvas || e.target === hotspotsContainer) && e.touches.length === 1) {
+        isDragging = true;
+        prevMouseX = e.touches[0].clientX;
+        prevMouseY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => { isDragging = false; });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging || e.touches.length !== 1) return;
+      const dx = e.touches[0].clientX - prevMouseX;
+      const dy = e.touches[0].clientY - prevMouseY;
+      prevMouseX = e.touches[0].clientX;
+      prevMouseY = e.touches[0].clientY;
+
+      targetYaw -= dx * 0.0045;
+      targetPitch -= dy * 0.0045;
+      targetPitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, targetPitch));
+    }, { passive: true });
+
+    // Scroll Wheel Zoom
+    window.addEventListener('wheel', (e) => {
+      camera.fov = Math.max(35, Math.min(85, camera.fov + e.deltaY * 0.04));
+      camera.updateProjectionMatrix();
+    }, { passive: true });
+
+    /* ===============================================================
+       7. BILINGUAL LANGUAGE LOCALIZATION (EN / TAMIL)
        =============================================================== */
     let isTamil = false;
     function toggleLanguage() {
@@ -1508,21 +1173,30 @@
     }
 
     /* ===============================================================
-       12. 60 FPS RENDER LOOP
+       8. 60 FPS RENDER LOOP
        =============================================================== */
-    const clock = new THREE.Clock();
-
     function animate() {
       requestAnimationFrame(animate);
-      updateWalkMovement();
 
-      if (windModel.userData.rotor) {
-        windModel.userData.rotor.rotation.z += 0.03;
-      }
+      // Smooth camera interpolation
+      yaw += (targetYaw - yaw) * 0.12;
+      pitch += (targetPitch - pitch) * 0.12;
+
+      const dir = new THREE.Vector3(
+        Math.sin(yaw) * Math.cos(pitch),
+        Math.sin(pitch),
+        -Math.cos(yaw) * Math.cos(pitch)
+      );
+      camera.lookAt(dir);
+
+      // Update 2D screen positions of hotspots
+      updateHotspotPositions();
 
       renderer.render(scene, camera);
     }
 
+    // Start with Campus Entrance Promenade
+    loadRoom('entrance');
     animate();
 
     window.addEventListener('resize', () => {
