@@ -219,6 +219,41 @@
       gap: 10px;
     }
 
+    .hud-telemetry {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    }
+
+    .telemetry-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+      animation: blinkDot 1s infinite alternate;
+    }
+
+    @keyframes blinkDot {
+      from { opacity: 0.3; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 960px) {
+      .hud-telemetry { display: none; }
+    }
+
     .hud-btn {
       background: var(--bg-glass);
       backdrop-filter: blur(16px);
@@ -570,7 +605,13 @@
           ← Back to Portfolio
         </a>
         <span class="brand-title">NEXUS // TN-2100</span>
-        <span class="brand-tag">VR-WEBXR READY</span>
+        <span class="brand-tag">ORBITAL SPACE STATION</span>
+      </div>
+
+      <!-- Live Space Telemetry Pill -->
+      <div class="hud-telemetry" id="telemetryPill">
+        <span class="telemetry-dot"></span>
+        <span class="telemetry-text">ORBIT: 412 KM LEO // SPEED: 7.66 KM/S // ZERO-G ACTIVE</span>
       </div>
 
       <div class="hud-controls">
@@ -600,7 +641,7 @@
         <div class="nova-title">AI Guide NOVA // Quantum Subtitle</div>
       </div>
       <p class="nova-subtitle-text" id="novaSubtitle">
-        Welcome to NEXUS Science Museum, Tirunelveli 2100. Select any hall below to warp your camera instantly.
+        Welcome to NEXUS Orbital Science Station, Tirunelveli 2100. Orbiting Earth at 412 km altitude in deep space. Select any hall below to warp your camera instantly.
       </p>
     </div>
 
@@ -767,7 +808,8 @@
        =================================================================== */
     const canvas = document.getElementById('webglCanvas');
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x04040a, 0.012);
+    scene.background = new THREE.Color(0x010206);
+    scene.fog = new THREE.FogExp2(0x02030a, 0.002);
 
     const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 15, 38);
@@ -776,20 +818,31 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.25;
 
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.maxPolarAngle = Math.PI / 2 + 0.05;
-    controls.minDistance = 6;
-    controls.maxDistance = 90;
+    controls.maxPolarAngle = Math.PI - 0.05; // Full 360 vertical viewing to see Earth below and cosmos above
+    controls.minPolarAngle = 0.05;
+    controls.minDistance = 5;
+    controls.maxDistance = 140;
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0x0e1226, 1.4);
+    // Lighting for deep cosmos
+    const ambientLight = new THREE.AmbientLight(0x0c132c, 1.2);
     scene.add(ambientLight);
 
-    const mainCyanLight = new THREE.PointLight(0x00f0ff, 2.5, 60);
+    // Deep space directional sunlight from distant solar star
+    const sunDirLight = new THREE.DirectionalLight(0xfffaed, 2.6);
+    sunDirLight.position.set(130, 75, 110);
+    scene.add(sunDirLight);
+
+    // Earth albedo blue glow reflecting upward from below
+    const earthAlbedoLight = new THREE.DirectionalLight(0x0284c7, 1.2);
+    earthAlbedoLight.position.set(-35, -55, -45);
+    scene.add(earthAlbedoLight);
+
+    const mainCyanLight = new THREE.PointLight(0x00f0ff, 2.2, 70);
     mainCyanLight.position.set(0, 20, 0);
     scene.add(mainCyanLight);
 
@@ -802,47 +855,368 @@
     scene.add(purpleLight);
 
     /* ===================================================================
-       3. ATRIUM & HALLS 3D ARCHITECTURE
+       3. ORBITAL SPACE STATION & DEEP COSMOS ARCHITECTURE
        =================================================================== */
-    // Reflective Cyber Floor Grid
-    const floorGeo = new THREE.PlaneGeometry(160, 160, 40, 40);
-    const floorMat = new THREE.MeshStandardMaterial({
-      color: 0x060814,
-      metalness: 0.85,
-      roughness: 0.25,
-      wireframe: false
-    });
-    const floor = new THREE.Mesh(floorGeo, floorMat);
-    floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -0.5;
-    scene.add(floor);
 
-    // Glowing Floor Grid Lines
-    const gridHelper = new THREE.GridHelper(160, 40, 0x00f0ff, 0x151d3b);
-    gridHelper.position.y = -0.45;
-    scene.add(gridHelper);
-
-    // Holographic Ceiling Ring Dome
-    const domeGeo = new THREE.TorusGeometry(32, 0.4, 16, 100);
-    const domeMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.6 });
-    const ceilingRing = new THREE.Mesh(domeGeo, domeMat);
-    ceilingRing.rotation.x = Math.PI / 2;
-    ceilingRing.position.y = 28;
-    scene.add(ceilingRing);
-
-    // Star-field Particles
-    const starCount = 1800;
+    // --- 3.1 360-Degree Spherical Cosmic Starfield (4,200 Stars) ---
+    const starCount = 4200;
     const starGeo = new THREE.BufferGeometry();
-    const starPositions = new Float32Array(starCount * 3);
-    for (let i = 0; i < starCount * 3; i += 3) {
-      starPositions[i] = (Math.random() - 0.5) * 160;
-      starPositions[i + 1] = Math.random() * 50 + 2;
-      starPositions[i + 2] = (Math.random() - 0.5) * 160;
+    const starPos = new Float32Array(starCount * 3);
+    const starColors = new Float32Array(starCount * 3);
+
+    const spectralPalette = [
+      new THREE.Color(0xffffff), // Pure white
+      new THREE.Color(0x7dd3fc), // Cyan-blue giant
+      new THREE.Color(0xa855f7), // Violet
+      new THREE.Color(0xfde047), // Golden dwarf
+      new THREE.Color(0xf472b6)  // Magenta
+    ];
+
+    for (let i = 0; i < starCount; i++) {
+      const u = Math.random();
+      const v = Math.random();
+      const theta = u * 2.0 * Math.PI;
+      const phi = Math.acos(2.0 * v - 1.0);
+      const r = 260 + Math.random() * 80;
+
+      const x = r * Math.sin(phi) * Math.cos(theta);
+      const y = r * Math.sin(phi) * Math.sin(theta);
+      const z = r * Math.cos(phi);
+
+      starPos[i * 3] = x;
+      starPos[i * 3 + 1] = y;
+      starPos[i * 3 + 2] = z;
+
+      const col = spectralPalette[Math.floor(Math.random() * spectralPalette.length)];
+      starColors[i * 3] = col.r;
+      starColors[i * 3 + 1] = col.g;
+      starColors[i * 3 + 2] = col.b;
     }
-    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    const starMat = new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.35, transparent: true, opacity: 0.7 });
-    const stars = new THREE.Points(starGeo, starMat);
-    scene.add(stars);
+
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+    const starMat = new THREE.PointsMaterial({
+      size: 0.85,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.95
+    });
+    const cosmosStars = new THREE.Points(starGeo, starMat);
+    scene.add(cosmosStars);
+
+    // --- 3.2 Volumetric Nebula Dust Clouds ---
+    function createNebula(colorHex, x, y, z, size, count) {
+      const nebGeo = new THREE.BufferGeometry();
+      const pos = new Float32Array(count * 3);
+      for (let i = 0; i < count * 3; i += 3) {
+        pos[i] = x + (Math.random() - 0.5) * size;
+        pos[i + 1] = y + (Math.random() - 0.5) * (size * 0.7);
+        pos[i + 2] = z + (Math.random() - 0.5) * size;
+      }
+      nebGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const nebMat = new THREE.PointsMaterial({
+        color: colorHex,
+        size: 3.5,
+        transparent: true,
+        opacity: 0.35,
+        blending: THREE.AdditiveBlending
+      });
+      return new THREE.Points(nebGeo, nebMat);
+    }
+    const cyanNebula = createNebula(0x00f0ff, -80, 40, -110, 70, 450);
+    const purpleNebula = createNebula(0x9333ea, 90, 30, -90, 80, 500);
+    const magentaNebula = createNebula(0xff007f, 10, -50, 90, 60, 350);
+    scene.add(cyanNebula);
+    scene.add(purpleNebula);
+    scene.add(magentaNebula);
+
+    // --- 3.3 Giant Planet Earth Hanging Below in Deep Space ---
+    const earthGroup = new THREE.Group();
+    earthGroup.position.set(-35, -55, -45);
+    earthGroup.rotation.z = THREE.MathUtils.degToRad(23.4);
+
+    const earthGeo = new THREE.SphereGeometry(32, 64, 64);
+    const earthMat = new THREE.MeshStandardMaterial({
+      color: 0x092b5a,
+      roughness: 0.3,
+      metalness: 0.2,
+      emissive: 0x031535,
+      emissiveIntensity: 0.5
+    });
+    const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+    earthGroup.add(earthMesh);
+
+    const landGeo = new THREE.SphereGeometry(32.12, 48, 48);
+    const landMat = new THREE.MeshStandardMaterial({
+      color: 0x15803d,
+      roughness: 0.8,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.5
+    });
+    const landMesh = new THREE.Mesh(landGeo, landMat);
+    earthGroup.add(landMesh);
+
+    const cloudGeo = new THREE.SphereGeometry(32.55, 48, 48);
+    const cloudMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.26,
+      wireframe: true
+    });
+    const cloudMesh = new THREE.Mesh(cloudGeo, cloudMat);
+    earthGroup.add(cloudMesh);
+
+    const haloGeo = new THREE.RingGeometry(32.8, 36.8, 64);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0x38bdf8,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.38,
+      blending: THREE.AdditiveBlending
+    });
+    const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+    haloMesh.rotation.x = Math.PI / 2;
+    earthGroup.add(haloMesh);
+
+    scene.add(earthGroup);
+
+    // --- 3.4 Ringed Gas Giant (Exoplanet Saturn) in Upper Sky ---
+    const saturnGroup = new THREE.Group();
+    saturnGroup.position.set(90, 50, -100);
+    saturnGroup.rotation.z = 0.45;
+    saturnGroup.rotation.x = 0.22;
+
+    const saturnGeo = new THREE.SphereGeometry(15, 36, 36);
+    const saturnMat = new THREE.MeshStandardMaterial({
+      color: 0xeab308,
+      roughness: 0.45,
+      emissive: 0x78350f,
+      emissiveIntensity: 0.35
+    });
+    const saturnMesh = new THREE.Mesh(saturnGeo, saturnMat);
+    saturnGroup.add(saturnMesh);
+
+    // Multi-band golden rings
+    const ringInnerGeo = new THREE.RingGeometry(18, 24, 64);
+    const ringInnerMat = new THREE.MeshBasicMaterial({
+      color: 0xfde047,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.75
+    });
+    const ringInner = new THREE.Mesh(ringInnerGeo, ringInnerMat);
+    ringInner.rotation.x = Math.PI / 2;
+    saturnGroup.add(ringInner);
+
+    const ringOuterGeo = new THREE.RingGeometry(25.5, 32, 64);
+    const ringOuterMat = new THREE.MeshBasicMaterial({
+      color: 0xfacc15,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.5
+    });
+    const ringOuter = new THREE.Mesh(ringOuterGeo, ringOuterMat);
+    ringOuter.rotation.x = Math.PI / 2;
+    saturnGroup.add(ringOuter);
+
+    scene.add(saturnGroup);
+
+    // --- 3.5 Distant Cosmic Sun / Pulsar Beacon ---
+    const sunGeo = new THREE.SphereGeometry(8, 24, 24);
+    const sunMat = new THREE.MeshBasicMaterial({ color: 0xfffbeb });
+    const sunMesh = new THREE.Mesh(sunGeo, sunMat);
+    sunMesh.position.set(130, 75, 110);
+    scene.add(sunMesh);
+
+    const sunCoronaGeo = new THREE.RingGeometry(9, 14, 32);
+    const sunCoronaMat = new THREE.MeshBasicMaterial({
+      color: 0xfef08a,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.4,
+      blending: THREE.AdditiveBlending
+    });
+    const sunCorona = new THREE.Mesh(sunCoronaGeo, sunCoronaMat);
+    sunCorona.position.copy(sunMesh.position);
+    sunCorona.lookAt(camera.position);
+    scene.add(sunCorona);
+
+    const sunGlowLight = new THREE.PointLight(0xfff7ed, 2.2, 350);
+    sunGlowLight.position.copy(sunMesh.position);
+    scene.add(sunGlowLight);
+
+    // --- 3.6 Shooting Stars (Meteors) ---
+    const meteors = [];
+    for (let m = 0; m < 6; m++) {
+      const mGeo = new THREE.CylinderGeometry(0.04, 0.25, 10, 6);
+      const mMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.9 });
+      const mMesh = new THREE.Mesh(mGeo, mMat);
+      mMesh.position.set((Math.random() - 0.5) * 140, 25 + Math.random() * 45, (Math.random() - 0.5) * 140);
+      mMesh.rotation.z = Math.PI / 3;
+      mMesh.rotation.x = Math.PI / 4;
+      scene.add(mMesh);
+      meteors.push({ mesh: mMesh, speed: 0.9 + Math.random() * 0.7 });
+    }
+
+    // --- 3.7 ISRO Deep-Space Recon Probe Satellite (Orbiting Station) ---
+    const probeGroup = new THREE.Group();
+    const probeBodyGeo = new THREE.BoxGeometry(1.2, 1.2, 2.0);
+    const probeBodyMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.1 });
+    const probeBody = new THREE.Mesh(probeBodyGeo, probeBodyMat);
+    probeGroup.add(probeBody);
+
+    // Solar panels on wings
+    const solarWingGeo = new THREE.BoxGeometry(3.6, 0.08, 1.0);
+    const solarWingMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, metalness: 0.5, roughness: 0.2 });
+    const solarWingL = new THREE.Mesh(solarWingGeo, solarWingMat);
+    solarWingL.position.set(2.4, 0, 0);
+    probeGroup.add(solarWingL);
+
+    const solarWingR = new THREE.Mesh(solarWingGeo, solarWingMat);
+    solarWingR.position.set(-2.4, 0, 0);
+    probeGroup.add(solarWingR);
+
+    // Dish antenna
+    const dishGeo = new THREE.ConeGeometry(0.8, 0.5, 16, 1, true);
+    const dishMat = new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.8 });
+    const dish = new THREE.Mesh(dishGeo, dishMat);
+    dish.position.set(0, 0, 1.2);
+    dish.rotation.x = Math.PI / 2;
+    probeGroup.add(dish);
+
+    // Blinking strobe beacon
+    const strobeLight = new THREE.PointLight(0xff0055, 1.8, 25);
+    strobeLight.position.set(0, 0.9, 0);
+    probeGroup.add(strobeLight);
+
+    probeGroup.position.set(26, 14, -20);
+    scene.add(probeGroup);
+
+    // --- 3.8 Cosmic Floating Space Dust (Parallax Particles) ---
+    const dustCount = 800;
+    const dustGeo = new THREE.BufferGeometry();
+    const dustPos = new Float32Array(dustCount * 3);
+    for (let i = 0; i < dustCount * 3; i += 3) {
+      dustPos[i] = (Math.random() - 0.5) * 140;
+      dustPos[i + 1] = (Math.random() - 0.5) * 70;
+      dustPos[i + 2] = (Math.random() - 0.5) * 140;
+    }
+    dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+    const dustMat = new THREE.PointsMaterial({
+      color: 0x7dd3fc,
+      size: 0.55,
+      transparent: true,
+      opacity: 0.5
+    });
+    const spaceDust = new THREE.Points(dustGeo, dustMat);
+    scene.add(spaceDust);
+
+    // --- 3.9 Floating Zero-Gravity Observation Decks (Glass Catwalks & Pods) ---
+    const hubDeckGeo = new THREE.CylinderGeometry(14, 14, 0.5, 32);
+    const hubDeckMat = new THREE.MeshStandardMaterial({
+      color: 0x060916,
+      transparent: true,
+      opacity: 0.6,
+      roughness: 0.1,
+      metalness: 0.95
+    });
+    const hubDeck = new THREE.Mesh(hubDeckGeo, hubDeckMat);
+    hubDeck.position.y = -0.5;
+    scene.add(hubDeck);
+
+    const hubRingGeo = new THREE.TorusGeometry(14, 0.18, 16, 64);
+    const hubRingMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+    const hubRing = new THREE.Mesh(hubRingGeo, hubRingMat);
+    hubRing.rotation.x = Math.PI / 2;
+    hubRing.position.y = -0.22;
+    scene.add(hubRing);
+
+    // Central hub ion thruster emitter underneath pointing into the cosmos
+    const hubThrusterGeo = new THREE.ConeGeometry(5.5, 10, 24, 1, true);
+    const hubThrusterMat = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+      transparent: true,
+      opacity: 0.22,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide
+    });
+    const hubThruster = new THREE.Mesh(hubThrusterGeo, hubThrusterMat);
+    hubThruster.position.y = -5.5;
+    hubThruster.rotation.x = Math.PI;
+    scene.add(hubThruster);
+
+    // Outer Station Habitat Halo Ring
+    const orbitalRingGeo = new THREE.TorusGeometry(52, 0.35, 16, 120);
+    const orbitalRingMat = new THREE.MeshBasicMaterial({ color: 0xa855f7, transparent: true, opacity: 0.45 });
+    const orbitalRing = new THREE.Mesh(orbitalRingGeo, orbitalRingMat);
+    orbitalRing.rotation.x = Math.PI / 2.2;
+    orbitalRing.position.y = 12;
+    scene.add(orbitalRing);
+
+    const podPositions = [
+      { x: 0, z: -34, col: 0x00f0ff },   // Space Hall
+      { x: 34, z: -12, col: 0x00f0ff },  // Energy Hall
+      { x: 32, z: 24, col: 0xa855f7 },   // AI Hall
+      { x: 0, z: 34, col: 0x10b981 },    // Bio Hall
+      { x: -34, z: 12, col: 0xf59e0b },  // Physics Lab
+      { x: -32, z: -24, col: 0xd97706 }  // Tamil Heritage
+    ];
+
+    podPositions.forEach(p => {
+      const podGeo = new THREE.CylinderGeometry(6, 6, 0.4, 6);
+      const podMat = new THREE.MeshStandardMaterial({
+        color: 0x050814,
+        transparent: true,
+        opacity: 0.55,
+        roughness: 0.15,
+        metalness: 0.9
+      });
+      const podMesh = new THREE.Mesh(podGeo, podMat);
+      podMesh.position.set(p.x, -0.5, p.z);
+      scene.add(podMesh);
+
+      const podRingGeo = new THREE.TorusGeometry(6, 0.12, 12, 6);
+      const podRingMat = new THREE.MeshBasicMaterial({ color: p.col });
+      const podRing = new THREE.Mesh(podRingGeo, podRingMat);
+      podRing.rotation.x = Math.PI / 2;
+      podRing.position.set(p.x, -0.25, p.z);
+      scene.add(podRing);
+
+      // Downward ion levitation emitter beneath each pod
+      const podThrusterGeo = new THREE.ConeGeometry(2.4, 4.8, 16, 1, true);
+      const podThrusterMat = new THREE.MeshBasicMaterial({
+        color: p.col,
+        transparent: true,
+        opacity: 0.28,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide
+      });
+      const podThruster = new THREE.Mesh(podThrusterGeo, podThrusterMat);
+      podThruster.position.set(p.x, -2.9, p.z);
+      podThruster.rotation.x = Math.PI;
+      scene.add(podThruster);
+
+      const dist = Math.sqrt(p.x * p.x + p.z * p.z);
+      const bridgeGeo = new THREE.BoxGeometry(1.6, 0.15, dist);
+      const bridgeMat = new THREE.MeshStandardMaterial({
+        color: 0x040612,
+        transparent: true,
+        opacity: 0.45,
+        metalness: 0.8
+      });
+      const bridge = new THREE.Mesh(bridgeGeo, bridgeMat);
+      bridge.position.set(p.x / 2, -0.45, p.z / 2);
+      bridge.lookAt(new THREE.Vector3(p.x, -0.45, p.z));
+      scene.add(bridge);
+
+      const stripGeo = new THREE.BoxGeometry(0.15, 0.05, dist);
+      const stripMat = new THREE.MeshBasicMaterial({ color: p.col });
+      const strip = new THREE.Mesh(stripGeo, stripMat);
+      strip.position.set(p.x / 2, -0.35, p.z / 2);
+      strip.lookAt(new THREE.Vector3(p.x, -0.35, p.z));
+      scene.add(strip);
+    });
 
     /* ===================================================================
        4. THE 6 HALL EXHIBIT 3D MODELS
@@ -1423,19 +1797,65 @@
       const delta = clock.getDelta();
       const elapsed = clock.getElapsedTime();
 
-      // Rotate globe
-      if (globeGroup) globeGroup.rotation.y += 0.008;
+      // Cosmic background starfield rotation
+      if (typeof cosmosStars !== 'undefined' && cosmosStars) {
+        cosmosStars.rotation.y += 0.00015;
+      }
 
-      // Rotate spinning exhibits (turbines, DNA helix, armillary sphere)
-      exhibits.forEach(ex => {
+      // Planet Earth axial rotation (ocean globe, land continents & swirling clouds)
+      if (typeof earthMesh !== 'undefined' && earthMesh) earthMesh.rotation.y += 0.0007;
+      if (typeof landMesh !== 'undefined' && landMesh) landMesh.rotation.y += 0.0007;
+      if (typeof cloudMesh !== 'undefined' && cloudMesh) {
+        cloudMesh.rotation.y += 0.0012;
+        cloudMesh.rotation.x += 0.0002;
+      }
+
+      // Ringed Gas Giant Saturn axial rotation
+      if (typeof saturnGroup !== 'undefined' && saturnGroup) saturnGroup.rotation.y += 0.0009;
+
+      // Outer station orbital halo ring
+      if (typeof orbitalRing !== 'undefined' && orbitalRing) orbitalRing.rotation.z += 0.0008;
+
+      // Shooting Stars / Meteors streaking across the cosmos
+      if (typeof meteors !== 'undefined') {
+        meteors.forEach(m => {
+          m.mesh.position.x -= m.speed;
+          m.mesh.position.y -= m.speed * 0.6;
+          m.mesh.position.z -= m.speed * 0.4;
+          if (m.mesh.position.y < -35 || m.mesh.position.x < -130) {
+            m.mesh.position.set(70 + Math.random() * 60, 35 + Math.random() * 40, (Math.random() - 0.5) * 140);
+          }
+        });
+      }
+
+      // ISRO Research Probe orbit around the station
+      if (typeof probeGroup !== 'undefined' && probeGroup) {
+        const pAngle = elapsed * 0.22;
+        probeGroup.position.x = Math.cos(pAngle) * 38;
+        probeGroup.position.z = Math.sin(pAngle) * 38;
+        probeGroup.position.y = 12 + Math.sin(elapsed * 0.6) * 3.5;
+        probeGroup.rotation.y = -pAngle;
+        if (typeof strobeLight !== 'undefined') {
+          strobeLight.intensity = Math.sin(elapsed * 6) > 0.4 ? 2.5 : 0.1;
+        }
+      }
+
+      // Cosmic space dust drift
+      if (typeof spaceDust !== 'undefined' && spaceDust) spaceDust.rotation.y += 0.0003;
+
+      // Rotate central holographic globe
+      if (typeof globeGroup !== 'undefined' && globeGroup) globeGroup.rotation.y += 0.008;
+
+      // Rotate spinning exhibits & gentle zero-G bobbing
+      exhibits.forEach((ex, idx) => {
         if (ex.spinner) ex.spinner.rotation.y += 0.015;
+        if (ex.group && ex.hall !== 'lobby') {
+          ex.group.position.y = 5 + Math.sin(elapsed * 1.5 + idx * 1.1) * 0.35;
+        }
       });
 
-      // Pulse ceiling dome
-      ceilingRing.rotation.z += 0.003;
-
-      // Exhaust particle animation
-      if (exhaustParticles) {
+      // Rocket exhaust particles in Space Hall
+      if (typeof exhaustParticles !== 'undefined' && exhaustParticles) {
         const pos = exhaustParticles.geometry.attributes.position.array;
         for (let i = 1; i < pos.length; i += 3) {
           pos[i] -= 0.25;
