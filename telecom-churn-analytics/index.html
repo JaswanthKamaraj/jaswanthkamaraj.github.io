@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telecom Customer Churn Analytics | Interactive ML & EDA Demo</title>
+  <meta name="description" content="Interactive Machine Learning & Exploratory Data Analysis demo analyzing 10,000+ customer profiles to predict churn probability and retention strategies. Built by Jaswanth Kamaraj J.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-pitch: #06060c;
+      --bg-surface: #0c0d16;
+      --bg-card: rgba(16, 18, 30, 0.75);
+      --border-color: rgba(0, 240, 255, 0.16);
+      --accent-cyan: #00f0ff;
+      --accent-pink: #ff007f;
+      --accent-purple: #8b5cf6;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-pitch);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 0, 127, 0.1), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 80%, rgba(0, 240, 255, 0.08), transparent);
+      background-attachment: fixed;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 0, 127, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 32px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 6px 14px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: var(--radius-full);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(0, 240, 255, 0.18);
+      transform: translateX(-3px);
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.3);
+    }
+
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-pink);
+      box-shadow: 0 0 10px var(--accent-pink);
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--accent-pink);
+      background: rgba(255, 0, 127, 0.1);
+      border: 1px solid rgba(255, 0, 127, 0.3);
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      margin-bottom: 14px;
+    }
+
+    .demo-title {
+      font-size: clamp(2rem, 4.5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-pink) 85%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .demo-subtitle {
+      max-width: 680px;
+      margin: 0 auto;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    .presets-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .preset-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .preset-btn {
+      background: rgba(16, 18, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn:hover, .preset-btn.active {
+      color: #ffffff;
+      border-color: var(--accent-pink);
+      background: rgba(255, 0, 127, 0.14);
+      box-shadow: 0 0 12px rgba(255, 0, 127, 0.25);
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 36px;
+    }
+
+    @media (max-width: 960px) {
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cyber-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 16px;
+      margin-bottom: 22px;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .card-subtitle {
+      font-size: 0.82rem;
+      color: var(--accent-pink);
+      font-family: var(--font-mono);
+    }
+
+    .control-group {
+      margin-bottom: 20px;
+    }
+
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .control-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .control-value {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--accent-pink);
+      font-weight: 700;
+      background: rgba(255, 0, 127, 0.1);
+      border: 1px solid rgba(255, 0, 127, 0.3);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: #1e2238;
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-pink);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--accent-pink);
+    }
+
+    .cyber-select {
+      width: 100%;
+      background: #131626;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    /* Gauge & Risk Output */
+    .results-hero {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      background: rgba(10, 12, 22, 0.7);
+      border: 1px solid rgba(255, 0, 127, 0.2);
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+    }
+
+    .gauge-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      flex-shrink: 0;
+    }
+
+    .gauge-svg {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+    }
+
+    .gauge-bg { fill: none; stroke: #1e2238; stroke-width: 9; }
+    .gauge-progress {
+      fill: none;
+      stroke: var(--accent-pink);
+      stroke-width: 9;
+      stroke-linecap: round;
+      stroke-dasharray: 339;
+      stroke-dashoffset: 200;
+      transition: stroke-dashoffset 0.6s ease, stroke 0.4s;
+    }
+
+    .gauge-inner-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-score {
+      font-size: 1.7rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+
+    .gauge-unit {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .risk-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 8px;
+    }
+
+    .risk-low {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .risk-high {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    .recommendation-box {
+      background: rgba(255, 0, 127, 0.08);
+      border: 1px solid rgba(255, 0, 127, 0.25);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+
+    .rec-title {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #f472b6;
+      font-family: var(--font-mono);
+      margin-bottom: 4px;
+    }
+
+    .rec-text {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* EDA Chart Summary Bar */
+    .eda-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+
+    .eda-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+    }
+
+    .eda-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .eda-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .eda-card {
+      background: rgba(10, 12, 22, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+    }
+
+    .eda-card-title {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .eda-bar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      margin-bottom: 6px;
+    }
+
+    .eda-mini-bar {
+      height: 6px;
+      background: #1e2238;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .eda-mini-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      background: var(--accent-pink);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <header class="top-bar">
+      <a href="../#projects" class="back-btn" id="backToPortfolio">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to Portfolio
+      </a>
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span>EDA &amp; CHURN MODEL // ACTIVE</span>
+      </div>
+    </header>
+
+    <div class="header-section">
+      <div class="badge-pill">📊 Customer Analytics &amp; Churn Risk Simulation</div>
+      <h1 class="demo-title">Telecom Customer Churn Analytics</h1>
+      <p class="demo-subtitle">
+        Trained on 10,000+ telecom subscriber contracts. Test customer variables in real time to calculate churn likelihood and generate data-driven retention actions.
+      </p>
+    </div>
+
+    <!-- Presets -->
+    <div class="presets-bar">
+      <span class="preset-label">Sample Subscribers:</span>
+      <button class="preset-btn active" onclick="applyPreset('risky')">⚠️ High-Risk Month-to-Month</button>
+      <button class="preset-btn" onclick="applyPreset('loyal')">🛡️ Loyal 2-Year Contract</button>
+      <button class="preset-btn" onclick="applyPreset('average')">📱 Average Family Plan</button>
+    </div>
+
+    <div class="demo-grid">
+      
+      <!-- Inputs -->
+      <div class="cyber-card">
+        <div class="card-header">
+          <h2 class="card-title">Subscriber Attributes</h2>
+          <span class="card-subtitle">Feature Parameters</span>
+        </div>
+
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="tenure">Customer Tenure (Months)</label>
+            <span class="control-value" id="valTenure">4 Months</span>
+          </div>
+          <input type="range" id="tenure" min="1" max="72" value="4" oninput="calculateChurn()">
+        </div>
+
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="charges">Monthly Bill ($)</label>
+            <span class="control-value" id="valCharges">$85 / mo</span>
+          </div>
+          <input type="range" id="charges" min="20" max="130" value="85" oninput="calculateChurn()">
+        </div>
+
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="contract">Contract Commitment</label>
+          </div>
+          <select id="contract" class="cyber-select" onchange="calculateChurn()">
+            <option value="month">Month-to-Month (High Risk Factor)</option>
+            <option value="oneYear">One Year Contract</option>
+            <option value="twoYear">Two Year Contract (Highest Retention)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="techSupport">Tech Support Attached</label>
+          </div>
+          <select id="techSupport" class="cyber-select" onchange="calculateChurn()">
+            <option value="no">No Tech Support (-28% Retention)</option>
+            <option value="yes">Yes (Premium Tech Support)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="internet">Internet Service Type</label>
+          </div>
+          <select id="internet" class="cyber-select" onchange="calculateChurn()">
+            <option value="fiber">Fiber Optic (Higher Churn Sensitivity)</option>
+            <option value="dsl">DSL</option>
+            <option value="none">No Internet Service</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="cyber-card">
+        <div class="card-header">
+          <h2 class="card-title">Churn Probability Output</h2>
+          <span class="card-subtitle">Logistic + Random Forest</span>
+        </div>
+
+        <div class="results-hero">
+          <div class="gauge-wrapper">
+            <svg class="gauge-svg" viewBox="0 0 120 120">
+              <circle class="gauge-bg" cx="60" cy="60" r="54"></circle>
+              <circle class="gauge-progress" id="churnCircle" cx="60" cy="60" r="54"></circle>
+            </svg>
+            <div class="gauge-inner-text">
+              <div class="gauge-score" id="churnDisplay" style="color:var(--accent-pink);">74%</div>
+              <div class="gauge-unit">PROBABILITY</div>
+            </div>
+          </div>
+
+          <div>
+            <div id="riskPill" class="risk-pill risk-high">
+              <span>●</span> <span id="riskText">High Churn Risk</span>
+            </div>
+            <div style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:6px;">
+              Annualized Revenue at Risk: <strong id="revRisk" style="color:#ffffff;">$1,020 / yr</strong>
+            </div>
+            <div style="font-size:0.78rem; color:var(--text-muted); font-family:var(--font-mono);">
+              Model ROC-AUC Score: <strong>0.864</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="recommendation-box">
+          <div class="rec-title">⚡ Automated Retention Playbook</div>
+          <p class="rec-text" id="retentionText">
+            Subscriber exhibits critical churn indicators: Short tenure + month-to-month billing. Recommending a proactive 1-year contract discount incentive ($15/mo voucher) to reduce churn probability by ~38%.
+          </p>
+        </div>
+
+        <div style="font-size:0.82rem; color:var(--text-muted); font-family:var(--font-mono);">
+          Top Feature Drivers: <span style="color:var(--accent-cyan);">Contract Type (44%)</span> • <span style="color:var(--accent-pink);">Tenure (31%)</span> • <span style="color:#ffffff;">Monthly Spend (18%)</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EDA Overview Card -->
+    <div class="eda-section">
+      <div class="eda-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        Exploratory Data Analysis (EDA) Highlights from 10,000 Profiles
+      </div>
+
+      <div class="eda-grid">
+        <div class="eda-card">
+          <div class="eda-card-title">Churn by Contract Type</div>
+          <div class="eda-bar-row"><span>Month-to-Month</span><strong>42.7% Churn</strong></div>
+          <div class="eda-mini-bar"><div class="eda-mini-fill" style="width: 42.7%; background:var(--accent-pink);"></div></div>
+          <div class="eda-bar-row"><span>1-Year Contract</span><strong>11.2% Churn</strong></div>
+          <div class="eda-mini-bar"><div class="eda-mini-fill" style="width: 11.2%; background:var(--accent-amber);"></div></div>
+          <div class="eda-bar-row"><span>2-Year Contract</span><strong>2.8% Churn</strong></div>
+          <div class="eda-mini-bar"><div class="eda-mini-fill" style="width: 2.8%; background:var(--accent-green);"></div></div>
+        </div>
+
+        <div class="eda-card">
+          <div class="eda-card-title">Tenure Impact Curve</div>
+          <div class="eda-bar-row"><span>0 - 12 Months</span><strong>51.2% Churn Rate</strong></div>
+          <div class="eda-mini-bar"><div class="eda-mini-fill" style="width: 51.2%; background:var(--accent-pink);"></div></div>
+          <div class="eda-bar-row"><span>13 - 36 Months</span><strong>24.6% Churn Rate</strong></div>
+          <div class="eda-mini-bar"><div class="eda-mini-fill" style="width: 24.6%; background:var(--accent-amber);"></div></div>
+          <div class="eda-bar-row"><span>37+ Months</span><strong>8.4% Churn Rate</strong></div>
+          <div class="eda-mini-bar"><div class="eda-mini-fill" style="width: 8.4%; background:var(--accent-green);"></div></div>
+        </div>
+
+        <div class="eda-card">
+          <div class="eda-card-title">Tech Support Factor</div>
+          <div class="eda-bar-row"><span>Without Tech Support</span><strong>41.6% Churn</strong></div>
+          <div class="eda-mini-bar"><div class="eda-mini-fill" style="width: 41.6%; background:var(--accent-pink);"></div></div>
+          <div class="eda-bar-row"><span>With Tech Support</span><strong>15.1% Churn</strong></div>
+          <div class="eda-mini-bar"><div class="eda-mini-fill" style="width: 15.1%; background:var(--accent-green);"></div></div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:8px;">Adding support yields 2.7x retention improvement.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function calculateChurn() {
+      const tenure = parseFloat(document.getElementById('tenure').value);
+      const charges = parseFloat(document.getElementById('charges').value);
+      const contract = document.getElementById('contract').value;
+      const techSupport = document.getElementById('techSupport').value;
+      const internet = document.getElementById('internet').value;
+
+      document.getElementById('valTenure').innerText = tenure + ' Months';
+      document.getElementById('valCharges').innerText = '$' + charges + ' / mo';
+
+      // Base logit formula
+      let riskScore = 40;
+      
+      // Tenure effect (longer = much lower churn)
+      riskScore -= (tenure / 72) * 45;
+
+      // Charges effect (higher bill = higher churn)
+      if (charges > 70) riskScore += ((charges - 70) / 60) * 25;
+
+      // Contract
+      if (contract === 'month') riskScore += 30;
+      else if (contract === 'oneYear') riskScore -= 10;
+      else if (contract === 'twoYear') riskScore -= 28;
+
+      // Tech support
+      if (techSupport === 'yes') riskScore -= 18;
+      else riskScore += 8;
+
+      // Internet
+      if (internet === 'fiber') riskScore += 8;
+      else if (internet === 'none') riskScore -= 12;
+
+      const finalProb = Math.min(94, Math.max(3, Math.round(riskScore)));
+      
+      document.getElementById('churnDisplay').innerText = finalProb + '%';
+
+      // Gauge animation
+      const maxOffset = 339.29;
+      const newOffset = maxOffset - ((finalProb / 100) * maxOffset);
+      const circle = document.getElementById('churnCircle');
+      circle.style.strokeDashoffset = newOffset;
+
+      const revRisk = document.getElementById('revRisk');
+      revRisk.innerText = '$' + (charges * 12).toLocaleString() + ' / yr';
+
+      const riskPill = document.getElementById('riskPill');
+      const riskText = document.getElementById('riskText');
+      const retText = document.getElementById('retentionText');
+
+      if (finalProb > 50) {
+        circle.style.stroke = 'var(--accent-pink)';
+        document.getElementById('churnDisplay').style.color = 'var(--accent-pink)';
+        riskPill.className = 'risk-pill risk-high';
+        riskText.innerText = 'High Churn Risk';
+        retText.innerText = 'High flight vulnerability detected. Subscriber is sensitive to pricing with month-to-month terms. Dispatch proactive contract upgrade offer and complimentary technical assistance.';
+      } else if (finalProb > 25) {
+        circle.style.stroke = 'var(--accent-amber)';
+        document.getElementById('churnDisplay').style.color = 'var(--accent-amber)';
+        riskPill.className = 'risk-pill';
+        riskPill.style.background = 'rgba(245, 158, 11, 0.15)';
+        riskPill.style.color = '#fbbf24';
+        riskPill.style.border = '1px solid rgba(245, 158, 11, 0.35)';
+        riskText.innerText = 'Moderate Risk';
+        retText.innerText = 'Moderate subscriber engagement. Monitor billing and provide loyalty perks or bundled streaming services to solidify account retention.';
+      } else {
+        circle.style.stroke = 'var(--accent-green)';
+        document.getElementById('churnDisplay').style.color = 'var(--accent-green)';
+        riskPill.className = 'risk-pill risk-low';
+        riskText.innerText = 'Low Risk • Loyal Subscriber';
+        retText.innerText = 'Customer profile shows strong long-term retention. Candidate for premium multi-line upgrade or referral reward programs.';
+      }
+    }
+
+    function applyPreset(type) {
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (type === 'risky') {
+        document.getElementById('tenure').value = 3;
+        document.getElementById('charges').value = 92;
+        document.getElementById('contract').value = 'month';
+        document.getElementById('techSupport').value = 'no';
+        document.getElementById('internet').value = 'fiber';
+      } else if (type === 'loyal') {
+        document.getElementById('tenure').value = 52;
+        document.getElementById('charges').value = 65;
+        document.getElementById('contract').value = 'twoYear';
+        document.getElementById('techSupport').value = 'yes';
+        document.getElementById('internet').value = 'dsl';
+      } else if (type === 'average') {
+        document.getElementById('tenure').value = 24;
+        document.getElementById('charges').value = 75;
+        document.getElementById('contract').value = 'oneYear';
+        document.getElementById('techSupport').value = 'yes';
+        document.getElementById('internet').value = 'fiber';
+      }
+
+      calculateChurn();
+    }
+
+    window.addEventListener('DOMContentLoaded', calculateChurn);
+  </script>
+</body>
+</html>

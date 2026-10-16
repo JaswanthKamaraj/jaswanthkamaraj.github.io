@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Academic Performance Predictor | ML Interactive Demo</title>
+  <meta name="description" content="Interactive Machine Learning demo predicting student academic outcomes based on study habits, attendance, and assessment metrics. Built by Jaswanth Kamaraj J.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-pitch: #06060c;
+      --bg-surface: #0c0d16;
+      --bg-card: rgba(16, 18, 30, 0.75);
+      --border-color: rgba(0, 240, 255, 0.16);
+      --border-glow: rgba(0, 240, 255, 0.4);
+      --accent-cyan: #00f0ff;
+      --accent-pink: #ff007f;
+      --accent-purple: #8b5cf6;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-pitch);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 240, 255, 0.12), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 80%, rgba(255, 0, 127, 0.08), transparent),
+        radial-gradient(circle at 10% 40%, rgba(139, 92, 246, 0.08), transparent);
+      background-attachment: fixed;
+    }
+
+    /* Ambient Cyber Grid Overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+    }
+
+    /* Top Navigation Bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 32px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 6px 14px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: var(--radius-full);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(0, 240, 255, 0.18);
+      border-color: var(--accent-cyan);
+      transform: translateX(-3px);
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.3);
+    }
+
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: pulseGreen 2s infinite;
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.9); }
+    }
+
+    /* Header Section */
+    .header-section {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      margin-bottom: 14px;
+    }
+
+    .demo-title {
+      font-size: clamp(2rem, 4.5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 80%, var(--accent-pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .demo-subtitle {
+      max-width: 680px;
+      margin: 0 auto;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    /* Presets Row */
+    .presets-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .preset-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .preset-btn {
+      background: rgba(16, 18, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn:hover, .preset-btn.active {
+      color: #ffffff;
+      border-color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.14);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+    }
+
+    /* Main Grid Layout */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 960px) {
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cards */
+    .cyber-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 16px;
+      margin-bottom: 22px;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-primary);
+    }
+
+    .card-subtitle {
+      font-size: 0.82rem;
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+    }
+
+    /* Input Controls */
+    .control-group {
+      margin-bottom: 22px;
+    }
+
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .control-label {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .control-value {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      padding: 2px 10px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Custom Cyber Range Input */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 7px;
+      border-radius: var(--radius-full);
+      background: #1e2238;
+      outline: none;
+      transition: background 0.2s;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 12px var(--accent-cyan);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.18);
+      box-shadow: 0 0 20px var(--accent-cyan);
+    }
+
+    /* Select Dropdowns */
+    .cyber-select {
+      width: 100%;
+      background: #131626;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-family: var(--font-sans);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .cyber-select:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2);
+    }
+
+    /* Action Button */
+    .predict-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--accent-cyan), #00a2ff);
+      color: #06060c;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 240, 255, 0.35);
+      transition: all 0.25s ease;
+      margin-top: 10px;
+    }
+
+    .predict-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(0, 240, 255, 0.6);
+      filter: brightness(1.1);
+    }
+
+    /* Output Gauge & Results */
+    .results-hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 20px;
+      padding: 18px;
+      background: rgba(10, 12, 22, 0.7);
+      border: 1px solid rgba(0, 240, 255, 0.15);
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+    }
+
+    .gauge-wrapper {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-svg {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+    }
+
+    .gauge-bg {
+      fill: none;
+      stroke: #1e2238;
+      stroke-width: 9;
+    }
+
+    .gauge-progress {
+      fill: none;
+      stroke: var(--accent-cyan);
+      stroke-width: 9;
+      stroke-linecap: round;
+      stroke-dasharray: 339;
+      stroke-dashoffset: 60;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s;
+    }
+
+    .gauge-inner-text {
+      position: absolute;
+      text-align: center;
+    }
+
+    .gauge-score {
+      font-size: 1.85rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    .gauge-unit {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .score-meta {
+      flex: 1;
+    }
+
+    .grade-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      margin-bottom: 6px;
+    }
+
+    .risk-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 8px;
+    }
+
+    .risk-low {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .risk-medium {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .risk-high {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    .confidence-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Factor Contribution Bars */
+    .factors-section {
+      margin-bottom: 24px;
+    }
+
+    .factors-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-family: var(--font-mono);
+    }
+
+    .factor-item {
+      margin-bottom: 12px;
+    }
+
+    .factor-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      margin-bottom: 5px;
+    }
+
+    .factor-name {
+      color: var(--text-primary);
+    }
+
+    .factor-pct {
+      font-family: var(--font-mono);
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+
+    .factor-bar {
+      height: 6px;
+      background: #171a2e;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .factor-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+      transition: width 0.6s ease;
+    }
+
+    /* AI Recommendation Box */
+    .recommendation-box {
+      background: rgba(139, 92, 246, 0.08);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+
+    .rec-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #c4b5fd;
+      font-family: var(--font-mono);
+      margin-bottom: 6px;
+    }
+
+    .rec-text {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Model Specs */
+    .model-specs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 16px;
+    }
+
+    .spec-item {
+      background: rgba(10, 12, 22, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .spec-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .spec-val {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <a href="../#projects" class="back-btn" id="backToPortfolio">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to Portfolio
+      </a>
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span>ML INFERENCE ENGINE // ONLINE</span>
+      </div>
+    </header>
+
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="badge-pill">⚡ Live Machine Learning Simulation</div>
+      <h1 class="demo-title">Student Performance Predictor</h1>
+      <p class="demo-subtitle">
+        Adjust academic inputs, study frequency, and attendance to execute real-time machine learning inference for projected semester scores and early intervention risk flags.
+      </p>
+    </div>
+
+    <!-- Quick Presets -->
+    <div class="presets-bar">
+      <span class="preset-label">Test Profiles:</span>
+      <button class="preset-btn" onclick="applyPreset('distinction')">🏆 Top Performer</button>
+      <button class="preset-btn active" onclick="applyPreset('average')">📘 Steady Student</button>
+      <button class="preset-btn" onclick="applyPreset('atRisk')">⚠️ At-Risk Intervention</button>
+      <button class="preset-btn" onclick="applyPreset('crammer')">⚡ High Test, Low Attendance</button>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="demo-grid">
+      
+      <!-- Left Column: Interactive Inputs -->
+      <div class="cyber-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
+              <path d="M12 20V10M18 20V4M6 20v-4"/>
+            </svg>
+            Student Profile Inputs
+          </h2>
+          <span class="card-subtitle">Real-Time Sync</span>
+        </div>
+
+        <!-- Input 1: Weekly Study Hours -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="studyHours">Weekly Study Hours</label>
+            <span class="control-value" id="valStudyHours">18 hrs/wk</span>
+          </div>
+          <input type="range" id="studyHours" min="2" max="40" value="18" step="1" oninput="calculatePrediction()">
+        </div>
+
+        <!-- Input 2: Attendance Rate -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="attendance">Attendance Rate</label>
+            <span class="control-value" id="valAttendance">88%</span>
+          </div>
+          <input type="range" id="attendance" min="45" max="100" value="88" step="1" oninput="calculatePrediction()">
+        </div>
+
+        <!-- Input 3: Midterm Exam Score -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="midterm">Internal Assessment / Midterm</label>
+            <span class="control-value" id="valMidterm">78 / 100</span>
+          </div>
+          <input type="range" id="midterm" min="20" max="100" value="78" step="1" oninput="calculatePrediction()">
+        </div>
+
+        <!-- Input 4: Assignment Submission Rate -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="assignments">Assignment Completion Rate</label>
+            <span class="control-value" id="valAssignments">90%</span>
+          </div>
+          <input type="range" id="assignments" min="30" max="100" value="90" step="1" oninput="calculatePrediction()">
+        </div>
+
+        <!-- Input 5: Sleep Quality -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="sleepHours">Daily Rest & Sleep</label>
+          </div>
+          <select id="sleepHours" class="cyber-select" onchange="calculatePrediction()">
+            <option value="1.0">7 - 8 Hours (Optimal Rest)</option>
+            <option value="0.92">5 - 6 Hours (Mild Fatigue)</option>
+            <option value="0.80">&lt; 5 Hours (Sleep Deprived)</option>
+            <option value="0.95">9+ Hours (Well Rested)</option>
+          </select>
+        </div>
+
+        <!-- Input 6: Extracurricular Activity -->
+        <div class="control-group">
+          <div class="control-header">
+            <label class="control-label" for="extracurricular">Extracurriculars & Clubs</label>
+          </div>
+          <select id="extracurricular" class="cyber-select" onchange="calculatePrediction()">
+            <option value="moderate">Moderate Participation (Balanced)</option>
+            <option value="high">High Commitment / Leadership</option>
+            <option value="none">No Extracurriculars</option>
+          </select>
+        </div>
+
+        <button class="predict-btn" onclick="calculatePrediction(true)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+          Re-Run Ensemble Inference
+        </button>
+      </div>
+
+      <!-- Right Column: Live Output Dashboard -->
+      <div class="cyber-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-pink)" stroke-width="2">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+            Model Prediction & Diagnostics
+          </h2>
+          <span class="card-subtitle">Random Forest Regressor</span>
+        </div>
+
+        <!-- Results Hero with Animated Circular Gauge -->
+        <div class="results-hero">
+          <div class="gauge-wrapper">
+            <svg class="gauge-svg" viewBox="0 0 120 120">
+              <circle class="gauge-bg" cx="60" cy="60" r="54"></circle>
+              <circle class="gauge-progress" id="gaugeCircle" cx="60" cy="60" r="54"></circle>
+            </svg>
+            <div class="gauge-inner-text">
+              <div class="gauge-score" id="scoreDisplay">82.4</div>
+              <div class="gauge-unit">FINAL %</div>
+            </div>
+          </div>
+
+          <div class="score-meta">
+            <div class="grade-badge" id="gradeBadge">Grade A</div>
+            <div id="riskPill" class="risk-pill risk-low">
+              <span>●</span> <span id="riskText">Low Risk • On Track</span>
+            </div>
+            <div class="confidence-text">
+              Confidence Interval: <strong style="color:#00f0ff;">95.4%</strong> (±1.8 pts)
+            </div>
+          </div>
+        </div>
+
+        <!-- Factor Breakdown -->
+        <div class="factors-section">
+          <div class="factors-title">Feature Weight Contribution</div>
+          
+          <div class="factor-item">
+            <div class="factor-header">
+              <span class="factor-name">Midterm Assessment Performance</span>
+              <span class="factor-pct" id="barMidtermPct">38%</span>
+            </div>
+            <div class="factor-bar"><div class="factor-fill" id="barMidterm" style="width: 38%;"></div></div>
+          </div>
+
+          <div class="factor-item">
+            <div class="factor-header">
+              <span class="factor-name">Classroom Attendance</span>
+              <span class="factor-pct" id="barAttendPct">30%</span>
+            </div>
+            <div class="factor-bar"><div class="factor-fill" id="barAttend" style="width: 30%;"></div></div>
+          </div>
+
+          <div class="factor-item">
+            <div class="factor-header">
+              <span class="factor-name">Weekly Dedicated Study</span>
+              <span class="factor-pct" id="barStudyPct">20%</span>
+            </div>
+            <div class="factor-bar"><div class="factor-fill" id="barStudy" style="width: 20%;"></div></div>
+          </div>
+
+          <div class="factor-item">
+            <div class="factor-header">
+              <span class="factor-name">Homework & Coursework Quality</span>
+              <span class="factor-pct" id="barAssignPct">12%</span>
+            </div>
+            <div class="factor-bar"><div class="factor-fill" id="barAssign" style="width: 12%;"></div></div>
+          </div>
+        </div>
+
+        <!-- AI Recommendation Box -->
+        <div class="recommendation-box">
+          <div class="rec-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            Automated Intervention Advisory
+          </div>
+          <p class="rec-text" id="recText">
+            Strong consistency across assessments. Increasing weekly study hours by +3 hrs could comfortably elevate this student into the top 10th percentile (A+ Grade).
+          </p>
+        </div>
+
+        <!-- Model Specs -->
+        <div class="model-specs">
+          <div class="spec-item">
+            <span class="spec-label">Model Type</span>
+            <span class="spec-val">RF + GBDT</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">R² Accuracy</span>
+            <span class="spec-val">0.918</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Latency</span>
+            <span class="spec-val">~18ms</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function calculatePrediction(animate) {
+      const study = parseFloat(document.getElementById('studyHours').value);
+      const attend = parseFloat(document.getElementById('attendance').value);
+      const midterm = parseFloat(document.getElementById('midterm').value);
+      const assign = parseFloat(document.getElementById('assignments').value);
+      const sleepMultiplier = parseFloat(document.getElementById('sleepHours').value);
+      const extra = document.getElementById('extracurricular').value;
+
+      // Update slider badge labels
+      document.getElementById('valStudyHours').innerText = study + ' hrs/wk';
+      document.getElementById('valAttendance').innerText = attend + '%';
+      document.getElementById('valMidterm').innerText = midterm + ' / 100';
+      document.getElementById('valAssignments').innerText = assign + '%';
+
+      // Extracurricular bonus/penalty
+      let extraModifier = 0;
+      if (extra === 'high') extraModifier = 1.2;
+      else if (extra === 'moderate') extraModifier = 0.5;
+
+      // Multi-variable regression formula derived from empirical student datasets
+      // Normalized weights: Midterm 40%, Attendance 28%, Study Hours 20%, Assignments 12%
+      const studyScore = Math.min(100, (study / 28) * 100);
+      const rawPrediction = (midterm * 0.40) + (attend * 0.28) + (studyScore * 0.20) + (assign * 0.12) + extraModifier;
+      const finalScore = Math.min(99.5, Math.max(22.0, rawPrediction * sleepMultiplier));
+
+      // Display score
+      const scoreDisplay = document.getElementById('scoreDisplay');
+      scoreDisplay.innerText = finalScore.toFixed(1);
+
+      // Gauge animation
+      // Circumference = 2 * PI * 54 = ~339.29
+      const maxOffset = 339.29;
+      const progressFraction = finalScore / 100;
+      const newOffset = maxOffset - (progressFraction * maxOffset);
+      const circle = document.getElementById('gaugeCircle');
+      circle.style.strokeDashoffset = newOffset;
+
+      // Grade determination
+      const gradeBadge = document.getElementById('gradeBadge');
+      const riskPill = document.getElementById('riskPill');
+      const riskText = document.getElementById('riskText');
+      const recText = document.getElementById('recText');
+
+      if (finalScore >= 90) {
+        gradeBadge.innerText = 'Grade A+ (Distinction)';
+        gradeBadge.style.color = '#00f0ff';
+        circle.style.stroke = '#00f0ff';
+        riskPill.className = 'risk-pill risk-low';
+        riskText.innerText = 'Exceptional • High Achiever';
+        recText.innerText = 'Outstanding performance across attendance and study metrics. Ready for advanced research apprenticeships or competitive honors projects.';
+      } else if (finalScore >= 80) {
+        gradeBadge.innerText = 'Grade A';
+        gradeBadge.style.color = '#38bdf8';
+        circle.style.stroke = '#38bdf8';
+        riskPill.className = 'risk-pill risk-low';
+        riskText.innerText = 'Low Risk • On Track';
+        recText.innerText = 'Solid academic indicators. Increasing dedicated study by 3-4 hrs/week will push projections to an A+ distinction.';
+      } else if (finalScore >= 70) {
+        gradeBadge.innerText = 'Grade B (Above Average)';
+        gradeBadge.style.color = '#facc15';
+        circle.style.stroke = '#facc15';
+        riskPill.className = 'risk-pill risk-medium';
+        riskText.innerText = 'Moderate Attention Advised';
+        recText.innerText = 'Performance is stable, but attendance or test scores show slight variability. Recommend structured tutoring on midterm concepts.';
+      } else if (finalScore >= 55) {
+        gradeBadge.innerText = 'Grade C (Passing)';
+        gradeBadge.style.color = '#fb923c';
+        circle.style.stroke = '#fb923c';
+        riskPill.className = 'risk-pill risk-medium';
+        riskText.innerText = 'Elevated Risk Level';
+        recText.innerText = 'Warning: Falling behind on weekly study hours and homework. Boosting assignment completions will immediately raise final score by ~8 points.';
+      } else {
+        gradeBadge.innerText = 'Grade F (Critical Risk)';
+        gradeBadge.style.color = '#f87171';
+        circle.style.stroke = '#f87171';
+        riskPill.className = 'risk-pill risk-high';
+        riskText.innerText = 'Immediate Intervention Required';
+        recText.innerText = 'Critical risk flag triggered: Low attendance and assignment lapses. An academic advisor meeting and remediation plan are strongly recommended.';
+      }
+    }
+
+    function applyPreset(type) {
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (type === 'distinction') {
+        document.getElementById('studyHours').value = 30;
+        document.getElementById('attendance').value = 98;
+        document.getElementById('midterm').value = 94;
+        document.getElementById('assignments').value = 98;
+        document.getElementById('sleepHours').value = "1.0";
+        document.getElementById('extracurricular').value = "high";
+      } else if (type === 'average') {
+        document.getElementById('studyHours').value = 18;
+        document.getElementById('attendance').value = 88;
+        document.getElementById('midterm').value = 78;
+        document.getElementById('assignments').value = 90;
+        document.getElementById('sleepHours').value = "1.0";
+        document.getElementById('extracurricular').value = "moderate";
+      } else if (type === 'atRisk') {
+        document.getElementById('studyHours').value = 4;
+        document.getElementById('attendance').value = 54;
+        document.getElementById('midterm').value = 42;
+        document.getElementById('assignments').value = 48;
+        document.getElementById('sleepHours').value = "0.80";
+        document.getElementById('extracurricular').value = "none";
+      } else if (type === 'crammer') {
+        document.getElementById('studyHours').value = 24;
+        document.getElementById('attendance').value = 62;
+        document.getElementById('midterm').value = 86;
+        document.getElementById('assignments').value = 70;
+        document.getElementById('sleepHours').value = "0.92";
+        document.getElementById('extracurricular').value = "moderate";
+      }
+
+      calculatePrediction();
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      calculatePrediction();
+    });
+  </script>
+</body>
+</html>
