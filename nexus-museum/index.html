@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS Science Museum: Tirunelveli 2100 | Futuristic WebXR Experience</title>
+  <meta name="description" content="NEXUS Science Museum: Tirunelveli 2100. A futuristic WebXR 3D virtual museum reimagining the District Science Centre, featuring ISRO Mahendragiri propulsion, Kudankulam clean energy, AI robotics, and Tamil heritage astronomy.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Three.js + OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- GSAP for cinematic camera and HUD animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #04040a;
+      --bg-glass: rgba(10, 12, 24, 0.75);
+      --border-cyan: rgba(0, 240, 255, 0.3);
+      --border-purple: rgba(168, 85, 247, 0.3);
+      --accent-cyan: #00f0ff;
+      --accent-magenta: #ff007f;
+      --accent-purple: #a855f7;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-tamil: 'Noto Sans Tamil', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+    }
+
+    /* WebGL Canvas */
+    #webglCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      display: block;
+    }
+
+    /* Holographic Boot Screen */
+    #bootScreen {
+      position: fixed;
+      inset: 0;
+      background: #020206;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1.2s ease, visibility 1.2s;
+    }
+
+    .boot-content {
+      text-align: center;
+      max-width: 500px;
+      padding: 20px;
+      position: relative;
+    }
+
+    .boot-logo {
+      font-family: var(--font-mono);
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #ffffff;
+      text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-cyan);
+      margin-bottom: 8px;
+    }
+
+    .boot-sub {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--accent-cyan);
+      letter-spacing: 0.2em;
+      margin-bottom: 36px;
+      text-transform: uppercase;
+    }
+
+    .scanner-ring {
+      width: 100px;
+      height: 100px;
+      border: 3px solid rgba(0, 240, 255, 0.2);
+      border-top-color: var(--accent-cyan);
+      border-bottom-color: var(--accent-magenta);
+      border-radius: 50%;
+      animation: spinRing 1.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+      margin: 0 auto 30px;
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+    }
+
+    @keyframes spinRing {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .boot-progress-bar {
+      width: 280px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0 auto 16px;
+      position: relative;
+    }
+
+    .boot-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+      box-shadow: 0 0 12px var(--accent-cyan);
+      transition: width 0.3s ease;
+    }
+
+    .boot-status {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    .boot-enter-btn {
+      display: none;
+      margin-top: 24px;
+      background: linear-gradient(135deg, var(--accent-cyan), #0099ff);
+      color: #04040a;
+      border: none;
+      padding: 12px 36px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      letter-spacing: 0.1em;
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+      transition: all 0.25s ease;
+    }
+
+    .boot-enter-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 45px rgba(0, 240, 255, 0.9);
+    }
+
+    /* HUD Layer */
+    .hud-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+    }
+
+    /* Top HUD Bar */
+    .hud-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hud-brand {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-cyan);
+      padding: 10px 18px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .brand-title {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: #ffffff;
+    }
+
+    .brand-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 2px 8px;
+      border-radius: 9999px;
+    }
+
+    .hud-controls {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hud-btn {
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .hud-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      box-shadow: 0 0 14px rgba(0, 240, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .hud-btn.active {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    /* NOVA AI Guide Overlay */
+    .nova-guide-card {
+      pointer-events: auto;
+      position: absolute;
+      top: 90px;
+      left: 24px;
+      max-width: 380px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-cyan);
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+      transition: all 0.3s ease;
+    }
+
+    .nova-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .nova-orb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 12px var(--accent-cyan);
+      animation: pulseOrb 1.6s infinite;
+    }
+
+    @keyframes pulseOrb {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.75); opacity: 0.5; }
+    }
+
+    .nova-title {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nova-subtitle-text {
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--text-main);
+      min-height: 48px;
+    }
+
+    /* Bottom Portals Bar */
+    .hud-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .halls-teleport-bar {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-purple);
+      padding: 8px 12px;
+      border-radius: 9999px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      max-width: 95vw;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .halls-teleport-bar::-webkit-scrollbar { display: none; }
+
+    .portal-tab {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+    }
+
+    .portal-tab:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(0, 240, 255, 0.4);
+    }
+
+    .portal-tab.active {
+      color: #04040a;
+      background: linear-gradient(135deg, var(--accent-cyan), #38bdf8);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.5);
+      font-weight: 800;
+    }
+
+    /* Interactive Exhibit Detail Modal */
+    #detailModal {
+      pointer-events: auto;
+      position: fixed;
+      bottom: 90px;
+      right: 24px;
+      max-width: 420px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-cyan);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8);
+      z-index: 50;
+      display: none;
+      animation: modalSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-magenta);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .modal-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .modal-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+
+    .modal-specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 18px;
+      background: rgba(4, 6, 14, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .spec-k { font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); }
+    .spec-v { font-size: 0.85rem; color: var(--accent-cyan); font-weight: 700; font-family: var(--font-mono); }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-action-primary {
+      background: linear-gradient(135deg, var(--accent-cyan), #0284c7);
+      color: #04040a;
+    }
+
+    .btn-action-primary:hover {
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.5);
+    }
+
+    .btn-action-close {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-action-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Warp Camera Speed Lines FX */
+    #warpOverlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 20;
+      opacity: 0;
+      background: radial-gradient(circle, transparent 40%, rgba(0, 240, 255, 0.2) 80%, rgba(168, 85, 247, 0.4) 100%);
+      transition: opacity 0.3s ease;
+    }
+
+    /* Interactive 2D Minimap */
+    .minimap-card {
+      pointer-events: auto;
+      position: absolute;
+      top: 90px;
+      right: 24px;
+      width: 140px;
+      height: 140px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-cyan);
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .minimap-title {
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      color: var(--accent-cyan);
+      text-align: center;
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .minimap-svg {
+      width: 100%;
+      height: calc(100% - 16px);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .nova-guide-card {
+        top: auto;
+        bottom: 80px;
+        left: 12px;
+        right: 12px;
+        max-width: calc(100vw - 24px);
+      }
+
+      .minimap-card {
+        display: none;
+      }
+
+      #detailModal {
+        bottom: 80px;
+        right: 12px;
+        left: 12px;
+        max-width: calc(100vw - 24px);
+      }
+
+      .halls-teleport-bar {
+        padding: 6px 8px;
+      }
+
+      .portal-tab {
+        padding: 6px 10px;
+        font-size: 0.72rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 3D Canvas -->
+  <canvas id="webglCanvas"></canvas>
+
+  <!-- Warp Speed Screen Transition Filter -->
+  <div id="warpOverlay"></div>
+
+  <!-- Boot / Holographic Loading Screen -->
+  <div id="bootScreen">
+    <div class="boot-content">
+      <div class="scanner-ring"></div>
+      <h1 class="boot-logo">NEXUS 2100</h1>
+      <p class="boot-sub">Tirunelveli Science Centre</p>
+      <div class="boot-progress-bar">
+        <div class="boot-progress-fill" id="bootFill"></div>
+      </div>
+      <p class="boot-status" id="bootStatus">SYNCHRONIZING QUANTUM VR RECEPTORS...</p>
+      <button class="boot-enter-btn" id="enterBtn" onclick="enterMuseum()">
+        INITIALIZE VIRTUAL ATRIUM ↵
+      </button>
+    </div>
+  </div>
+
+  <!-- Main HUD Layer -->
+  <div class="hud-layer">
+    
+    <!-- Top HUD Bar -->
+    <header class="hud-top">
+      <div class="hud-brand">
+        <a href="../#projects" class="hud-btn" style="padding:4px 10px; font-size:0.75rem; border-color:var(--border-cyan);">
+          ← Back to Portfolio
+        </a>
+        <span class="brand-title">NEXUS // TN-2100</span>
+        <span class="brand-tag">VR-WEBXR READY</span>
+      </div>
+
+      <div class="hud-controls">
+        <!-- Language Toggle -->
+        <button class="hud-btn" onclick="toggleLanguage()" id="langBtn" title="Switch Language">
+          🌐 <span id="langText">EN / தமிழ்</span>
+        </button>
+        <!-- Audio Ambient Toggle -->
+        <button class="hud-btn" onclick="toggleAudio()" id="audioBtn" title="Toggle Spatial Audio">
+          🔊 <span id="audioText">Sound: OFF</span>
+        </button>
+        <!-- Day / Cyber Night Lighting Toggle -->
+        <button class="hud-btn" onclick="toggleLighting()" id="lightBtn" title="Toggle Lighting Mode">
+          💡 <span id="lightText">Cyber Night</span>
+        </button>
+        <!-- VR Headset Button -->
+        <button class="hud-btn" onclick="toggleVR()" id="vrBtn" title="Enter VR / Fullscreen">
+          🥽 <span>VR Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- NOVA AI Guide Card -->
+    <div class="nova-guide-card" id="novaCard">
+      <div class="nova-header">
+        <div class="nova-orb"></div>
+        <div class="nova-title">AI Guide NOVA // Quantum Subtitle</div>
+      </div>
+      <p class="nova-subtitle-text" id="novaSubtitle">
+        Welcome to NEXUS Science Museum, Tirunelveli 2100. Select any hall below to warp your camera instantly.
+      </p>
+    </div>
+
+    <!-- 2D Interactive Minimap -->
+    <div class="minimap-card">
+      <div class="minimap-title">NEXUS MINIMAP</div>
+      <svg class="minimap-svg" viewBox="0 0 100 100">
+        <!-- Atrium Center -->
+        <circle cx="50" cy="50" r="14" fill="none" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="2 2" />
+        <circle cx="50" cy="50" r="4" fill="#00f0ff" id="mapUserPin" />
+        <!-- Halls Radial Nodes -->
+        <circle cx="50" cy="18" r="7" fill="none" stroke="#a855f7" stroke-width="1.2" id="mapSpace" />
+        <circle cx="82" cy="35" r="7" fill="none" stroke="#a855f7" stroke-width="1.2" id="mapEnergy" />
+        <circle cx="82" cy="72" r="7" fill="none" stroke="#a855f7" stroke-width="1.2" id="mapAI" />
+        <circle cx="50" cy="85" r="7" fill="none" stroke="#a855f7" stroke-width="1.2" id="mapBio" />
+        <circle cx="18" cy="72" r="7" fill="none" stroke="#a855f7" stroke-width="1.2" id="mapPhysics" />
+        <circle cx="18" cy="35" r="7" fill="none" stroke="#a855f7" stroke-width="1.2" id="mapHeritage" />
+      </svg>
+    </div>
+
+    <!-- Bottom Teleport Portals Navigation Bar -->
+    <footer class="hud-bottom">
+      <nav class="halls-teleport-bar" aria-label="Museum Halls">
+        <button class="portal-tab active" onclick="warpToHall('lobby')">
+          🏛️ <span data-en="Entry Lobby" data-ta="முகப்பு அரங்கு">Entry Lobby</span>
+        </button>
+        <button class="portal-tab" onclick="warpToHall('space')">
+          🚀 <span data-en="ISRO Space Hall" data-ta="விண்வெளி அரங்கு">ISRO Space Hall</span>
+        </button>
+        <button class="portal-tab" onclick="warpToHall('energy')">
+          ⚡ <span data-en="Energy Grid" data-ta="தூய ஆற்றல் அரங்கு">Energy Grid</span>
+        </button>
+        <button class="portal-tab" onclick="warpToHall('ai')">
+          🧠 <span data-en="AI &amp; Robotics" data-ta="செயற்கை நுண்ணறிவு">AI &amp; Robotics</span>
+        </button>
+        <button class="portal-tab" onclick="warpToHall('bio')">
+          🧬 <span data-en="Tamirabarani Bio" data-ta="தாமிரபரணி உயிரியல்">Tamirabarani Bio</span>
+        </button>
+        <button class="portal-tab" onclick="warpToHall('physics')">
+          🧲 <span data-en="Physics Lab" data-ta="இயற்பியல் கூடம்">Physics Lab</span>
+        </button>
+        <button class="portal-tab" onclick="warpToHall('heritage')">
+          📜 <span data-en="Tamil Heritage Science" data-ta="தமிழர் அறிவியல் மரபு">Tamil Heritage</span>
+        </button>
+      </nav>
+    </footer>
+
+  </div>
+
+  <!-- Interactive Exhibit 3D Detail Modal -->
+  <div id="detailModal">
+    <div class="modal-tag" id="modalTag">EXHIBIT // ISRO PROPULSION</div>
+    <h3 class="modal-title" id="modalTitle">Vikas Cryogenic Engine CE-20</h3>
+    <p class="modal-desc" id="modalDesc">
+      Engineered at ISRO Propulsion Complex (IPRC) in Mahendragiri, Tirunelveli district. Powered Chandrayaan & Gaganyaan with staged liquid hydrogen-oxygen combustion.
+    </p>
+    <div class="modal-specs-grid" id="modalSpecs">
+      <div><span class="spec-k">DISTRICT ORIGIN:</span><div class="spec-v">Mahendragiri, TN</div></div>
+      <div><span class="spec-k">THRUST (VACUUM):</span><div class="spec-v">200 kN / 20.4 tf</div></div>
+      <div><span class="spec-k">SPECIFIC IMPULSE:</span><div class="spec-v">443 Seconds</div></div>
+      <div><span class="spec-k">ERA / STATUS:</span><div class="spec-v">Gaganyaan Certified</div></div>
+    </div>
+    <div class="modal-actions">
+      <button class="action-btn btn-action-primary" id="btnExplode" onclick="toggleExplodedView()">
+        💥 Explode Assembly View
+      </button>
+      <button class="action-btn btn-action-close" onclick="closeDetailModal()">
+        ✕ Close
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* ===================================================================
+       1. WEB AUDIO SYNTHESIZER (Spatial Ambient Soundscapes & Whooshes)
+       =================================================================== */
+    let audioCtx = null;
+    let isSoundOn = false;
+    let ambientOsc = null;
+    let ambientGain = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function toggleAudio() {
+      initAudio();
+      isSoundOn = !isSoundOn;
+      const btn = document.getElementById('audioBtn');
+      const text = document.getElementById('audioText');
+
+      if (isSoundOn) {
+        btn.classList.add('active');
+        text.innerText = 'Sound: ON';
+        startAmbientDrone();
+        playBeep(880, 0.1);
+      } else {
+        btn.classList.remove('active');
+        text.innerText = 'Sound: OFF';
+        stopAmbientDrone();
+      }
+    }
+
+    function startAmbientDrone() {
+      if (!audioCtx || ambientOsc) return;
+      ambientOsc = audioCtx.createOscillator();
+      ambientGain = audioCtx.createGain();
+      ambientOsc.type = 'sine';
+      ambientOsc.frequency.setValueAtTime(65, audioCtx.currentTime); // Deep cyberpunk hum
+
+      ambientGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+      ambientGain.gain.exponentialRampToValueAtTime(0.04, audioCtx.currentTime + 3);
+
+      ambientOsc.connect(ambientGain);
+      ambientGain.connect(audioCtx.destination);
+      ambientOsc.start();
+    }
+
+    function stopAmbientDrone() {
+      if (ambientGain) {
+        ambientGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+        setTimeout(() => {
+          if (ambientOsc) { ambientOsc.stop(); ambientOsc.disconnect(); ambientOsc = null; }
+        }, 500);
+      }
+    }
+
+    function playWarpSound() {
+      if (!isSoundOn || !audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.6);
+      osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 1.2);
+
+      gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.4);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 1.3);
+    }
+
+    function playBeep(freq = 600, duration = 0.08) {
+      if (!isSoundOn || !audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    /* ===================================================================
+       2. THREE.JS 3D SCENE & ENGINE
+       =================================================================== */
+    const canvas = document.getElementById('webglCanvas');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x04040a, 0.012);
+
+    const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 15, 38);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 2 + 0.05;
+    controls.minDistance = 6;
+    controls.maxDistance = 90;
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0x0e1226, 1.4);
+    scene.add(ambientLight);
+
+    const mainCyanLight = new THREE.PointLight(0x00f0ff, 2.5, 60);
+    mainCyanLight.position.set(0, 20, 0);
+    scene.add(mainCyanLight);
+
+    const magentaLight = new THREE.PointLight(0xff007f, 1.8, 50);
+    magentaLight.position.set(25, 12, 10);
+    scene.add(magentaLight);
+
+    const purpleLight = new THREE.PointLight(0x8b5cf6, 1.8, 50);
+    purpleLight.position.set(-25, 12, -10);
+    scene.add(purpleLight);
+
+    /* ===================================================================
+       3. ATRIUM & HALLS 3D ARCHITECTURE
+       =================================================================== */
+    // Reflective Cyber Floor Grid
+    const floorGeo = new THREE.PlaneGeometry(160, 160, 40, 40);
+    const floorMat = new THREE.MeshStandardMaterial({
+      color: 0x060814,
+      metalness: 0.85,
+      roughness: 0.25,
+      wireframe: false
+    });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -0.5;
+    scene.add(floor);
+
+    // Glowing Floor Grid Lines
+    const gridHelper = new THREE.GridHelper(160, 40, 0x00f0ff, 0x151d3b);
+    gridHelper.position.y = -0.45;
+    scene.add(gridHelper);
+
+    // Holographic Ceiling Ring Dome
+    const domeGeo = new THREE.TorusGeometry(32, 0.4, 16, 100);
+    const domeMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.6 });
+    const ceilingRing = new THREE.Mesh(domeGeo, domeMat);
+    ceilingRing.rotation.x = Math.PI / 2;
+    ceilingRing.position.y = 28;
+    scene.add(ceilingRing);
+
+    // Star-field Particles
+    const starCount = 1800;
+    const starGeo = new THREE.BufferGeometry();
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i += 3) {
+      starPositions[i] = (Math.random() - 0.5) * 160;
+      starPositions[i + 1] = Math.random() * 50 + 2;
+      starPositions[i + 2] = (Math.random() - 0.5) * 160;
+    }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMat = new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.35, transparent: true, opacity: 0.7 });
+    const stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+
+    /* ===================================================================
+       4. THE 6 HALL EXHIBIT 3D MODELS
+       =================================================================== */
+    const exhibits = [];
+
+    // --- Exhibit 1: Central Holographic Globe (Tirunelveli Highlighting) ---
+    const globeGroup = new THREE.Group();
+    globeGroup.position.set(0, 6, 0);
+    globeGroup.userData = { id: 'lobby', title: 'NEXUS Central Atrium', desc: 'Central holographic atrium mapping Tamil Nadu scientific infrastructure with real-time quantum telemetry.' };
+    
+    const globeGeo = new THREE.SphereGeometry(3.5, 32, 32);
+    const globeMat = new THREE.MeshStandardMaterial({
+      color: 0x03223f,
+      wireframe: true,
+      emissive: 0x00f0ff,
+      emissiveIntensity: 0.4
+    });
+    const globeMesh = new THREE.Mesh(globeGeo, globeMat);
+    globeGroup.add(globeMesh);
+
+    // Orbiting Satellites around globe
+    const ringGeo = new THREE.RingGeometry(4.8, 5.0, 48);
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0xff007f, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+    const satRing = new THREE.Mesh(ringGeo, ringMat);
+    satRing.rotation.x = Math.PI / 3;
+    globeGroup.add(satRing);
+
+    // Tirunelveli Pulse Beacon Marker
+    const beaconGeo = new THREE.CylinderGeometry(0.08, 0.4, 2, 16);
+    const beaconMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+    const beacon = new THREE.Mesh(beaconGeo, beaconMat);
+    beacon.position.set(0.6, 2.8, 1.8);
+    beacon.rotation.z = -0.3;
+    globeGroup.add(beacon);
+
+    scene.add(globeGroup);
+    exhibits.push({ group: globeGroup, hall: 'lobby' });
+
+    // --- Exhibit 2: Space Hall (ISRO Mahendragiri Cryogenic Rocket Engine) ---
+    const spaceGroup = new THREE.Group();
+    spaceGroup.position.set(0, 5, -34);
+    spaceGroup.userData = {
+      id: 'space',
+      tag: 'SPACE PROPULSION // IPRC MAHENDRAGIRI',
+      title: 'ISRO Cryogenic CE-20 Engine (Mahendragiri)',
+      desc: 'Engineered at ISRO Propulsion Complex (IPRC) in Mahendragiri, Tirunelveli district. Powering heavy-lift launch vehicles with staged liquid hydrogen-oxygen combustion.',
+      specs: [
+        ['LOCATION', 'Mahendragiri, Tirunelveli'],
+        ['THRUST', '200 kN Vacuum'],
+        ['SPECIFIC IMPULSE', '443 Seconds'],
+        ['MISSION', 'LVM3 / Gaganyaan']
+      ]
+    };
+
+    // Rocket Nozzle Cone
+    const nozzleGeo = new THREE.ConeGeometry(3.2, 5.5, 32, 4, true);
+    const nozzleMat = new THREE.MeshStandardMaterial({
+      color: 0x222a3f,
+      metalness: 0.9,
+      roughness: 0.2,
+      emissive: 0x00f0ff,
+      emissiveIntensity: 0.2
+    });
+    const nozzle = new THREE.Mesh(nozzleGeo, nozzleMat);
+    nozzle.rotation.x = Math.PI;
+    spaceGroup.add(nozzle);
+
+    // Combustion Chamber
+    const chamberGeo = new THREE.CylinderGeometry(1.6, 1.6, 2.5, 32);
+    const chamberMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.95, roughness: 0.1 });
+    const chamber = new THREE.Mesh(chamberGeo, chamberMat);
+    chamber.position.y = 3.6;
+    spaceGroup.add(chamber);
+
+    // Turbo-pump rings & pipes
+    const pipeGeo = new THREE.TorusGeometry(2.0, 0.2, 16, 32);
+    const pipeMat = new THREE.MeshBasicMaterial({ color: 0xff007f });
+    const pipe = new THREE.Mesh(pipeGeo, pipeMat);
+    pipe.rotation.x = Math.PI / 2;
+    pipe.position.y = 2.4;
+    spaceGroup.add(pipe);
+
+    // Rocket Exhaust Particle System
+    const exhaustCount = 450;
+    const exhaustGeo = new THREE.BufferGeometry();
+    const exhaustPos = new Float32Array(exhaustCount * 3);
+    for (let i = 0; i < exhaustCount * 3; i += 3) {
+      exhaustPos[i] = (Math.random() - 0.5) * 1.8;
+      exhaustPos[i + 1] = -Math.random() * 7 - 2;
+      exhaustPos[i + 2] = (Math.random() - 0.5) * 1.8;
+    }
+    exhaustGeo.setAttribute('position', new THREE.BufferAttribute(exhaustPos, 3));
+    const exhaustMat = new THREE.PointsMaterial({ color: 0x00f0ff, size: 0.45, transparent: true, opacity: 0.8 });
+    const exhaustParticles = new THREE.Points(exhaustGeo, exhaustMat);
+    spaceGroup.add(exhaustParticles);
+
+    scene.add(spaceGroup);
+    exhibits.push({ group: spaceGroup, hall: 'space' });
+
+    // --- Exhibit 3: Energy Hall (Kudankulam Nuclear & Muppandal Wind Clean Grid) ---
+    const energyGroup = new THREE.Group();
+    energyGroup.position.set(34, 5, -12);
+    energyGroup.userData = {
+      id: 'energy',
+      tag: 'CLEAN ENERGY // KUDANKULAM & MUPPANDAL',
+      title: 'Kudankulam Nuclear Core & Muppandal Wind Grid',
+      desc: 'Tirunelveli is India’s supreme clean energy powerhouse, housing the 2,000 MW Kudankulam Nuclear Plant and the vast Muppandal mountain wind farm.',
+      specs: [
+        ['NUCLEAR CAPACITY', '2x 1,000 MW VVER'],
+        ['WIND CORRIDOR', 'Muppandal Pass'],
+        ['GRID CONTRIBUTION', 'Over 3,500 MW Total'],
+        ['CARBON SAVINGS', '18.4M Tons/Year']
+      ]
+    };
+
+    // Nuclear Reactor Core Sphere with Cherenkov Blue Glow
+    const reactorGeo = new THREE.SphereGeometry(2.4, 32, 32);
+    const reactorMat = new THREE.MeshStandardMaterial({
+      color: 0x0055ff,
+      emissive: 0x00f0ff,
+      emissiveIntensity: 0.9,
+      wireframe: true
+    });
+    const reactor = new THREE.Mesh(reactorGeo, reactorMat);
+    energyGroup.add(reactor);
+
+    // Triple Atomic Electron Orbit Rings
+    for (let i = 0; i < 3; i++) {
+      const electronRingGeo = new THREE.TorusGeometry(3.8, 0.1, 16, 64);
+      const electronRingMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+      const eRing = new THREE.Mesh(electronRingGeo, electronRingMat);
+      eRing.rotation.x = (i * Math.PI) / 3;
+      eRing.rotation.y = (i * Math.PI) / 4;
+      energyGroup.add(eRing);
+    }
+
+    // Mini Wind Turbine next to reactor
+    const poleGeo = new THREE.CylinderGeometry(0.12, 0.25, 7, 16);
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+    const pole = new THREE.Mesh(poleGeo, poleMat);
+    pole.position.set(4.5, 0, 0);
+    energyGroup.add(pole);
+
+    const bladesGroup = new THREE.Group();
+    bladesGroup.position.set(4.5, 3.5, 0.3);
+    for (let b = 0; b < 3; b++) {
+      const bladeGeo = new THREE.BoxGeometry(0.2, 3.2, 0.04);
+      const bladeMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+      const blade = new THREE.Mesh(bladeGeo, bladeMat);
+      blade.rotation.z = (b * (2 * Math.PI)) / 3;
+      blade.position.y = 1.6 * Math.cos((b * (2 * Math.PI)) / 3);
+      blade.position.x = 1.6 * Math.sin((b * (2 * Math.PI)) / 3);
+      bladesGroup.add(blade);
+    }
+    energyGroup.add(bladesGroup);
+
+    scene.add(energyGroup);
+    exhibits.push({ group: energyGroup, hall: 'energy', spinner: bladesGroup });
+
+    // --- Exhibit 4: AI & Robotics Hall (Interactive Neural Graph) ---
+    const aiGroup = new THREE.Group();
+    aiGroup.position.set(32, 5, 24);
+    aiGroup.userData = {
+      id: 'ai',
+      tag: 'SYNAPTIC COMPUTING // NEURAL CORE',
+      title: 'Quantum Synaptic Neural Graph',
+      desc: '3D neural topological visualization demonstrating deep learning inference, attention layers, and robotic spatial autonomy.',
+      specs: [
+        ['NODES', '64 Active Synapses'],
+        ['LATENCY', '0.42 Nanoseconds'],
+        ['ARCH', 'Transformer & RAG'],
+        ['ROBOTICS LINK', 'NOVA Cyber Core']
+      ]
+    };
+
+    // Neural nodes
+    const nodeGeo = new THREE.SphereGeometry(0.35, 16, 16);
+    const nodeMat = new THREE.MeshStandardMaterial({ color: 0xa855f7, emissive: 0xa855f7, emissiveIntensity: 0.8 });
+    const nodes = [];
+    for (let n = 0; n < 28; n++) {
+      const node = new THREE.Mesh(nodeGeo, nodeMat);
+      node.position.set((Math.random() - 0.5) * 6, (Math.random() - 0.5) * 6, (Math.random() - 0.5) * 6);
+      aiGroup.add(node);
+      nodes.push(node);
+    }
+
+    // Synaptic connecting lines
+    const lineMat = new THREE.LineBasicMaterial({ color: 0xa855f7, transparent: true, opacity: 0.4 });
+    const lineGeo = new THREE.BufferGeometry();
+    const linePoints = [];
+    for (let l = 0; l < nodes.length - 1; l++) {
+      linePoints.push(nodes[l].position.x, nodes[l].position.y, nodes[l].position.z);
+      linePoints.push(nodes[l + 1].position.x, nodes[l + 1].position.y, nodes[l + 1].position.z);
+    }
+    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePoints, 3));
+    const linesMesh = new THREE.LineSegments(lineGeo, lineMat);
+    aiGroup.add(linesMesh);
+
+    scene.add(aiGroup);
+    exhibits.push({ group: aiGroup, hall: 'ai' });
+
+    // --- Exhibit 5: Life Science Hall (Tamirabarani River & DNA Helix) ---
+    const bioGroup = new THREE.Group();
+    bioGroup.position.set(0, 5, 34);
+    bioGroup.userData = {
+      id: 'bio',
+      tag: 'BIODIVERSITY // TAMIRABARANI BASIN',
+      title: 'Tamirabarani River & Synthetic DNA Helix',
+      desc: 'Honoring South India’s only perennial river originating from the Western Ghats of Tirunelveli. Explores ecological preservation and bio-molecular gene editing.',
+      specs: [
+        ['RIVER ORIGIN', 'Agasthyamalai Hills'],
+        ['WATER PURITY', 'High Copper Mineralization'],
+        ['BIOMARKER', 'Endemic Species Catalog'],
+        ['SYNTHETIC GENE', 'Cas13 Bio-Defense']
+      ]
+    };
+
+    // Double Helix DNA
+    const helixGroup = new THREE.Group();
+    const baseGeo = new THREE.SphereGeometry(0.2, 12, 12);
+    const matA = new THREE.MeshBasicMaterial({ color: 0x10b981 });
+    const matB = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+    for (let h = 0; h < 30; h++) {
+      const y = (h - 15) * 0.35;
+      const angle = h * 0.45;
+      const x1 = Math.cos(angle) * 1.5;
+      const z1 = Math.sin(angle) * 1.5;
+      const x2 = -x1;
+      const z2 = -z1;
+
+      const p1 = new THREE.Mesh(baseGeo, matA);
+      p1.position.set(x1, y, z1);
+      helixGroup.add(p1);
+
+      const p2 = new THREE.Mesh(baseGeo, matB);
+      p2.position.set(x2, y, z2);
+      helixGroup.add(p2);
+
+      // Connecting rungs
+      const rBarGeo = new THREE.CylinderGeometry(0.04, 0.04, 3, 8);
+      const rBarMat = new THREE.MeshBasicMaterial({ color: 0x334155, transparent: true, opacity: 0.6 });
+      const rBar = new THREE.Mesh(rBarGeo, rBarMat);
+      rBar.position.set(0, y, 0);
+      rBar.rotation.z = Math.PI / 2;
+      rBar.rotation.y = angle;
+      helixGroup.add(rBar);
+    }
+    bioGroup.add(helixGroup);
+
+    scene.add(bioGroup);
+    exhibits.push({ group: bioGroup, hall: 'bio', spinner: helixGroup });
+
+    // --- Exhibit 6: Physics Lab (Magnetic & Gravitational Fields) ---
+    const physicsGroup = new THREE.Group();
+    physicsGroup.position.set(-34, 5, 12);
+    physicsGroup.userData = {
+      id: 'physics',
+      tag: 'QUANTUM PHYSICS // GRAVITATIONAL FLUX',
+      title: 'Torus Magnetic Flux Field & Spacetime Curvature',
+      desc: 'Interactive demonstration of electromagnetic induction, Lorentz force dynamics, and relativistic gravitational spacetime depressions.',
+      specs: [
+        ['MAGNETIC FLUX', '14.2 Tesla'],
+        ['FIELD TOPOLOGY', 'Toroidal Vortex'],
+        ['SIMULATION', 'Particle Trajectory'],
+        ['PHYSICS RULE', 'Maxwell-Einstein']
+      ]
+    };
+
+    const torusGeo = new THREE.TorusKnotGeometry(2.2, 0.4, 64, 16);
+    const torusMat = new THREE.MeshStandardMaterial({
+      color: 0xf59e0b,
+      wireframe: true,
+      emissive: 0xf59e0b,
+      emissiveIntensity: 0.5
+    });
+    const torusMesh = new THREE.Mesh(torusGeo, torusMat);
+    physicsGroup.add(torusMesh);
+
+    scene.add(physicsGroup);
+    exhibits.push({ group: physicsGroup, hall: 'physics', spinner: torusMesh });
+
+    // --- Exhibit 7: Tamil Heritage Science Hall (Ancient Astronomy & Metallurgy) ---
+    const heritageGroup = new THREE.Group();
+    heritageGroup.position.set(-32, 5, -24);
+    heritageGroup.userData = {
+      id: 'heritage',
+      tag: 'TAMIL HERITAGE // தமிழர் அறிவியல்',
+      title: 'Ancient Tamil Astronomy & Wootz Crucible Metallurgy',
+      desc: 'Celebrating Sangam astronomical instruments, calculation of solar equinoxes, and high-carbon Wootz steel metallurgy pioneered in ancient Tamil Nadu.',
+      specs: [
+        ['SANGAM ROOTS', 'Adichanallur (Tirunelveli)'],
+        ['METALLURGY', 'Crucible High-Carbon Steel'],
+        ['ASTRONOMY', '27 Nakshatras & Solar Ecliptic'],
+        ['HERITAGE AGE', 'Over 3,000+ BCE Verified']
+      ]
+    };
+
+    // Ancient Armillary Celestial Ring Sphere
+    const armSphere = new THREE.Group();
+    for (let r = 0; r < 4; r++) {
+      const ringG = new THREE.TorusGeometry(2.6 + r * 0.4, 0.08, 16, 64);
+      const ringM = new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.9, roughness: 0.3 });
+      const ringMsh = new THREE.Mesh(ringG, ringM);
+      ringMsh.rotation.x = (r * Math.PI) / 4;
+      ringMsh.rotation.y = (r * Math.PI) / 6;
+      armSphere.add(ringMsh);
+    }
+    heritageGroup.add(armSphere);
+
+    // Ancient Tamil Inscription Pillar
+    const pillarGeo = new THREE.CylinderGeometry(0.6, 0.7, 4.5, 8);
+    const pillarMat = new THREE.MeshStandardMaterial({ color: 0x292524, roughness: 0.8 });
+    const pillar = new THREE.Mesh(pillarGeo, pillarMat);
+    pillar.position.set(3.2, 0, 0);
+    heritageGroup.add(pillar);
+
+    scene.add(heritageGroup);
+    exhibits.push({ group: heritageGroup, hall: 'heritage', spinner: armSphere });
+
+    /* ===================================================================
+       5. RAYCASTING & INTERACTIVE 3D DETAIL SELECTION
+       =================================================================== */
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    window.addEventListener('click', (event) => {
+      // Ignore click if clicking HUD UI
+      if (event.target.closest('.hud-layer') || event.target.closest('#detailModal') || event.target.closest('#bootScreen')) return;
+
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const hitObjects = [];
+      exhibits.forEach(ex => {
+        ex.group.traverse(child => {
+          if (child.isMesh) hitObjects.push({ mesh: child, parentGroup: ex.group });
+        });
+      });
+
+      const intersects = raycaster.intersectObjects(hitObjects.map(h => h.mesh), false);
+      if (intersects.length > 0) {
+        const hitMesh = intersects[0].object;
+        const matched = hitObjects.find(h => h.mesh === hitMesh);
+        if (matched && matched.parentGroup.userData.title) {
+          openDetailModal(matched.parentGroup.userData);
+          playBeep(920, 0.12);
+        }
+      }
+    });
+
+    let currentSelectedGroup = null;
+    let isExploded = false;
+
+    function openDetailModal(data) {
+      document.getElementById('modalTag').innerText = data.tag || 'EXHIBIT ARCHIVE';
+      document.getElementById('modalTitle').innerText = data.title;
+      document.getElementById('modalDesc').innerText = data.desc;
+
+      const specsBox = document.getElementById('modalSpecs');
+      specsBox.innerHTML = '';
+      if (data.specs) {
+        data.specs.forEach(([k, v]) => {
+          const s = document.createElement('div');
+          s.innerHTML = `<span class="spec-k">${k}:</span><div class="spec-v">${v}</div>`;
+          specsBox.appendChild(s);
+        });
+      }
+
+      document.getElementById('detailModal').style.display = 'block';
+
+      // Update NOVA subtitle
+      updateNovaSubtitle(`Accessing 3D telemetry for ${data.title}. You may rotate and inspect this exhibit.`);
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').style.display = 'none';
+      if (isExploded) toggleExplodedView();
+    }
+
+    function toggleExplodedView() {
+      isExploded = !isExploded;
+      const btn = document.getElementById('btnExplode');
+      btn.innerText = isExploded ? '↩ Reset Assembly' : '💥 Explode Assembly View';
+      playBeep(isExploded ? 1200 : 700, 0.1);
+
+      // Animate explosion on space nozzle or components
+      const targetGroup = exhibits.find(e => e.hall === currentHall)?.group;
+      if (targetGroup) {
+        targetGroup.children.forEach((child, idx) => {
+          const targetY = isExploded ? child.position.y + (idx % 2 === 0 ? 2.5 : -2.5) : 0;
+          gsap.to(child.position, { y: targetY, duration: 0.8, ease: 'power2.out' });
+        });
+      }
+    }
+
+    /* ===================================================================
+       6. WARP TELEPORT NAVIGATION & CAMERA GSAP
+       =================================================================== */
+    const hallCoordinates = {
+      lobby: { cam: { x: 0, y: 15, z: 28 }, look: { x: 0, y: 5, z: 0 }, pin: { cx: 50, cy: 50 } },
+      space: { cam: { x: 0, y: 12, z: -14 }, look: { x: 0, y: 5, z: -34 }, pin: { cx: 50, cy: 18 } },
+      energy: { cam: { x: 18, y: 12, z: -2 }, look: { x: 34, y: 5, z: -12 }, pin: { cx: 82, cy: 35 } },
+      ai: { cam: { x: 18, y: 12, z: 18 }, look: { x: 32, y: 5, z: 24 }, pin: { cx: 82, cy: 72 } },
+      bio: { cam: { x: 0, y: 12, z: 16 }, look: { x: 0, y: 5, z: 34 }, pin: { cx: 50, cy: 85 } },
+      physics: { cam: { x: -18, y: 12, z: 2 }, look: { x: -34, y: 5, z: 12 }, pin: { cx: 18, cy: 72 } },
+      heritage: { cam: { x: -16, y: 12, z: -14 }, look: { x: -32, y: 5, z: -24 }, pin: { cx: 18, cy: 35 } }
+    };
+
+    let currentHall = 'lobby';
+
+    function warpToHall(hallKey) {
+      if (!hallCoordinates[hallKey]) return;
+      currentHall = hallKey;
+
+      // Update portal active tab
+      document.querySelectorAll('.portal-tab').forEach(t => t.classList.remove('active'));
+      event?.currentTarget?.classList.add('active');
+
+      // Play sound & screen warp
+      playWarpSound();
+      const warpOverlay = document.getElementById('warpOverlay');
+      warpOverlay.style.opacity = '1';
+
+      // Minimap pin
+      const pin = document.getElementById('mapUserPin');
+      gsap.to(pin, {
+        attr: { cx: hallCoordinates[hallKey].pin.cx, cy: hallCoordinates[hallKey].pin.cy },
+        duration: 0.8
+      });
+
+      // Camera FOV stretch (warp speed illusion)
+      gsap.to(camera, {
+        fov: 85,
+        duration: 0.4,
+        onUpdate: () => camera.updateProjectionMatrix(),
+        onComplete: () => {
+          gsap.to(camera, {
+            fov: 65,
+            duration: 0.6,
+            onUpdate: () => camera.updateProjectionMatrix()
+          });
+        }
+      });
+
+      // Camera position transition
+      const target = hallCoordinates[hallKey];
+      gsap.to(camera.position, {
+        x: target.cam.x,
+        y: target.cam.y,
+        z: target.cam.z,
+        duration: 1.4,
+        ease: 'power3.inOut'
+      });
+
+      gsap.to(controls.target, {
+        x: target.look.x,
+        y: target.look.y,
+        z: target.look.z,
+        duration: 1.4,
+        ease: 'power3.inOut',
+        onComplete: () => {
+          warpOverlay.style.opacity = '0';
+        }
+      });
+
+      // Update NOVA voice subtitle
+      const hallEx = exhibits.find(e => e.hall === hallKey);
+      if (hallEx && hallEx.group.userData.desc) {
+        updateNovaSubtitle(hallEx.group.userData.desc);
+      } else {
+        updateNovaSubtitle("Exploring the Central Holographic Atrium of NEXUS Tirunelveli.");
+      }
+    }
+
+    function updateNovaSubtitle(text) {
+      const elem = document.getElementById('novaSubtitle');
+      elem.innerText = '';
+      let charIdx = 0;
+      clearInterval(window.novaTypeInterval);
+      window.novaTypeInterval = setInterval(() => {
+        if (charIdx < text.length) {
+          elem.innerText += text[charIdx];
+          charIdx++;
+        } else {
+          clearInterval(window.novaTypeInterval);
+        }
+      }, 18);
+    }
+
+    /* ===================================================================
+       7. HUD CONTROLS (Language, Lighting, VR)
+       =================================================================== */
+    let isTamil = false;
+    function toggleLanguage() {
+      isTamil = !isTamil;
+      document.getElementById('langText').innerText = isTamil ? 'தமிழ் (TA)' : 'EN / தமிழ்';
+      document.querySelectorAll('[data-en]').forEach(el => {
+        el.innerText = isTamil ? el.getAttribute('data-ta') : el.getAttribute('data-en');
+      });
+      playBeep(800, 0.08);
+    }
+
+    let isNightMode = true;
+    function toggleLighting() {
+      isNightMode = !isNightMode;
+      const text = document.getElementById('lightText');
+      if (isNightMode) {
+        text.innerText = 'Cyber Night';
+        ambientLight.intensity = 1.4;
+        mainCyanLight.intensity = 2.5;
+        scene.fog.color.setHex(0x04040a);
+      } else {
+        text.innerText = 'Solar Day';
+        ambientLight.intensity = 2.8;
+        mainCyanLight.intensity = 1.6;
+        scene.fog.color.setHex(0x141a36);
+      }
+      playBeep(900, 0.08);
+    }
+
+    function toggleVR() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+        document.getElementById('vrBtn').classList.add('active');
+        updateNovaSubtitle("Fullscreen immersive WebXR simulation activated.");
+      } else {
+        document.exitFullscreen();
+        document.getElementById('vrBtn').classList.remove('active');
+      }
+    }
+
+    /* ===================================================================
+       8. BOOT SEQUENCE INITIALIZATION
+       =================================================================== */
+    const bootFill = document.getElementById('bootFill');
+    const bootStatus = document.getElementById('bootStatus');
+    const enterBtn = document.getElementById('enterBtn');
+
+    let loadProgress = 0;
+    const loadInterval = setInterval(() => {
+      loadProgress += Math.floor(Math.random() * 18) + 8;
+      if (loadProgress >= 100) {
+        loadProgress = 100;
+        clearInterval(loadInterval);
+        bootFill.style.width = '100%';
+        bootStatus.innerText = 'ALL 6 SCIENCE HALLS LOADED & ONLINE.';
+        enterBtn.style.display = 'inline-block';
+        gsap.from(enterBtn, { scale: 0.8, opacity: 0, duration: 0.4 });
+      } else {
+        bootFill.style.width = loadProgress + '%';
+        if (loadProgress > 70) bootStatus.innerText = 'CALIBRATING KUDANKULAM & ISRO 3D TELEMETRY...';
+        else if (loadProgress > 40) bootStatus.innerText = 'SYNTHESIZING TAMIRABARANI & NEURAL GRAPHS...';
+      }
+    }, 120);
+
+    function enterMuseum() {
+      initAudio();
+      playWarpSound();
+      const bootScreen = document.getElementById('bootScreen');
+      bootScreen.style.opacity = '0';
+      bootScreen.style.pointerEvents = 'none';
+      setTimeout(() => {
+        bootScreen.style.display = 'none';
+      }, 1200);
+
+      warpToHall('lobby');
+    }
+
+    /* ===================================================================
+       9. 60 FPS RENDER LOOP
+       =================================================================== */
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+      const elapsed = clock.getElapsedTime();
+
+      // Rotate globe
+      if (globeGroup) globeGroup.rotation.y += 0.008;
+
+      // Rotate spinning exhibits (turbines, DNA helix, armillary sphere)
+      exhibits.forEach(ex => {
+        if (ex.spinner) ex.spinner.rotation.y += 0.015;
+      });
+
+      // Pulse ceiling dome
+      ceilingRing.rotation.z += 0.003;
+
+      // Exhaust particle animation
+      if (exhaustParticles) {
+        const pos = exhaustParticles.geometry.attributes.position.array;
+        for (let i = 1; i < pos.length; i += 3) {
+          pos[i] -= 0.25;
+          if (pos[i] < -10) pos[i] = -2;
+        }
+        exhaustParticles.geometry.attributes.position.needsUpdate = true;
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Resize Handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
