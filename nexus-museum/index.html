@@ -902,81 +902,80 @@
     let currentHallKey = 'lobby';
 
     /* ===============================================================
-       2. CINEMATIC WALK-IN ENTRY FLOW
+       2. CINEMATIC WALK-IN ENTRY FLOW (FAST, RELIABLE & FAILSAFE)
        =============================================================== */
-    let isTransitioning = false;
-
     function walkInsideMuseum() {
-      if (isTransitioning) return;
-      isTransitioning = true;
-
-      // Zoom exterior view directly into center glass entrance doors (49% 64%)
       const extView = document.getElementById('exteriorView');
-      extView.style.transform = 'scale(4.2)';
+      const intView = document.getElementById('interiorView');
+      const flash = document.getElementById('flashOverlay');
+
+      if (!extView || !intView) return;
+
+      // Smooth zoom into glass doors
+      extView.style.transform = 'scale(2.2)';
+      extView.style.opacity = '0';
+      if (flash) flash.style.opacity = '0.5';
 
       playPneumaticDoorSound();
 
-      const flash = document.getElementById('flashOverlay');
       setTimeout(() => {
-        flash.style.opacity = '1';
-      }, 900);
-
-      setTimeout(() => {
-        document.getElementById('interiorView').classList.add('active');
         extView.style.display = 'none';
+        intView.classList.add('active');
+        intView.style.opacity = '1';
+        intView.style.pointerEvents = 'auto';
+        if (flash) flash.style.opacity = '0';
 
         switchInteriorHall('lobby');
-
-        setTimeout(() => {
-          flash.style.opacity = '0';
-          isTransitioning = false;
-        }, 150);
-      }, 1400);
+      }, 350);
     }
 
     function enterDirectlyTo(hallKey) {
       walkInsideMuseum();
       setTimeout(() => {
         switchInteriorHall(hallKey);
-      }, 1500);
+      }, 400);
     }
 
     function stepOutsideToPromenade() {
-      if (isTransitioning) return;
-      isTransitioning = true;
-
-      playPneumaticDoorSound();
+      const extView = document.getElementById('exteriorView');
+      const intView = document.getElementById('interiorView');
       const flash = document.getElementById('flashOverlay');
-      flash.style.opacity = '1';
+
+      if (!extView || !intView) return;
+
+      if (flash) flash.style.opacity = '0.5';
+      playPneumaticDoorSound();
 
       setTimeout(() => {
-        document.getElementById('interiorView').classList.remove('active');
-        const extView = document.getElementById('exteriorView');
+        intView.classList.remove('active');
+        intView.style.opacity = '0';
+        intView.style.pointerEvents = 'none';
+
         extView.style.display = 'block';
         extView.style.transform = 'scale(1)';
+        extView.style.opacity = '1';
 
-        setTimeout(() => {
-          flash.style.opacity = '0';
-          isTransitioning = false;
-        }, 200);
-      }, 600);
+        if (flash) flash.style.opacity = '0';
+      }, 250);
     }
 
     function playPneumaticDoorSound() {
       try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(140, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.5);
+        osc.frequency.setValueAtTime(160, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(550, ctx.currentTime + 0.4);
         gain.gain.setValueAtTime(0.01, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.15);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+        gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + 0.75);
+        osc.stop(ctx.currentTime + 0.55);
       } catch (e) {}
     }
 
@@ -994,32 +993,49 @@
       });
 
       // Update Header Indicator
-      document.getElementById('currentHallIndicatorText').innerText = 'LOCATION: ' + data.title.toUpperCase();
+      const ind = document.getElementById('currentHallIndicatorText');
+      if (ind) ind.innerText = 'LOCATION: ' + data.title.toUpperCase();
 
       // Update Sidebar Info
-      document.getElementById('sidebarHallTag').innerText = data.tag;
-      document.getElementById('sidebarTitle').innerText = data.title;
-      document.getElementById('sidebarDesc').innerText = data.desc;
+      const tag = document.getElementById('sidebarHallTag');
+      if (tag) tag.innerText = data.tag;
+      const title = document.getElementById('sidebarTitle');
+      if (title) title.innerText = data.title;
+      const desc = document.getElementById('sidebarDesc');
+      if (desc) desc.innerText = data.desc;
 
       const specsBox = document.getElementById('sidebarSpecs');
-      specsBox.innerHTML = '';
-      data.specs.forEach(s => {
-        const cell = document.createElement('div');
-        cell.className = 'spec-item';
-        cell.innerHTML = '<span class="spec-label">' + s.k + '</span><span class="spec-val">' + s.v + '</span>';
-        specsBox.appendChild(cell);
-      });
+      if (specsBox) {
+        specsBox.innerHTML = '';
+        data.specs.forEach(s => {
+          const cell = document.createElement('div');
+          cell.className = 'spec-item';
+          cell.innerHTML = '<span class="spec-label">' + s.k + '</span><span class="spec-val">' + s.v + '</span>';
+          specsBox.appendChild(cell);
+        });
+      }
 
       // Update Photo
-      document.getElementById('hallPhotoImg').src = data.photo;
+      const photoImg = document.getElementById('hallPhotoImg');
+      if (photoImg) photoImg.src = data.photo;
 
-      // Switch 3D Model
-      switch3DModel(data.modelIndex);
+      // Safely switch 3D model if active
+      try {
+        if (typeof switch3DModel === 'function' && threeInitialized) {
+          switch3DModel(data.modelIndex);
+        }
+      } catch (e) {
+        console.warn('3D model switch note:', e);
+      }
 
       // Reset speech
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      document.getElementById('btnAudioPlay').innerText = '▶';
-      document.getElementById('audioCuratorStatus').innerText = 'Click to play spoken technical narration';
+      try {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      } catch (e) {}
+      const audioBtn = document.getElementById('btnAudioPlay');
+      if (audioBtn) audioBtn.innerText = '▶';
+      const audioStatus = document.getElementById('audioCuratorStatus');
+      if (audioStatus) audioStatus.innerText = 'Click to play spoken technical narration';
     }
 
     /* ===============================================================
@@ -1029,217 +1045,264 @@
 
     function setVisualMode(mode) {
       currentMode = mode;
-      document.getElementById('btnModePhoto').classList.toggle('active', mode === 'photo');
-      document.getElementById('btnMode3D').classList.toggle('active', mode === '3d');
+      const btnP = document.getElementById('btnModePhoto');
+      const btn3 = document.getElementById('btnMode3D');
+      if (btnP) btnP.classList.toggle('active', mode === 'photo');
+      if (btn3) btn3.classList.toggle('active', mode === '3d');
 
       const canvasBox = document.getElementById('canvas3dBox');
       const explodeBtn = document.getElementById('btnExplodeParts');
 
       if (mode === '3d') {
-        canvasBox.classList.add('visible');
-        explodeBtn.style.display = 'block';
-        onResizeCanvas();
+        const ok = initThreeJS();
+        if (ok) {
+          if (canvasBox) canvasBox.classList.add('visible');
+          if (explodeBtn) explodeBtn.style.display = 'block';
+          onResizeCanvas();
+          if (hallsData[currentHallKey]) {
+            switch3DModel(hallsData[currentHallKey].modelIndex);
+          }
+        } else {
+          alert('Interactive 3D model view is initializing or requires network connection for Three.js. Showing real high-definition gallery photo.');
+          setVisualMode('photo');
+        }
       } else {
-        canvasBox.classList.remove('visible');
-        explodeBtn.style.display = 'none';
+        if (canvasBox) canvasBox.classList.remove('visible');
+        if (explodeBtn) explodeBtn.style.display = 'none';
       }
     }
 
     /* ===============================================================
-       5. THREE.JS 3D EXHIBIT INSPECTOR SETUP & 7 MODELS
+       5. THREE.JS 3D EXHIBIT INSPECTOR SETUP (SAFE & DEFERRED)
        =============================================================== */
-    const inspectCanvas = document.getElementById('inspectCanvas3d');
-    const stageBox = document.getElementById('canvas3dBox');
-
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x060b18);
-
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.set(0, 1.8, 4.8);
-
-    const renderer = new THREE.WebGLRenderer({ canvas: inspectCanvas, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.06;
-    controls.minDistance = 2.0;
-    controls.maxDistance = 8.0;
-    controls.target.set(0, 0.8, 0);
-
-    // Studio Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
-    scene.add(ambientLight);
-
-    const keyLight = new THREE.DirectionalLight(0xfffbeb, 1.6);
-    keyLight.position.set(5, 8, 5);
-    scene.add(keyLight);
-
-    const fillLight = new THREE.DirectionalLight(0x38bdf8, 1.0);
-    fillLight.position.set(-5, 4, -3);
-    scene.add(fillLight);
-
-    // Showcase Table
-    const pedestalGroup = new THREE.Group();
-    const tableTop = new THREE.Mesh(
-      new THREE.CylinderGeometry(2.2, 2.3, 0.3, 32),
-      new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.3, metalness: 0.5 })
-    );
-    tableTop.position.y = -0.15;
-    pedestalGroup.add(tableTop);
-    scene.add(pedestalGroup);
-
-    // Build the 7 3D Models
+    let threeInitialized = false;
+    let scene = null, camera = null, renderer = null, controls = null;
     const models = [];
     let currentModelIdx = 0;
     let isAssemblyExploded = false;
 
-    // Model 0: Apollo Space Suit (Lobby)
-    const m0 = new THREE.Group();
-    const suitMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.3 });
-    const suitTorso = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.4, 1.2, 16), suitMat);
-    suitTorso.position.y = 1.2;
-    m0.add(suitTorso);
-    const suitHelmet = new THREE.Mesh(new THREE.SphereGeometry(0.38, 20, 20), suitMat);
-    suitHelmet.position.y = 2.0;
-    m0.add(suitHelmet);
-    const suitVisor = new THREE.Mesh(
-      new THREE.SphereGeometry(0.32, 16, 16, 0, Math.PI),
-      new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.95, roughness: 0.1 })
-    );
-    suitVisor.position.set(0, 2.0, 0.1);
-    m0.add(suitVisor);
-    models.push(m0);
+    function initThreeJS() {
+      if (threeInitialized) return true;
+      if (typeof THREE === 'undefined') {
+        console.warn('Three.js library is not yet loaded from CDN');
+        return false;
+      }
 
-    // Model 1: ISRO CE-20 Cryogenic Rocket Engine (Aerospace)
-    const m1 = new THREE.Group();
-    const nozzleMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.95, roughness: 0.2, side: THREE.DoubleSide });
-    const nozzleMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 1.0, 1.5, 32, 1, true), nozzleMat);
-    nozzleMesh.position.y = 0.75;
-    m1.add(nozzleMesh);
-    const chamberMesh = new THREE.Mesh(
-      new THREE.SphereGeometry(0.5, 24, 24),
-      new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8, roughness: 0.3 })
-    );
-    chamberMesh.position.y = 1.7;
-    m1.add(chamberMesh);
-    [-0.45, 0.45].forEach(ox => {
-      const p = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.1, 16), new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9 }));
-      p.position.set(ox, 1.6, 0.2);
-      m1.add(p);
-    });
-    models.push(m1);
+      try {
+        const inspectCanvas = document.getElementById('inspectCanvas3d');
+        const stageBox = document.getElementById('canvas3dBox');
+        if (!inspectCanvas || !stageBox) return false;
 
-    // Model 2: 6-Axis Industrial Robot Arm (Robotics)
-    const m2 = new THREE.Group();
-    const orangeMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.2, metalness: 0.6 });
-    const whiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
-    const baseCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 0.45, 16), orangeMat);
-    baseCyl.position.y = 0.25;
-    m2.add(baseCyl);
-    const arm1 = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.85, 0.24), whiteMat);
-    arm1.position.set(0, 0.85, 0.12);
-    arm1.rotation.x = 0.3;
-    m2.add(arm1);
-    const arm2 = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.75, 0.2), orangeMat);
-    arm2.position.set(0, 1.45, -0.05);
-    arm2.rotation.x = -0.55;
-    m2.add(arm2);
-    models.push(m2);
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x060b18);
 
-    // Model 3: Optomechanical 3D Star Projector (3D Theatre)
-    const m3 = new THREE.Group();
-    const projMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
-    const centerPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 1.2, 16), projMat);
-    centerPillar.position.y = 0.6;
-    m3.add(centerPillar);
-    const starGlobeN = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), projMat);
-    starGlobeN.position.y = 1.45;
-    m3.add(starGlobeN);
-    const starGlobeS = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), projMat);
-    starGlobeS.position.y = 0.85;
-    m3.add(starGlobeS);
-    const lensRing = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.05, 16, 32), new THREE.MeshStandardMaterial({ color: 0x38bdf8, metalness: 0.9 }));
-    lensRing.position.y = 1.15;
-    lensRing.rotation.x = Math.PI / 2;
-    m3.add(lensRing);
-    models.push(m3);
+        camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+        camera.position.set(0, 1.8, 4.8);
 
-    // Model 4: Giant Newton's Momentum Cradle (Physics Lab)
-    const m4 = new THREE.Group();
-    const frameMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.1 });
-    const woodMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.6 });
-    const cradleBase = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.15, 0.8), woodMat);
-    cradleBase.position.y = 0.08;
-    m4.add(cradleBase);
-    [-0.8, 0.8].forEach(fx => {
-      const fBar = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.4, 12), frameMat);
-      fBar.position.set(fx, 0.8, 0);
-      m4.add(fBar);
-    });
-    const topBar = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.7, 12), frameMat);
-    topBar.position.set(0, 1.5, 0);
-    topBar.rotation.z = Math.PI / 2;
-    m4.add(topBar);
-    const ballMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.98, roughness: 0.05 });
-    [-0.4, -0.2, 0, 0.2, 0.4].forEach(bx => {
-      const ball = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 16), ballMat);
-      ball.position.set(bx, 0.7, 0);
-      m4.add(ball);
-    });
-    models.push(m4);
+        renderer = new THREE.WebGLRenderer({ canvas: inspectCanvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Model 5: Giant Solar System Orrery (Science Park)
-    const m5 = new THREE.Group();
-    const goldMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.9, roughness: 0.1 });
-    const orreryPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.25, 0.8, 16), frameMat);
-    orreryPillar.position.y = 0.4;
-    m5.add(orreryPillar);
-    const sunSphere = new THREE.Mesh(new THREE.SphereGeometry(0.45, 24, 24), new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xd97706, emissiveIntensity: 0.4 }));
-    sunSphere.position.y = 1.1;
-    m5.add(sunSphere);
-    [0.85, 1.25, 1.65].forEach((r, idx) => {
-      const trackRing = new THREE.Mesh(new THREE.TorusGeometry(r, 0.02, 8, 32), frameMat);
-      trackRing.position.y = 1.1;
-      trackRing.rotation.x = Math.PI / 2;
-      m5.add(trackRing);
+        if (typeof THREE.OrbitControls === 'function') {
+          controls = new THREE.OrbitControls(camera, renderer.domElement);
+          controls.enableDamping = true;
+          controls.dampingFactor = 0.06;
+          controls.minDistance = 2.0;
+          controls.maxDistance = 8.0;
+          controls.target.set(0, 0.8, 0);
+        }
 
-      const pMesh = new THREE.Mesh(new THREE.SphereGeometry(idx === 1 ? 0.12 : 0.08, 12, 12), idx === 1 ? new THREE.MeshStandardMaterial({ color: 0x38bdf8 }) : goldMat);
-      pMesh.position.set(r, 1.1, 0);
-      m5.add(pMesh);
-    });
-    models.push(m5);
+        // Studio Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
+        scene.add(ambientLight);
 
-    // Model 6: Tamil Wootz Crucible Steel Sword (Heritage)
-    const m6 = new THREE.Group();
-    const velvetMat = new THREE.MeshStandardMaterial({ color: 0x881337, roughness: 0.9 });
-    const cushion = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.12, 0.7), velvetMat);
-    cushion.position.y = 0.08;
-    m6.add(cushion);
-    const steelMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.18 });
-    const bladeMesh = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.08, 0.03), steelMat);
-    bladeMesh.position.set(0, 0.18, 0);
-    bladeMesh.rotation.y = 0.15;
-    m6.add(bladeMesh);
-    const crucible = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.14, 0.22, 16), new THREE.MeshStandardMaterial({ color: 0x57534e, roughness: 0.85 }));
-    crucible.position.set(0.65, 0.18, 0.15);
-    m6.add(crucible);
-    models.push(m6);
+        const keyLight = new THREE.DirectionalLight(0xfffbeb, 1.6);
+        keyLight.position.set(5, 8, 5);
+        scene.add(keyLight);
 
-    // Add initial model
-    scene.add(models[0]);
+        const fillLight = new THREE.DirectionalLight(0x38bdf8, 1.0);
+        fillLight.position.set(-5, 4, -3);
+        scene.add(fillLight);
+
+        // Showcase Table
+        const pedestalGroup = new THREE.Group();
+        const tableTop = new THREE.Mesh(
+          new THREE.CylinderGeometry(2.2, 2.3, 0.3, 32),
+          new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.3, metalness: 0.5 })
+        );
+        tableTop.position.y = -0.15;
+        pedestalGroup.add(tableTop);
+        scene.add(pedestalGroup);
+
+        buildAll7Models();
+
+        if (models.length > 0) {
+          scene.add(models[0]);
+        }
+
+        threeInitialized = true;
+        onResizeCanvas();
+        animate();
+        return true;
+      } catch (err) {
+        console.warn('WebGL initialization error:', err);
+        return false;
+      }
+    }
+
+    function buildAll7Models() {
+      if (models.length > 0) return;
+      const frameMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.1 });
+
+      // Model 0: Apollo Space Suit (Lobby)
+      const m0 = new THREE.Group();
+      const suitMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.3 });
+      const suitTorso = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.4, 1.2, 16), suitMat);
+      suitTorso.position.y = 1.2;
+      m0.add(suitTorso);
+      const suitHelmet = new THREE.Mesh(new THREE.SphereGeometry(0.38, 20, 20), suitMat);
+      suitHelmet.position.y = 2.0;
+      m0.add(suitHelmet);
+      const suitVisor = new THREE.Mesh(
+        new THREE.SphereGeometry(0.32, 16, 16, 0, Math.PI),
+        new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.95, roughness: 0.1 })
+      );
+      suitVisor.position.set(0, 2.0, 0.1);
+      m0.add(suitVisor);
+      models.push(m0);
+
+      // Model 1: ISRO CE-20 Cryogenic Rocket Engine (Aerospace)
+      const m1 = new THREE.Group();
+      const nozzleMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.95, roughness: 0.2, side: THREE.DoubleSide });
+      const nozzleMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 1.0, 1.5, 32, 1, true), nozzleMat);
+      nozzleMesh.position.y = 0.75;
+      m1.add(nozzleMesh);
+      const chamberMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 24, 24),
+        new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8, roughness: 0.3 })
+      );
+      chamberMesh.position.y = 1.7;
+      m1.add(chamberMesh);
+      [-0.45, 0.45].forEach(ox => {
+        const p = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.1, 16), new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9 }));
+        p.position.set(ox, 1.6, 0.2);
+        m1.add(p);
+      });
+      models.push(m1);
+
+      // Model 2: 6-Axis Industrial Robot Arm (Robotics)
+      const m2 = new THREE.Group();
+      const orangeMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.2, metalness: 0.6 });
+      const whiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+      const baseCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 0.45, 16), orangeMat);
+      baseCyl.position.y = 0.25;
+      m2.add(baseCyl);
+      const arm1 = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.85, 0.24), whiteMat);
+      arm1.position.set(0, 0.85, 0.12);
+      arm1.rotation.x = 0.3;
+      m2.add(arm1);
+      const arm2 = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.75, 0.2), orangeMat);
+      arm2.position.set(0, 1.45, -0.05);
+      arm2.rotation.x = -0.55;
+      m2.add(arm2);
+      models.push(m2);
+
+      // Model 3: Optomechanical 3D Star Projector (3D Theatre)
+      const m3 = new THREE.Group();
+      const projMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
+      const centerPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 1.2, 16), projMat);
+      centerPillar.position.y = 0.6;
+      m3.add(centerPillar);
+      const starGlobeN = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), projMat);
+      starGlobeN.position.y = 1.45;
+      m3.add(starGlobeN);
+      const starGlobeS = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), projMat);
+      starGlobeS.position.y = 0.85;
+      m3.add(starGlobeS);
+      const lensRing = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.05, 16, 32), new THREE.MeshStandardMaterial({ color: 0x38bdf8, metalness: 0.9 }));
+      lensRing.position.y = 1.15;
+      lensRing.rotation.x = Math.PI / 2;
+      m3.add(lensRing);
+      models.push(m3);
+
+      // Model 4: Giant Newton's Momentum Cradle (Physics Lab)
+      const m4 = new THREE.Group();
+      const woodMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.6 });
+      const cradleBase = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.15, 0.8), woodMat);
+      cradleBase.position.y = 0.08;
+      m4.add(cradleBase);
+      [-0.8, 0.8].forEach(fx => {
+        const fBar = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.4, 12), frameMat);
+        fBar.position.set(fx, 0.8, 0);
+        m4.add(fBar);
+      });
+      const topBar = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.7, 12), frameMat);
+      topBar.position.set(0, 1.5, 0);
+      topBar.rotation.z = Math.PI / 2;
+      m4.add(topBar);
+      const ballMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.98, roughness: 0.05 });
+      [-0.4, -0.2, 0, 0.2, 0.4].forEach(bx => {
+        const ball = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 16), ballMat);
+        ball.position.set(bx, 0.7, 0);
+        m4.add(ball);
+      });
+      models.push(m4);
+
+      // Model 5: Giant Solar System Orrery (Science Park)
+      const m5 = new THREE.Group();
+      const goldMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.9, roughness: 0.1 });
+      const orreryPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.25, 0.8, 16), frameMat);
+      orreryPillar.position.y = 0.4;
+      m5.add(orreryPillar);
+      const sunSphere = new THREE.Mesh(new THREE.SphereGeometry(0.45, 24, 24), new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xd97706, emissiveIntensity: 0.4 }));
+      sunSphere.position.y = 1.1;
+      m5.add(sunSphere);
+      [0.85, 1.25, 1.65].forEach((r, idx) => {
+        const trackRing = new THREE.Mesh(new THREE.TorusGeometry(r, 0.02, 8, 32), frameMat);
+        trackRing.position.y = 1.1;
+        trackRing.rotation.x = Math.PI / 2;
+        m5.add(trackRing);
+
+        const pMesh = new THREE.Mesh(new THREE.SphereGeometry(idx === 1 ? 0.12 : 0.08, 12, 12), idx === 1 ? new THREE.MeshStandardMaterial({ color: 0x38bdf8 }) : goldMat);
+        pMesh.position.set(r, 1.1, 0);
+        m5.add(pMesh);
+      });
+      models.push(m5);
+
+      // Model 6: Tamil Wootz Crucible Steel Sword (Heritage)
+      const m6 = new THREE.Group();
+      const velvetMat = new THREE.MeshStandardMaterial({ color: 0x881337, roughness: 0.9 });
+      const cushion = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.12, 0.7), velvetMat);
+      cushion.position.y = 0.08;
+      m6.add(cushion);
+      const steelMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.18 });
+      const bladeMesh = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.08, 0.03), steelMat);
+      bladeMesh.position.set(0, 0.18, 0);
+      bladeMesh.rotation.y = 0.15;
+      m6.add(bladeMesh);
+      const crucible = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.14, 0.22, 16), new THREE.MeshStandardMaterial({ color: 0x57534e, roughness: 0.85 }));
+      crucible.position.set(0.65, 0.18, 0.15);
+      m6.add(crucible);
+      models.push(m6);
+    }
 
     function switch3DModel(index) {
-      if (index === currentModelIdx) return;
+      if (!threeInitialized || !scene || models.length === 0) return;
+      if (index === currentModelIdx && scene.children.includes(models[index])) return;
       if (isAssemblyExploded) toggleExplodeAssembly();
 
-      scene.remove(models[currentModelIdx]);
+      if (models[currentModelIdx]) {
+        scene.remove(models[currentModelIdx]);
+      }
       currentModelIdx = index;
-      scene.add(models[currentModelIdx]);
+      if (models[currentModelIdx]) {
+        scene.add(models[currentModelIdx]);
+      }
 
-      camera.position.set(0, 1.8, 4.8);
-      controls.target.set(0, 0.8, 0);
-      controls.update();
+      if (camera && controls) {
+        camera.position.set(0, 1.8, 4.8);
+        controls.target.set(0, 0.8, 0);
+        controls.update();
+      }
     }
 
     function toggleExplodeAssembly() {
@@ -1359,25 +1422,53 @@
     });
 
     /* ===============================================================
-       9. 60 FPS RENDER LOOP
+       10. 60 FPS RENDER LOOP & EVENT BINDINGS
        =============================================================== */
     function animate() {
+      if (!threeInitialized || !renderer || !scene || !camera) return;
       requestAnimationFrame(animate);
 
       // Turntable rotation in 3D mode
-      if (currentMode === '3d' && !isAssemblyExploded) {
+      if (currentMode === '3d' && !isAssemblyExploded && models[currentModelIdx]) {
         models[currentModelIdx].rotation.y += 0.005;
       }
 
-      controls.update();
+      if (controls) controls.update();
       renderer.render(scene, camera);
     }
 
-    animate();
-
     window.addEventListener('resize', () => {
-      onResizeCanvas();
+      if (threeInitialized) onResizeCanvas();
     });
+
+    // Guarantee that clicking anywhere on the entrance works reliably
+    function setupEntranceEvents() {
+      const enterBtn = document.getElementById('btnEnterMuseum');
+      const doorHotspot = document.querySelector('.entrance-door-hotspot');
+      const doorZone = document.querySelector('.facade-door-click-zone');
+
+      [enterBtn, doorHotspot, doorZone].forEach(el => {
+        if (el) {
+          el.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            walkInsideMuseum();
+          });
+          el.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            walkInsideMuseum();
+          });
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupEntranceEvents);
+    } else {
+      setupEntranceEvents();
+    }
+    setTimeout(setupEntranceEvents, 200);
   </script>
 </body>
 </html>
