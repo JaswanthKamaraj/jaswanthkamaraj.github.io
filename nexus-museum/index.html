@@ -115,6 +115,85 @@
     .pin-physics      { top: 35%; left: 16%; }
     .pin-fountain     { bottom: 20%; left: 18%; }
 
+    /* Header bar on Exterior View */
+    .facade-header-bar {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+      text-align: center;
+    }
+    .facade-badge-pill {
+      background: rgba(14, 22, 40, 0.92);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      backdrop-filter: blur(10px);
+      color: #ffffff;
+      padding: 8px 24px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      letter-spacing: 0.08em;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7);
+    }
+    .facade-hint-pill {
+      background: rgba(0, 0, 0, 0.75);
+      color: #38bdf8;
+      padding: 5px 16px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Invisible Glass Door Click Zone covering entrance */
+    .facade-door-click-zone {
+      position: absolute;
+      top: 50%;
+      left: 36%;
+      width: 28%;
+      height: 28%;
+      z-index: 14;
+      cursor: pointer;
+    }
+
+    /* Left / Right Gallery Navigation Arrows */
+    .stage-nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 12;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(14, 22, 40, 0.88);
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+      font-size: 1.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6);
+    }
+    .stage-nav-arrow:hover {
+      background: #0284c7;
+      border-color: #38bdf8;
+      transform: translateY(-50%) scale(1.12);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.8);
+    }
+    .arrow-prev { left: 20px; }
+    .arrow-next { right: 20px; }
+
     /* The Center Entrance Door Waypoint Call-To-Action */
     .entrance-door-hotspot {
       position: absolute;
@@ -542,6 +621,15 @@
       <img src="museum-facade.jpg" alt="Advanced Science Museum Tirunelveli Campus Facade" class="facade-bg-image">
       <div class="facade-ambient-overlay"></div>
 
+      <!-- Header bar overlay on exterior view -->
+      <div class="facade-header-bar">
+        <div class="facade-badge-pill">🏛️ ADVANCED SCIENCE MUSEUM • TIRUNELVELI</div>
+        <div class="facade-hint-pill">Click doors or press [ENTER] to walk inside</div>
+      </div>
+
+      <!-- Clickable Glass Door Area -->
+      <div class="facade-door-click-zone" onclick="walkInsideMuseum()" title="Click to step inside the museum"></div>
+
       <!-- Interactive Pins on the Exterior Building -->
       <div class="facade-pin pin-theatre" onclick="enterDirectlyTo('theatre')">
         <span>🎬 3D Science Theatre Auditorium</span>
@@ -559,7 +647,7 @@
       <!-- Center Entrance Door Waypoint Call-To-Action -->
       <div class="entrance-door-hotspot" onclick="walkInsideMuseum()">
         <div class="door-waypoint-ring">🚶</div>
-        <button class="enter-museum-cta-btn">
+        <button class="enter-museum-cta-btn" id="btnEnterMuseum">
           <span>STEP INSIDE THE MUSEUM ➔</span>
         </button>
       </div>
@@ -586,6 +674,9 @@
         </div>
 
         <div class="interior-nav-btns">
+          <button class="btn-int" onclick="toggleFullscreen()" id="btnFullscreen">
+            ⛶ <span>FULLSCREEN</span>
+          </button>
           <button class="btn-int" onclick="toggleLanguage()" id="btnLang">
             🌐 <span id="txtLang">EN / தமிழ்</span>
           </button>
@@ -610,6 +701,10 @@
               🚀 Interactive 3D Model
             </button>
           </div>
+
+          <!-- Gallery Stroll Arrows: Previous and Next Hall -->
+          <button class="stage-nav-arrow arrow-prev" onclick="prevHall()" title="Previous Gallery [Left Arrow]">❮</button>
+          <button class="stage-nav-arrow arrow-next" onclick="nextHall()" title="Next Gallery [Right Arrow]">❯</button>
 
           <!-- Real Gallery Photo Layer -->
           <img src="gallery-lobby.jpg" alt="Gallery View" id="hallPhotoImg" class="hall-photo-layer">
@@ -1214,16 +1309,52 @@
     }
 
     /* ===============================================================
-       8. KEYBOARD SHORTCUTS
+       8. GALLERY STROLL (NEXT / PREV) & FULLSCREEN
+       =============================================================== */
+    const hallOrder = ['lobby', 'aerospace', 'robotics', 'theatre', 'physics', 'science-park', 'heritage'];
+
+    function nextHall() {
+      const idx = hallOrder.indexOf(currentHallKey);
+      const nextIdx = (idx + 1) % hallOrder.length;
+      switchInteriorHall(hallOrder[nextIdx]);
+    }
+
+    function prevHall() {
+      const idx = hallOrder.indexOf(currentHallKey);
+      const prevIdx = (idx - 1 + hallOrder.length) % hallOrder.length;
+      switchInteriorHall(hallOrder[prevIdx]);
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+        document.getElementById('btnFullscreen').innerHTML = '⛶ <span>WINDOWED</span>';
+      } else {
+        document.exitFullscreen().catch(() => {});
+        document.getElementById('btnFullscreen').innerHTML = '⛶ <span>FULLSCREEN</span>';
+      }
+    }
+
+    /* ===============================================================
+       9. KEYBOARD & TOUCH SHORTCUTS
        =============================================================== */
     window.addEventListener('keydown', (e) => {
-      if (e.key.toLowerCase() === 'w' || e.key === 'ArrowUp') {
-        const extView = document.getElementById('exteriorView');
-        if (extView.style.display !== 'none') {
+      const extView = document.getElementById('exteriorView');
+      const isOutside = extView.style.display !== 'none';
+
+      if (e.key.toLowerCase() === 'w' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
+        if (isOutside) {
+          e.preventDefault();
           walkInsideMuseum();
         }
       } else if (e.key === 'Escape') {
         stepOutsideToPromenade();
+      } else if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') {
+        if (!isOutside) nextHall();
+      } else if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') {
+        if (!isOutside) prevHall();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
       }
     });
 
