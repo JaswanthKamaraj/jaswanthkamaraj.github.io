@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Advanced Science Museum: Tirunelveli | Walk Inside 3D Experience</title>
-  <meta name="description" content="Step right inside the Advanced Science Museum, Tirunelveli. Start in front of the grand campus facade and walk through the glass entrance doors into the futuristic science galleries.">
+  <title>Advanced Science Museum: Tirunelveli | Walk-Inside 3D Experience</title>
+  <meta name="description" content="Explore the full Advanced Science Museum, Tirunelveli. Walk through the glass entrance doors into 7 interactive halls: ISRO Aerospace, Robotics, 3D Theatre, Hands-on Physics Lab, Science Park, and Tamil Metallurgy.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@500;700&display=swap" rel="stylesheet">
 
-  <!-- Three.js + OrbitControls for 3D Exhibit Inspection -->
+  <!-- Three.js + OrbitControls -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <style>
     :root {
-      --bg-dark: #070b16;
-      --bg-surface: #0f172a;
+      --bg-dark: #060a15;
+      --bg-surface: #0e1628;
       --bg-card: #131d35;
       --brand-blue: #0284c7;
       --brand-cyan: #38bdf8;
-      --brand-gold: #f59e0b;
+      --brand-amber: #f59e0b;
+      --brand-emerald: #10b981;
       --border-subtle: rgba(255, 255, 255, 0.12);
       --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -41,7 +42,6 @@
       user-select: none;
     }
 
-    /* Fullscreen Viewport Wrapper */
     #experienceContainer {
       position: relative;
       width: 100vw;
@@ -68,28 +68,27 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      filter: brightness(0.95);
+      filter: brightness(0.96);
     }
 
-    /* Ambient Subtle Vignette */
     .facade-ambient-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(7, 11, 22, 0.6) 100%);
+      background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(6, 10, 21, 0.6) 100%);
       pointer-events: none;
     }
 
-    /* Exterior Floating Interactive Pins on the building */
+    /* Exterior Interactive Pins on Building Features */
     .facade-pin {
       position: absolute;
       z-index: 15;
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(14, 22, 40, 0.88);
       border: 1px solid rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(8px);
       padding: 6px 14px;
@@ -97,7 +96,7 @@
       font-size: 0.74rem;
       font-weight: 700;
       color: #ffffff;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
       cursor: pointer;
       transition: all 0.2s ease;
       animation: pinFloat 3s ease-in-out infinite;
@@ -111,8 +110,10 @@
       border-color: #38bdf8;
       transform: translateY(-4px) scale(1.05);
     }
-    .pin-planetarium { top: 22%; right: 22%; }
-    .pin-fountain    { bottom: 22%; left: 18%; }
+    .pin-theatre      { top: 28%; right: 26%; }
+    .pin-science-park { bottom: 25%; right: 12%; }
+    .pin-physics      { top: 35%; left: 16%; }
+    .pin-fountain     { bottom: 20%; left: 18%; }
 
     /* The Center Entrance Door Waypoint Call-To-Action */
     .entrance-door-hotspot {
@@ -129,10 +130,10 @@
     }
 
     .door-waypoint-ring {
-      width: 64px;
-      height: 64px;
+      width: 66px;
+      height: 66px;
       border-radius: 50%;
-      background: rgba(2, 132, 199, 0.5);
+      background: rgba(2, 132, 199, 0.55);
       border: 2.5px solid #ffffff;
       display: flex;
       align-items: center;
@@ -156,7 +157,7 @@
       background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
       border: 2px solid #ffffff;
       color: #ffffff;
-      padding: 14px 30px;
+      padding: 14px 32px;
       border-radius: 999px;
       font-size: 0.96rem;
       font-weight: 800;
@@ -175,29 +176,6 @@
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 45px rgba(56, 189, 248, 0.9);
     }
 
-    /* Sliding Double Doors for Door Transition */
-    .sliding-doors-box {
-      position: absolute;
-      top: 52%;
-      left: 45%;
-      width: 8%;
-      height: 18%;
-      z-index: 12;
-      overflow: hidden;
-      display: flex;
-      pointer-events: none;
-      opacity: 0;
-    }
-    .s-door {
-      width: 50%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(10px);
-      transition: transform 1.2s ease;
-    }
-    .s-door-left { transform: translateX(0); }
-    .s-door-right { transform: translateX(0); }
-
     /* Flash Transition Overlay */
     #flashOverlay {
       position: absolute;
@@ -205,7 +183,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at 49% 64%, rgba(255, 255, 255, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+      background: radial-gradient(circle at 49% 64%, rgba(255, 255, 255, 0.95) 0%, rgba(14, 22, 40, 0.98) 100%);
       z-index: 25;
       opacity: 0;
       pointer-events: none;
@@ -213,7 +191,7 @@
     }
 
     /* ===============================================================
-       B. INTERIOR MUSEUM EXPERIENCE (INSIDE THE BUILDING)
+       B. INTERIOR MUSEUM EXPERIENCE (INSIDE THE 7 HALLS)
        =============================================================== */
     #interiorView {
       position: absolute;
@@ -227,18 +205,18 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.8s ease;
-      background: #080d1a;
+      background: var(--bg-dark);
     }
     #interiorView.active {
       opacity: 1;
       pointer-events: auto;
     }
 
-    /* Interior Top Navigation Bar */
+    /* Top Interior Navigation Bar */
     .interior-nav {
       position: relative;
       z-index: 30;
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(14, 22, 40, 0.95);
       border-bottom: 1px solid var(--border-subtle);
       padding: 12px 24px;
       display: flex;
@@ -279,7 +257,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(8, 13, 26, 0.7);
+      background: rgba(6, 10, 21, 0.7);
       border: 1px solid var(--border-subtle);
       padding: 6px 16px;
       border-radius: 999px;
@@ -329,7 +307,7 @@
       flex: 1;
       position: relative;
       display: grid;
-      grid-template-columns: 1fr 420px;
+      grid-template-columns: 1fr 430px;
       overflow: hidden;
     }
 
@@ -338,7 +316,7 @@
       position: relative;
       width: 100%;
       height: 100%;
-      background: #050811;
+      background: #040711;
       overflow: hidden;
     }
 
@@ -352,7 +330,7 @@
       transition: opacity 0.5s ease;
     }
 
-    /* 3D Canvas Box (Overlaid or Toggleable) */
+    /* 3D Canvas Box */
     #canvas3dBox {
       position: absolute;
       top: 0;
@@ -361,7 +339,7 @@
       height: 100%;
       z-index: 5;
       display: none;
-      background: radial-gradient(circle at 50% 50%, #0d1527 0%, #050811 100%);
+      background: radial-gradient(circle at 50% 50%, #0d162a 0%, #040711 100%);
     }
     #canvas3dBox.visible { display: block; }
 
@@ -373,7 +351,7 @@
     }
     #inspectCanvas3d:active { cursor: grabbing; }
 
-    /* 3D Mode Toggle Button on Visual Box */
+    /* Visual Mode Toggle Buttons */
     .visual-toggle-bar {
       position: absolute;
       top: 18px;
@@ -383,7 +361,7 @@
       gap: 8px;
     }
     .v-toggle-btn {
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(14, 22, 40, 0.88);
       border: 1px solid var(--border-subtle);
       color: #cbd5e1;
       padding: 8px 14px;
@@ -399,6 +377,23 @@
       border-color: #38bdf8;
       color: #ffffff;
       box-shadow: 0 4px 14px rgba(2, 132, 199, 0.5);
+    }
+
+    /* 3D Explode Button */
+    .c-3d-btn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 10;
+      background: #0284c7;
+      border: 1px solid #38bdf8;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
     }
 
     /* Right Stage: Exhibit Information & Audio Curator */
@@ -439,7 +434,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      background: rgba(8, 13, 26, 0.6);
+      background: rgba(6, 10, 21, 0.6);
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
       padding: 12px;
@@ -486,14 +481,14 @@
     .audio-head { font-size: 0.8rem; font-weight: 700; }
     .audio-sub  { font-size: 0.7rem; color: var(--brand-cyan); font-family: var(--font-mono); }
 
-    /* Bottom Wing Navigation Carousel */
+    /* Bottom Gallery Wing Carousel */
     .bottom-hall-selector {
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(14, 22, 40, 0.95);
       border-top: 1px solid var(--border-subtle);
       padding: 12px 24px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       overflow-x: auto;
       scrollbar-width: none;
     }
@@ -505,7 +500,7 @@
       color: #cbd5e1;
       padding: 8px 16px;
       border-radius: 999px;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
@@ -525,62 +520,43 @@
       box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
     }
 
-    /* 3D Explode Button in 3D Mode */
-    .c-3d-btn {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      z-index: 10;
-      background: #0284c7;
-      border: 1px solid #38bdf8;
-      color: #ffffff;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: none;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-    }
-
     @media (max-width: 900px) {
       .interior-stage { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
       .stage-info-sidebar { border-left: none; border-top: 1px solid var(--border-subtle); }
-      .pin-planetarium, .pin-fountain { display: none; }
+      .facade-pin { display: none; }
       .enter-museum-cta-btn { font-size: 0.85rem; padding: 12px 20px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Fullscreen Experience Wrapper -->
   <div id="experienceContainer">
 
-    <!-- Flash Overlay for Seamless Door Transition -->
+    <!-- Flash Overlay for Smooth Door Transition -->
     <div id="flashOverlay"></div>
 
     <!-- ===============================================================
-         1. EXTERIOR VIEW (LIKE IN THE IMAGE)
+         1. EXTERIOR VIEW ("LIKE IN THE IMAGE")
          =============================================================== -->
     <div id="exteriorView">
       <img src="museum-facade.jpg" alt="Advanced Science Museum Tirunelveli Campus Facade" class="facade-bg-image">
       <div class="facade-ambient-overlay"></div>
 
-      <!-- Sliding Doors Transition Layer -->
-      <div class="sliding-doors-box" id="doorAnimBox">
-        <div class="s-door s-door-left" id="sDoorL"></div>
-        <div class="s-door s-door-right" id="sDoorR"></div>
+      <!-- Interactive Pins on the Exterior Building -->
+      <div class="facade-pin pin-theatre" onclick="enterDirectlyTo('theatre')">
+        <span>🎬 3D Science Theatre Auditorium</span>
       </div>
-
-      <!-- Interactive Pins on Building Features -->
-      <div class="facade-pin pin-planetarium" onclick="enterDirectlyTo('aerospace')">
-        <span>🪐 Geodesic Planetarium Dome</span>
+      <div class="facade-pin pin-science-park" onclick="enterDirectlyTo('science-park')">
+        <span>🌳 Outdoor Science Park & Orrery</span>
+      </div>
+      <div class="facade-pin pin-physics" onclick="enterDirectlyTo('physics')">
+        <span>⚙️ Hands-on Physics Discovery Lab</span>
       </div>
       <div class="facade-pin pin-fountain">
         <span>🌊 Science Centre Fountain Plaza</span>
       </div>
 
-      <!-- Central Entrance Door Waypoint Call-To-Action -->
+      <!-- Center Entrance Door Waypoint Call-To-Action -->
       <div class="entrance-door-hotspot" onclick="walkInsideMuseum()">
         <div class="door-waypoint-ring">🚶</div>
         <button class="enter-museum-cta-btn">
@@ -590,7 +566,7 @@
     </div>
 
     <!-- ===============================================================
-         2. INTERIOR MUSEUM EXPERIENCE (INSIDE THE BUILDING)
+         2. INTERIOR MUSEUM EXPERIENCE (INSIDE THE 7 HALLS)
          =============================================================== -->
     <div id="interiorView">
       
@@ -600,7 +576,7 @@
           <div class="interior-badge">🏛️</div>
           <div class="interior-brand-text">
             <span class="interior-brand-title">ADVANCED SCIENCE MUSEUM: TIRUNELVELI</span>
-            <span class="interior-brand-sub">District Science Centre • Interior Exhibition Galleries</span>
+            <span class="interior-brand-sub">District Science Centre • 7 Interactive Exhibition Galleries</span>
           </div>
         </div>
 
@@ -654,7 +630,7 @@
             <div class="sidebar-hall-tag" id="sidebarHallTag">MAIN ATRIUM & RECEPTION</div>
             <h2 class="sidebar-title" id="sidebarTitle">Grand Entrance Lobby & Atrium</h2>
             <p class="sidebar-desc" id="sidebarDesc">
-              The high glass-skylight atrium welcoming visitors inside the Advanced Science Museum. Features the visitor reception desk, Apollo EVA space suit, and planetary science demonstrations.
+              The high glass-skylight atrium welcoming visitors inside the Advanced Science Museum. Features the visitor reception desk, Apollo EVA space suit vitrine, and planetary science demonstrations.
             </p>
 
             <div class="sidebar-specs-grid" id="sidebarSpecs">
@@ -672,7 +648,7 @@
               </div>
               <div class="spec-item">
                 <span class="spec-label">Galleries</span>
-                <span class="spec-val">Direct Access to 4 Wings</span>
+                <span class="spec-val">Direct Access to 7 Wings</span>
               </div>
             </div>
           </div>
@@ -691,22 +667,28 @@
 
       </div>
 
-      <!-- Bottom Gallery Wing Teleport Selector -->
+      <!-- Bottom Gallery Wing Teleport Selector (All 7 Halls Matching Facade!) -->
       <nav class="bottom-hall-selector">
         <button class="hall-select-btn active" onclick="switchInteriorHall('lobby')" id="btn-hall-lobby">
-          🏢 <span>1. Grand Lobby & Atrium</span>
+          🏢 <span>1. Grand Lobby</span>
         </button>
         <button class="hall-select-btn" onclick="switchInteriorHall('aerospace')" id="btn-hall-aerospace">
-          🚀 <span>2. Aerospace & ISRO Hall</span>
+          🚀 <span>2. Space & ISRO</span>
         </button>
         <button class="hall-select-btn" onclick="switchInteriorHall('robotics')" id="btn-hall-robotics">
-          🤖 <span>3. Robotics & AI Lab</span>
+          🤖 <span>3. Robotics & AI</span>
         </button>
-        <button class="hall-select-btn" onclick="switchInteriorHall('energy')" id="btn-hall-energy">
-          ⚡ <span>4. Clean Energy Hall</span>
+        <button class="hall-select-btn" onclick="switchInteriorHall('theatre')" id="btn-hall-theatre">
+          🎬 <span>4. 3D Theatre</span>
+        </button>
+        <button class="hall-select-btn" onclick="switchInteriorHall('physics')" id="btn-hall-physics">
+          ⚙️ <span>5. Physics Lab</span>
+        </button>
+        <button class="hall-select-btn" onclick="switchInteriorHall('science-park')" id="btn-hall-science-park">
+          🌳 <span>6. Science Park</span>
         </button>
         <button class="hall-select-btn" onclick="switchInteriorHall('heritage')" id="btn-hall-heritage">
-          ⚔️ <span>5. Tamil Wootz Metallurgy</span>
+          ⚔️ <span>7. Tamil Heritage</span>
         </button>
       </nav>
 
@@ -714,12 +696,12 @@
 
   </div>
 
-  <!-- ===================================================================
+  <!-- ===============================================================
        THREE.JS & WALK-IN ENGINE SCRIPT
-       =================================================================== -->
+       =============================================================== */
   <script>
     /* ===============================================================
-       1. DATA FOR ALL INTERIOR EXHIBITION HALLS
+       1. DATA FOR ALL 7 EXHIBITION HALLS (MATCHING EXTERIOR BUILDING)
        =============================================================== */
     const hallsData = {
       lobby: {
@@ -732,7 +714,7 @@
           { k: 'Architecture', v: 'Double Glass Skylight' },
           { k: 'Key Display', v: 'Apollo EVA Space Suit' },
           { k: 'Visitor Hub', v: 'Information & Tickets' },
-          { k: 'Access', v: 'Direct Access to 4 Wings' }
+          { k: 'Access', v: 'Direct Access to 7 Wings' }
         ],
         modelIndex: 0
       },
@@ -764,32 +746,61 @@
         ],
         modelIndex: 2
       },
-      energy: {
-        id: 'energy',
-        tag: 'NORTH CLEAN ENERGY & NUCLEAR SCIENCE HALL',
-        title: 'Kudankulam Nuclear & Muppandal Wind Model',
-        desc: "Engineering scale tabletop model of the Kudankulam Nuclear Power Plant (KKNPP) and adjacent Muppandal wind turbines in Tirunelveli, generating clean base-load renewable power.",
-        photo: 'gallery-lobby.jpg',
+      theatre: {
+        id: 'theatre',
+        tag: 'DIGITAL 3D THEATRE AUDITORIUM',
+        title: '3D Science Cinema & Planetarium Shows',
+        desc: "Modern digital stereoscopic 3D science theatre featuring tiered seating, spatial surround sound, and immersive presentations on astronomy, cosmic exploration, and deep-sea biology.",
+        photo: 'gallery-theatre.jpg',
         specs: [
-          { k: 'Reactor Type', v: 'VVER-1000 Pressurized Water' },
-          { k: 'Plant Capacity', v: '2 x 1,000 MW Nuclear Units' },
-          { k: 'Wind Corridor', v: 'Muppandal Pass (1.5+ GW)' },
-          { k: 'District', v: 'Tirunelveli, Tamil Nadu' }
+          { k: 'Screen Type', v: 'Curved 4K Silver Screen' },
+          { k: 'Projection', v: 'Active 3D Stereoscopic' },
+          { k: 'Audio System', v: '7.1 Dolby Spatial Surround' },
+          { k: 'Daily Shows', v: '4 Scheduled Showings' }
         ],
         modelIndex: 3
+      },
+      physics: {
+        id: 'physics',
+        tag: 'INTERACTIVE DISCOVERY & PHYSICS LAB',
+        title: 'Hands-on Interactive Science & Physics Hall',
+        desc: "An interactive laboratory where students and visitors experiment directly with fundamental physical laws: momentum conservation on Newton's cradle, electrostatic charging, and optical light prisms.",
+        photo: 'gallery-physics.jpg',
+        specs: [
+          { k: 'Key Experiment', v: "Giant Newton's Momentum Cradle" },
+          { k: 'Electrostatics', v: 'Van de Graaff 250kV Generator' },
+          { k: 'Wave Optics', v: 'Prism Rainbow Dispersion' },
+          { k: 'Philosophy', v: 'Hands-on Experiential Learning' }
+        ],
+        modelIndex: 4
+      },
+      'science-park': {
+        id: 'science-park',
+        tag: 'OUTDOOR SCIENCE PARK & BOTANICAL LAWNS',
+        title: 'Science Park & Giant Solar System Orrery',
+        desc: "The spacious outdoor science grounds featuring the giant mechanical Solar System Orrery sculpture, the high-precision equatorial sundial, parabolic whispering dishes, and renewable energy demonstrators.",
+        photo: 'gallery-science-park.jpg',
+        specs: [
+          { k: 'Centerpiece', v: 'Giant Planetary Orrery Sculpture' },
+          { k: 'Timekeeping', v: 'Stainless Steel Equatorial Sundial' },
+          { k: 'Acoustics', v: '30m Parabolic Echo Dishes' },
+          { k: 'Environment', v: 'Landscaped Botanical Gardens' }
+        ],
+        modelIndex: 5
       },
       heritage: {
         id: 'heritage',
         tag: 'CENTRAL ATRIUM & TAMIL HERITAGE SCIENCE',
         title: 'Ancient Tamil Wootz Crucible Steel Sword',
         desc: "Physical artifact showcase displaying a high-carbon Wootz steel blade with its characteristic Damascus watermark pattern, alongside a fired clay smelting crucible. Originated in ancient Tamil Nadu.",
+        photo: 'gallery-lobby.jpg',
         specs: [
           { k: 'Origin Era', v: '300 BCE (Sangam Classical Era)' },
           { k: 'Metallurgy', v: 'Crucible Smelting Technique' },
           { k: 'Microstructure', v: 'Carbon Nanotubes & Cementite Wires' },
           { k: 'Maritime Trade', v: 'Exported from Korkai to Rome & Arabia' }
         ],
-        modelIndex: 4
+        modelIndex: 6
       }
     };
 
@@ -800,33 +811,27 @@
        =============================================================== */
     let isTransitioning = false;
 
-    // STEP INSIDE (WALK THROUGH THE ENTRANCE DOORS OF THE IMAGE)
     function walkInsideMuseum() {
       if (isTransitioning) return;
       isTransitioning = true;
 
-      // 1. Zoom exterior view directly into center glass entrance doors (49% 64%)
+      // Zoom exterior view directly into center glass entrance doors (49% 64%)
       const extView = document.getElementById('exteriorView');
       extView.style.transform = 'scale(4.2)';
 
-      // 2. Play door whoosh audio
       playPneumaticDoorSound();
 
-      // 3. Trigger Flash & Door Transition
       const flash = document.getElementById('flashOverlay');
       setTimeout(() => {
         flash.style.opacity = '1';
       }, 900);
 
       setTimeout(() => {
-        // Switch to interior view
         document.getElementById('interiorView').classList.add('active');
         extView.style.display = 'none';
 
-        // Switch to lobby
         switchInteriorHall('lobby');
 
-        // Fade out flash
         setTimeout(() => {
           flash.style.opacity = '0';
           isTransitioning = false;
@@ -841,7 +846,6 @@
       }, 1500);
     }
 
-    // EXIT OUTSIDE TO CAMPUS PROMENADE
     function stepOutsideToPromenade() {
       if (isTransitioning) return;
       isTransitioning = true;
@@ -863,7 +867,6 @@
       }, 600);
     }
 
-    // Procedural Pneumatic Door Audio
     function playPneumaticDoorSound() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -948,13 +951,13 @@
     }
 
     /* ===============================================================
-       5. THREE.JS 3D EXHIBIT INSPECTOR SETUP & MODELS
+       5. THREE.JS 3D EXHIBIT INSPECTOR SETUP & 7 MODELS
        =============================================================== */
     const inspectCanvas = document.getElementById('inspectCanvas3d');
     const stageBox = document.getElementById('canvas3dBox');
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x070c18);
+    scene.background = new THREE.Color(0x060b18);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.set(0, 1.8, 4.8);
@@ -991,7 +994,7 @@
     pedestalGroup.add(tableTop);
     scene.add(pedestalGroup);
 
-    // Build the 5 3D Models
+    // Build the 7 3D Models
     const models = [];
     let currentModelIdx = 0;
     let isAssemblyExploded = false;
@@ -1049,48 +1052,86 @@
     m2.add(arm2);
     models.push(m2);
 
-    // Model 3: Kudankulam Nuclear & Wind Turbine (Energy)
+    // Model 3: Optomechanical 3D Star Projector (3D Theatre)
     const m3 = new THREE.Group();
-    const concMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.4 });
-    const domeCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 0.65, 24), concMat);
-    domeCyl.position.set(-0.4, 0.35, 0);
-    m3.add(domeCyl);
-    const domeHem = new THREE.Mesh(new THREE.SphereGeometry(0.65, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2), concMat);
-    domeHem.position.set(-0.4, 0.68, 0);
-    m3.add(domeHem);
-    const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.09, 1.6, 16), whiteMat);
-    mast.position.set(0.7, 0.8, 0);
-    m3.add(mast);
-    const turbineRotor = new THREE.Group();
-    turbineRotor.position.set(0.7, 1.6, 0.1);
-    for (let i = 0; i < 3; i++) {
-      const blade = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.7, 0.02), whiteMat);
-      blade.rotation.z = (i / 3) * Math.PI * 2;
-      blade.position.y = Math.sin((i / 3) * Math.PI * 2) * 0.35;
-      blade.position.x = Math.cos((i / 3) * Math.PI * 2) * 0.35;
-      turbineRotor.add(blade);
-    }
-    m3.add(turbineRotor);
-    m3.userData.rotor = turbineRotor;
+    const projMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
+    const centerPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 1.2, 16), projMat);
+    centerPillar.position.y = 0.6;
+    m3.add(centerPillar);
+    const starGlobeN = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), projMat);
+    starGlobeN.position.y = 1.45;
+    m3.add(starGlobeN);
+    const starGlobeS = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), projMat);
+    starGlobeS.position.y = 0.85;
+    m3.add(starGlobeS);
+    const lensRing = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.05, 16, 32), new THREE.MeshStandardMaterial({ color: 0x38bdf8, metalness: 0.9 }));
+    lensRing.position.y = 1.15;
+    lensRing.rotation.x = Math.PI / 2;
+    m3.add(lensRing);
     models.push(m3);
 
-    // Model 4: Tamil Wootz Crucible Steel Sword (Heritage)
+    // Model 4: Giant Newton's Momentum Cradle (Physics Lab)
     const m4 = new THREE.Group();
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.1 });
+    const woodMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.6 });
+    const cradleBase = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.15, 0.8), woodMat);
+    cradleBase.position.y = 0.08;
+    m4.add(cradleBase);
+    [-0.8, 0.8].forEach(fx => {
+      const fBar = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.4, 12), frameMat);
+      fBar.position.set(fx, 0.8, 0);
+      m4.add(fBar);
+    });
+    const topBar = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.7, 12), frameMat);
+    topBar.position.set(0, 1.5, 0);
+    topBar.rotation.z = Math.PI / 2;
+    m4.add(topBar);
+    const ballMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.98, roughness: 0.05 });
+    [-0.4, -0.2, 0, 0.2, 0.4].forEach(bx => {
+      const ball = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 16), ballMat);
+      ball.position.set(bx, 0.7, 0);
+      m4.add(ball);
+    });
+    models.push(m4);
+
+    // Model 5: Giant Solar System Orrery (Science Park)
+    const m5 = new THREE.Group();
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.9, roughness: 0.1 });
+    const orreryPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.25, 0.8, 16), frameMat);
+    orreryPillar.position.y = 0.4;
+    m5.add(orreryPillar);
+    const sunSphere = new THREE.Mesh(new THREE.SphereGeometry(0.45, 24, 24), new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xd97706, emissiveIntensity: 0.4 }));
+    sunSphere.position.y = 1.1;
+    m5.add(sunSphere);
+    [0.85, 1.25, 1.65].forEach((r, idx) => {
+      const trackRing = new THREE.Mesh(new THREE.TorusGeometry(r, 0.02, 8, 32), frameMat);
+      trackRing.position.y = 1.1;
+      trackRing.rotation.x = Math.PI / 2;
+      m5.add(trackRing);
+
+      const pMesh = new THREE.Mesh(new THREE.SphereGeometry(idx === 1 ? 0.12 : 0.08, 12, 12), idx === 1 ? new THREE.MeshStandardMaterial({ color: 0x38bdf8 }) : goldMat);
+      pMesh.position.set(r, 1.1, 0);
+      m5.add(pMesh);
+    });
+    models.push(m5);
+
+    // Model 6: Tamil Wootz Crucible Steel Sword (Heritage)
+    const m6 = new THREE.Group();
     const velvetMat = new THREE.MeshStandardMaterial({ color: 0x881337, roughness: 0.9 });
     const cushion = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.12, 0.7), velvetMat);
     cushion.position.y = 0.08;
-    m4.add(cushion);
+    m6.add(cushion);
     const steelMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.18 });
     const bladeMesh = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.08, 0.03), steelMat);
     bladeMesh.position.set(0, 0.18, 0);
     bladeMesh.rotation.y = 0.15;
-    m4.add(bladeMesh);
+    m6.add(bladeMesh);
     const crucible = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.14, 0.22, 16), new THREE.MeshStandardMaterial({ color: 0x57534e, roughness: 0.85 }));
     crucible.position.set(0.65, 0.18, 0.15);
-    m4.add(crucible);
-    models.push(m4);
+    m6.add(crucible);
+    models.push(m6);
 
-    // Add first model
+    // Add initial model
     scene.add(models[0]);
 
     function switch3DModel(index) {
@@ -1192,13 +1233,9 @@
     function animate() {
       requestAnimationFrame(animate);
 
-      // Slow turntable rotation in 3D mode
+      // Turntable rotation in 3D mode
       if (currentMode === '3d' && !isAssemblyExploded) {
         models[currentModelIdx].rotation.y += 0.005;
-      }
-
-      if (m3.userData.rotor) {
-        m3.userData.rotor.rotation.z += 0.035;
       }
 
       controls.update();
