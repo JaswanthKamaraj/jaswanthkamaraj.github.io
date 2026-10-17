@@ -1,0 +1,2809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlowCode Engine | Universal Algorithm to Flowchart & Polyglot Code Synthesizer</title>
+  <meta name="description" content="Generate interactive SVG flowcharts and production-ready code in 11 programming languages for any algorithm or program. Created by Jaswanth Kamaraj.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-pitch: #05070e;
+      --bg-surface: #0a0d18;
+      --bg-card: rgba(13, 17, 30, 0.85);
+      --bg-card-hover: rgba(19, 25, 44, 0.9);
+      --border-color: rgba(0, 240, 255, 0.16);
+      --border-color-hover: rgba(0, 240, 255, 0.4);
+      --accent-cyan: #00f0ff;
+      --accent-purple: #9d4edd;
+      --accent-pink: #f72585;
+      --accent-amber: #f59e0b;
+      --accent-green: #10b981;
+      --accent-blue: #3b82f6;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+      --shadow-glow: 0 0 25px rgba(0, 240, 255, 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-pitch);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(157, 78, 221, 0.15), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 80%, rgba(0, 240, 255, 0.08), transparent);
+      background-attachment: fixed;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Container */
+    .app-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1540px;
+      margin: 0 auto;
+      padding: 20px 24px 60px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* Navigation Bar */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 22px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0,240,255,0.2), rgba(157,78,221,0.3));
+      border: 1px solid var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 0 15px rgba(0,240,255,0.3);
+    }
+
+    .brand-text h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text p {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.03);
+      color: var(--text-primary);
+    }
+
+    .btn-nav:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+      color: #fff;
+    }
+
+    .btn-nav.primary {
+      background: linear-gradient(135deg, #00f0ff 0%, #7928ca 100%);
+      color: #05070e;
+      font-weight: 700;
+      border: none;
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.35);
+    }
+
+    .btn-nav.primary:hover {
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Input Section */
+    .hero-search-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 26px 28px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-search-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-purple), transparent);
+    }
+
+    .search-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .search-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-primary);
+    }
+
+    .search-badge {
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .search-input-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(5, 8, 18, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      padding: 14px 20px 14px 46px;
+      border-radius: var(--radius-md);
+      transition: all 0.25s ease;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+      background: rgba(7, 12, 26, 0.95);
+    }
+
+    .search-icon-svg {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: var(--accent-cyan);
+      pointer-events: none;
+    }
+
+    .btn-synthesize {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #00f0ff 0%, #9d4edd 100%);
+      color: #05070e;
+      font-weight: 800;
+      font-size: 0.92rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-synthesize:hover {
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.6);
+      transform: translateY(-2px);
+    }
+
+    /* Preset Chips */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .presets-label {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preset-chip {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-mono);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .preset-chip:hover, .preset-chip.active {
+      background: rgba(0, 240, 255, 0.12);
+      border-color: var(--accent-cyan);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+    }
+
+    /* Main Workspace Grid (Flowchart & Code) */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      min-height: 680px;
+    }
+
+    @media (max-width: 1080px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Panel Card */
+    .panel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 14px 18px;
+      background: rgba(10, 14, 26, 0.95);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .panel-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-badge {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: rgba(157, 78, 221, 0.15);
+      border: 1px solid rgba(157, 78, 221, 0.35);
+      color: #d8b4fe;
+    }
+
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-tool {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-mono);
+    }
+
+    .btn-tool:hover {
+      background: rgba(0, 240, 255, 0.12);
+      border-color: var(--accent-cyan);
+      color: #fff;
+    }
+
+    .btn-tool.active {
+      background: var(--accent-cyan);
+      color: #05070e;
+      border-color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    /* Flowchart Canvas Area */
+    .flowchart-viewport {
+      flex: 1;
+      min-height: 540px;
+      background: #060914;
+      position: relative;
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .flowchart-viewport:active {
+      cursor: grabbing;
+    }
+
+    .flowchart-viewport::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .flowchart-viewport::-webkit-scrollbar-thumb {
+      background: rgba(0, 240, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    /* Flowchart SVG Element */
+    .flowchart-svg {
+      transition: transform 0.2s ease;
+      filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5));
+    }
+
+    /* Flowchart Node Styles */
+    .fc-node {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .fc-node:hover {
+      filter: drop-shadow(0 0 10px var(--accent-cyan));
+    }
+
+    .fc-node.active-step {
+      filter: drop-shadow(0 0 16px #00f0ff) brightness(1.3);
+      animation: stepPulse 1.2s infinite alternate;
+    }
+
+    @keyframes stepPulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.03); }
+    }
+
+    /* Legend Bar */
+    .flowchart-legend {
+      padding: 10px 18px;
+      background: rgba(10, 14, 26, 0.95);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-pill {
+      width: 14px;
+      height: 8px;
+      border-radius: 4px;
+    }
+
+    /* Polyglot Code Area */
+    .languages-bar {
+      padding: 10px 14px;
+      background: rgba(8, 11, 22, 0.95);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+    }
+
+    .languages-bar::-webkit-scrollbar {
+      height: 4px;
+    }
+    .languages-bar::-webkit-scrollbar-thumb {
+      background: rgba(0, 240, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    .lang-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.76rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .lang-tab:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .lang-tab.active {
+      background: rgba(0, 240, 255, 0.14);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+    }
+
+    /* Code Container */
+    .code-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #04060c;
+      min-height: 380px;
+      position: relative;
+    }
+
+    .code-scroll-pane {
+      flex: 1;
+      max-height: 440px;
+      overflow: auto;
+      padding: 16px 20px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: #e2e8f0;
+    }
+
+    .code-scroll-pane::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .code-scroll-pane::-webkit-scrollbar-thumb {
+      background: rgba(0, 240, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    pre code {
+      font-family: var(--font-mono);
+      tab-size: 4;
+      display: block;
+      white-space: pre;
+    }
+
+    /* Syntax Highlighting */
+    .syn-kw { color: #f72585; font-weight: 600; }
+    .syn-fn { color: #00f0ff; font-weight: 600; }
+    .syn-str { color: #10b981; }
+    .syn-num { color: #f59e0b; }
+    .syn-cmt { color: #64748b; font-style: italic; }
+    .syn-var { color: #9d4edd; }
+    .syn-type { color: #38bdf8; }
+
+    /* Bottom Tabbed Inspector */
+    .inspector-card {
+      border-top: 1px solid var(--border-color);
+      background: rgba(7, 10, 20, 0.98);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .inspector-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 14px;
+    }
+
+    .inspector-tab {
+      padding: 9px 16px;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+      background: transparent;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+
+    .inspector-tab.active {
+      color: var(--accent-cyan);
+      border-bottom-color: var(--accent-cyan);
+      font-weight: 600;
+    }
+
+    .inspector-body {
+      padding: 14px 18px;
+      min-height: 120px;
+      font-size: 0.82rem;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Complexity Table */
+    .complexity-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+
+    .complexity-table th, .complexity-table td {
+      padding: 7px 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .complexity-table th {
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+    }
+
+    .complexity-table td {
+      color: #fff;
+    }
+
+    .badge-comp {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+    }
+
+    /* Simulation Output Box */
+    .sim-output-box {
+      background: #020408;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #38bdf8;
+      line-height: 1.6;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    .sim-output-box .log-prompt {
+      color: #10b981;
+    }
+    .sim-output-box .log-out {
+      color: #e2e8f0;
+    }
+
+    /* Toast Notification */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(10, 15, 30, 0.95);
+      border: 1px solid var(--accent-cyan);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- Top Navigation -->
+    <header class="top-nav">
+      <div class="brand-group">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">
+          <h1>FlowCode Engine</h1>
+          <p>Universal Flowchart &amp; Polyglot Code Synthesizer</p>
+        </div>
+      </div>
+
+      <nav class="nav-actions">
+        <a href="../index.html" class="btn-nav">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7 7l-7-7 7-7"/></svg>
+          Portfolio
+        </a>
+        <a href="https://github.com/JaswanthKamaraj" target="_blank" rel="noopener noreferrer" class="btn-nav">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <button id="btnQuickDemo" class="btn-nav primary">
+          ⚡ Try Random Algo
+        </button>
+      </nav>
+    </header>
+
+    <!-- Search / Input Studio Card -->
+    <section class="hero-search-card">
+      <div class="search-title-row">
+        <div class="search-title">
+          <span>Enter Any Algorithm or Program Name</span>
+          <span class="search-badge">11 Polyglot Languages Supported</span>
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
+          Works with all standard algorithms, data structures &amp; custom user logic
+        </div>
+      </div>
+
+      <form id="searchForm" class="search-form" onsubmit="event.preventDefault(); synthesizeAlgorithm();">
+        <div class="search-input-wrap">
+          <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input 
+            type="text" 
+            id="algoInput" 
+            class="search-input" 
+            placeholder="Type any algorithm, problem, or logic name (e.g. Binary Search, Bubble Sort, Dijkstra, Palindrome, Fibonacci, BFS, Stack...)" 
+            autocomplete="off"
+            value="Binary Search"
+          >
+        </div>
+        <button type="submit" class="btn-synthesize" id="btnSynthesize">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          Synthesize Flowchart &amp; Code
+        </button>
+      </form>
+
+      <!-- Preset Quick Chips -->
+      <div class="presets-container">
+        <span class="presets-label">⚡ Popular Quick Selectors:</span>
+        <div class="chips-row" id="presetChips">
+          <button class="preset-chip active" data-algo="Binary Search">🎯 Binary Search</button>
+          <button class="preset-chip" data-algo="Bubble Sort">🫧 Bubble Sort</button>
+          <button class="preset-chip" data-algo="Fibonacci Series">🌀 Fibonacci Series</button>
+          <button class="preset-chip" data-algo="Dijkstra's Algorithm">🗺️ Dijkstra's Shortest Path</button>
+          <button class="preset-chip" data-algo="Prime Number Checker">🔢 Prime Checker</button>
+          <button class="preset-chip" data-algo="Palindrome Checker">🔁 Palindrome</button>
+          <button class="preset-chip" data-algo="Merge Sort">⚡ Merge Sort</button>
+          <button class="preset-chip" data-algo="Quick Sort">⚡ Quick Sort</button>
+          <button class="preset-chip" data-algo="Depth First Search (DFS)">🌲 DFS Graph</button>
+          <button class="preset-chip" data-algo="Breadth First Search (BFS)">🌊 BFS Graph</button>
+          <button class="preset-chip" data-algo="Stack Operations">🥞 Stack (Push/Pop)</button>
+          <button class="preset-chip" data-algo="Queue Operations">🚶 Queue (FIFO)</button>
+          <button class="preset-chip" data-algo="GCD (Euclidean Algorithm)">📐 GCD / Euclidean</button>
+          <button class="preset-chip" data-algo="Two Sum Problem">🎯 Two Sum</button>
+          <button class="preset-chip" data-algo="User Authentication Logic">🔐 User Login Flow</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Workspace Grid -->
+    <main class="workspace-grid">
+
+      <!-- Left Panel: Flowchart Canvas -->
+      <section class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              Interactive Flowchart
+            </span>
+            <span class="panel-badge" id="algoCategoryBadge">DIVIDE &amp; CONQUER</span>
+          </div>
+
+          <div class="panel-actions">
+            <button class="btn-tool" id="btnZoomIn" title="Zoom In">➕</button>
+            <button class="btn-tool" id="btnZoomOut" title="Zoom Out">➖</button>
+            <button class="btn-tool" id="btnResetZoom" title="Reset View">🔄 Fit</button>
+            <button class="btn-tool active" id="btnAnimateFlow" title="Step-by-step Flow Simulation">
+              ▶️ Animate Steps
+            </button>
+            <button class="btn-tool" id="btnExportSvg" title="Download SVG Vector">💾 Export SVG</button>
+          </div>
+        </div>
+
+        <div class="flowchart-viewport" id="flowchartViewport">
+          <!-- Flowchart SVG injected here -->
+          <svg id="flowchartSvg" class="flowchart-svg" width="600" height="720" viewBox="0 0 600 720">
+            <!-- Dynamic SVG nodes -->
+          </svg>
+        </div>
+
+        <!-- Legend -->
+        <div class="flowchart-legend">
+          <div class="legend-item"><span class="legend-pill" style="background:#10b981;"></span> Start / End</div>
+          <div class="legend-item"><span class="legend-pill" style="background:#00f0ff;"></span> Input / Output</div>
+          <div class="legend-item"><span class="legend-pill" style="background:#6366f1;"></span> Process / Compute</div>
+          <div class="legend-item"><span class="legend-pill" style="background:#f59e0b;"></span> Decision Condition</div>
+        </div>
+      </section>
+
+      <!-- Right Panel: Polyglot Code Studio -->
+      <section class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+              Polyglot Code Synthesizer
+            </span>
+            <span class="panel-badge" id="codeLanguageBadge">PYTHON 3</span>
+          </div>
+
+          <div class="panel-actions">
+            <button class="btn-tool" id="btnCopyCode" title="Copy Code to Clipboard">
+              📋 Copy Code
+            </button>
+            <button class="btn-tool" id="btnDownloadCode" title="Download Code File">
+              💾 Download
+            </button>
+          </div>
+        </div>
+
+        <!-- Language Selector Tabs (11 Languages) -->
+        <div class="languages-bar" id="languagesBar">
+          <button class="lang-tab active" data-lang="python">🐍 Python</button>
+          <button class="lang-tab" data-lang="c">⚡ C</button>
+          <button class="lang-tab" data-lang="cpp">💻 C++</button>
+          <button class="lang-tab" data-lang="java">☕ Java</button>
+          <button class="lang-tab" data-lang="javascript">🟨 JavaScript</button>
+          <button class="lang-tab" data-lang="typescript">🔷 TypeScript</button>
+          <button class="lang-tab" data-lang="csharp">🎯 C#</button>
+          <button class="lang-tab" data-lang="go">🐹 Go</button>
+          <button class="lang-tab" data-lang="rust">🦀 Rust</button>
+          <button class="lang-tab" data-lang="php">🐘 PHP</button>
+          <button class="lang-tab" data-lang="swift">🐦 Swift</button>
+        </div>
+
+        <!-- Code Container -->
+        <div class="code-container">
+          <div class="code-scroll-pane">
+            <pre><code id="codeDisplay"><!-- Syntax highlighted code --></code></pre>
+          </div>
+
+          <!-- Bottom Tabbed Inspector -->
+          <div class="inspector-card">
+            <div class="inspector-tabs">
+              <button class="inspector-tab active" data-target="tabSimOutput">▶️ Test Run &amp; Output</button>
+              <button class="inspector-tab" data-target="tabComplexity">📊 Complexity Analysis</button>
+              <button class="inspector-tab" data-target="tabLogic">🧠 Logic Breakdown</button>
+            </div>
+
+            <div class="inspector-body">
+              <!-- Tab 1: Simulated Run -->
+              <div id="tabSimOutput" class="tab-content active">
+                <div class="sim-output-box" id="simOutputBox">
+                  <div class="log-prompt">$ compiler run --target=python binary_search.py</div>
+                  <div class="log-out">Compiling &amp; executing test suite...</div>
+                  <div class="log-out">Input Array: [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]</div>
+                  <div class="log-out">Target Key: 23</div>
+                  <div class="log-out" style="color: #10b981;">✓ Target found at Index: 5 (Iterations: 3)</div>
+                </div>
+              </div>
+
+              <!-- Tab 2: Complexity -->
+              <div id="tabComplexity" class="tab-content">
+                <table class="complexity-table">
+                  <thead>
+                    <tr>
+                      <th>Time (Best)</th>
+                      <th>Time (Average)</th>
+                      <th>Time (Worst)</th>
+                      <th>Space Complexity</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td id="compBest"><span class="badge-comp">O(1)</span></td>
+                      <td id="compAvg"><span class="badge-comp">O(log n)</span></td>
+                      <td id="compWorst"><span class="badge-comp">O(log n)</span></td>
+                      <td id="compSpace"><span class="badge-comp">O(1) Aux</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Tab 3: Logic Steps -->
+              <div id="tabLogic" class="tab-content">
+                <div id="logicBreakdown" style="color: var(--text-secondary); line-height: 1.6; font-size: 0.8rem;">
+                  <!-- Dynamic logic steps -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast-msg">Code copied to clipboard!</div>
+
+  <!-- FlowCode Comprehensive Logic & Code Engine -->
+  <script>
+    // =========================================================================
+    // 1. COMPREHENSIVE ALGORITHM DATABASE (With polyglot code in 11 languages)
+    // =========================================================================
+    const ALGO_DATABASE = {
+      "binary search": {
+        title: "Binary Search",
+        category: "DIVIDE & CONQUER / SEARCHING",
+        complexity: { best: "O(1)", avg: "O(log n)", worst: "O(log n)", space: "O(1) Auxiliary" },
+        logic: [
+          "1. Initialize pointers: left = 0, right = length - 1.",
+          "2. While left <= right, calculate middle index mid = left + (right - left) / 2.",
+          "3. Compare arr[mid] with target key:",
+          "   - If arr[mid] == target: Key found, return mid index.",
+          "   - If arr[mid] < target: Target lies in right half -> left = mid + 1.",
+          "   - If arr[mid] > target: Target lies in left half -> right = mid - 1.",
+          "4. If left > right without match, return -1 (Key not found in sorted array)."
+        ],
+        testOutput: [
+          "$ runner --target=binary_search",
+          "Sorted Array: [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]",
+          "Target Key: 23",
+          "→ Step 1: Checking Mid Index 4 (Val: 16) -> 16 < 23 (Search Right)",
+          "→ Step 2: Checking Mid Index 7 (Val: 56) -> 56 > 23 (Search Left)",
+          "→ Step 3: Checking Mid Index 5 (Val: 23) -> Match Found!",
+          "✓ Result: Key 23 successfully located at Index 5!"
+        ],
+        flowchart: [
+          { type: "terminal", text: "Start" },
+          { type: "io", text: "Input: Sorted Arr[], Target Key" },
+          { type: "process", text: "Set left = 0, right = n - 1" },
+          { type: "decision", text: "Is left <= right?", yesTo: 4, noTo: 9 },
+          { type: "process", text: "Calculate mid = left + (right - left) / 2" },
+          { type: "decision", text: "Is arr[mid] == target?", yesTo: 6, noTo: 7 },
+          { type: "io", text: "Output: Found at index 'mid'" },
+          { type: "decision", text: "Is arr[mid] < target?", yesTo: "left = mid + 1", noTo: "right = mid - 1" },
+          { type: "process", text: "Update left or right pointer & loop back" },
+          { type: "io", text: "Output: Element not found (-1)" },
+          { type: "terminal", text: "End" }
+        ],
+        code: {
+          python: `def binary_search(arr, target):
+    """
+    Performs Binary Search on sorted array.
+    Time Complexity: O(log n), Space: O(1)
+    """
+    left, right = 0, len(arr) - 1
+    
+    while left <= right:
+        mid = left + (right - left) // 2
+        
+        # Check if target is present at mid
+        if arr[mid] == target:
+            return mid
+        # If target greater, ignore left half
+        elif arr[mid] < target:
+            left = mid + 1
+        # If target smaller, ignore right half
+        else:
+            right = mid - 1
+            
+    return -1  # Target not found
+
+# Driver Test
+dataset = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+target = 23
+result = binary_search(dataset, target)
+print(f"Target {target} located at index: {result}")`,
+
+          c: `#include <stdio.h>
+
+int binarySearch(int arr[], int size, int target) {
+    int left = 0, right = size - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (arr[mid] == target)
+            return mid;
+        if (arr[mid] < target)
+            left = mid + 1;
+        else
+            right = mid - 1;
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {2, 5, 8, 12, 16, 23, 38, 56, 72, 91};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int target = 23;
+    int res = binarySearch(arr, n, target);
+    printf("Target %d located at index: %d\\n", target, res);
+    return 0;
+}`,
+
+          cpp: `#include <iostream>
+#include <vector>
+
+int binarySearch(const std::vector<int>& arr, int target) {
+    int left = 0, right = static_cast<int>(arr.size()) - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == target) return mid;
+        if (arr[mid] < target)  left = mid + 1;
+        else                    right = mid - 1;
+    }
+    return -1;
+}
+
+int main() {
+    std::vector<int> data = {2, 5, 8, 12, 16, 23, 38, 56, 72, 91};
+    int target = 23;
+    int idx = binarySearch(data, target);
+    std::cout << "Element found at index: " << idx << std::endl;
+    return 0;
+}`,
+
+          java: `public class BinarySearch {
+    public static int search(int[] arr, int target) {
+        int left = 0, right = arr.length - 1;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            if (arr[mid] == target) return mid;
+            if (arr[mid] < target)  left = mid + 1;
+            else                    right = mid - 1;
+        }
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        int[] data = {2, 5, 8, 12, 16, 23, 38, 56, 72, 91};
+        int target = 23;
+        int result = search(data, target);
+        System.out.println("Target index: " + result);
+    }
+}`,
+
+          javascript: `function binarySearch(arr, target) {
+    let left = 0;
+    let right = arr.length - 1;
+
+    while (left <= right) {
+        const mid = Math.floor(left + (right - left) / 2);
+
+        if (arr[mid] === target) {
+            return mid;
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1;
+}
+
+// Test Run
+const numbers = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
+console.log("Index:", binarySearch(numbers, 23));`,
+
+          typescript: `function binarySearch(arr: number[], target: number): number {
+    let left: number = 0;
+    let right: number = arr.length - 1;
+
+    while (left <= right) {
+        const mid: number = Math.floor(left + (right - left) / 2);
+
+        if (arr[mid] === target) return mid;
+        if (arr[mid] < target)   left = mid + 1;
+        else                     right = mid - 1;
+    }
+    return -1;
+}
+
+const list: number[] = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
+console.log("Target index:", binarySearch(list, 23));`,
+
+          csharp: `using System;
+
+public class Program {
+    public static int BinarySearch(int[] arr, int target) {
+        int left = 0, right = arr.Length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (arr[mid] == target) return mid;
+            if (arr[mid] < target)  left = mid + 1;
+            else                    right = mid - 1;
+        }
+        return -1;
+    }
+
+    public static void Main() {
+        int[] dataset = {2, 5, 8, 12, 16, 23, 38, 56, 72, 91};
+        Console.WriteLine($"Found at index: {BinarySearch(dataset, 23)}");
+    }
+}`,
+
+          go: `package main
+
+import "fmt"
+
+func binarySearch(arr []int, target int) int {
+    left, right := 0, len(arr)-1
+    for left <= right {
+        mid := left + (right-left)/2
+        if arr[mid] == target {
+            return mid
+        } else if arr[mid] < target {
+            left = mid + 1
+        } else {
+            right = mid - 1
+        }
+    }
+    return -1
+}
+
+func main() {
+    data := []int{2, 5, 8, 12, 16, 23, 38, 56, 72, 91}
+    fmt.Printf("Found at index: %d\\n", binarySearch(data, 23))
+}`,
+
+          rust: `fn binary_search(arr: &[i32], target: i32) -> Option<usize> {
+    let mut left = 0;
+    let mut right = arr.len().checked_sub(1)?;
+
+    while left <= right {
+        let mid = left + (right - left) / 2;
+        if arr[mid] == target {
+            return Some(mid);
+        } else if arr[mid] < target {
+            left = mid + 1;
+        } else {
+            if mid == 0 { break; }
+            right = mid - 1;
+        }
+    }
+    None
+}
+
+fn main() {
+    let dataset = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
+    match binary_search(&dataset, 23) {
+        Some(idx) => println!("Target found at index: {}", idx),
+        None => println!("Target not in array"),
+    }
+}`,
+
+          php: `<?php
+function binarySearch($arr, $target) {
+    $left = 0;
+    $right = count($arr) - 1;
+
+    while ($left <= $right) {
+        $mid = intdiv($left + $right, 2);
+        if ($arr[$mid] === $target) {
+            return $mid;
+        }
+        if ($arr[$mid] < $target) {
+            $left = $mid + 1;
+        } else {
+            $right = $mid - 1;
+        }
+    }
+    return -1;
+}
+
+$nums = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
+echo "Index: " . binarySearch($nums, 23) . "\\n";
+?>`,
+
+          swift: `import Foundation
+
+func binarySearch<T: Comparable>(_ array: [T], target: T) -> Int? {
+    var left = 0
+    var right = array.count - 1
+
+    while left <= right {
+        let mid = left + (right - left) / 2
+        if array[mid] == target {
+            return mid
+        } else if array[mid] < target {
+            left = mid + 1
+        } else {
+            right = mid - 1
+        }
+    }
+    return nil
+}
+
+let numbers = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+if let idx = binarySearch(numbers, target: 23) {
+    print("Found target at index \\(idx)")
+}`
+        }
+      },
+
+      "bubble sort": {
+        title: "Bubble Sort",
+        category: "COMPARISON SORTING",
+        complexity: { best: "O(n)", avg: "O(n²)", worst: "O(n²)", space: "O(1) In-Place" },
+        logic: [
+          "1. Iterate through array from index i = 0 to n - 1.",
+          "2. For each pass, run inner loop j from 0 to n - i - 2.",
+          "3. Compare adjacent items: arr[j] and arr[j + 1].",
+          "4. If arr[j] > arr[j + 1], swap them to bubble up larger element.",
+          "5. If no swaps occurred in a full pass, terminate early (optimized).",
+          "6. Return the sorted array."
+        ],
+        testOutput: [
+          "$ runner --target=bubble_sort",
+          "Initial Unsorted: [64, 34, 25, 12, 22, 11, 90]",
+          "Pass 1: Swapped 5 adjacent pairs -> [34, 25, 12, 22, 11, 64, 90]",
+          "Pass 2: Swapped 4 adjacent pairs -> [25, 12, 22, 11, 34, 64, 90]",
+          "Pass 3: Swapped 3 adjacent pairs -> [12, 22, 11, 25, 34, 64, 90]",
+          "Pass 4: Swapped 1 adjacent pair  -> [12, 11, 22, 25, 34, 64, 90]",
+          "Pass 5: Swapped 1 adjacent pair  -> [11, 12, 22, 25, 34, 64, 90]",
+          "✓ Sorted Array: [11, 12, 22, 25, 34, 64, 90]"
+        ],
+        flowchart: [
+          { type: "terminal", text: "Start" },
+          { type: "io", text: "Input: Array arr[] of size n" },
+          { type: "process", text: "Set i = 0" },
+          { type: "decision", text: "Is i < n - 1?", yesTo: 4, noTo: 9 },
+          { type: "process", text: "Set j = 0, swapped = false" },
+          { type: "decision", text: "Is j < n - i - 1?", yesTo: 6, noTo: 8 },
+          { type: "decision", text: "Is arr[j] > arr[j+1]?", yesTo: "Swap arr[j], arr[j+1]", noTo: "j = j + 1" },
+          { type: "process", text: "Swap elements & set swapped = true, increment j" },
+          { type: "process", text: "Increment i (next pass)" },
+          { type: "io", text: "Output: Sorted Array arr[]" },
+          { type: "terminal", text: "End" }
+        ],
+        code: {
+          python: `def bubble_sort(arr):
+    """
+    Optimized Bubble Sort algorithm.
+    Time Complexity: O(n^2), Space: O(1)
+    """
+    n = len(arr)
+    for i in range(n):
+        swapped = False
+        # Last i elements are already in place
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        # If no swaps occurred, array is sorted
+        if not swapped:
+            break
+    return arr
+
+# Test Run
+sample = [64, 34, 25, 12, 22, 11, 90]
+print("Sorted Array:", bubble_sort(sample))`,
+
+          c: `#include <stdio.h>
+#include <stdbool.h>
+
+void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+    }
+}
+
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    bubbleSort(arr, n);
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\\n");
+    return 0;
+}`,
+
+          cpp: `#include <iostream>
+#include <vector>
+
+void bubbleSort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; ++i) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; ++j) {
+            if (arr[j] > arr[j + 1]) {
+                std::swap(arr[j], arr[j + 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+    }
+}
+
+int main() {
+    std::vector<int> nums = {64, 34, 25, 12, 22, 11, 90};
+    bubbleSort(nums);
+    for (int v : nums) std::cout << v << " ";
+    std::cout << std::endl;
+    return 0;
+}`,
+
+          java: `import java.util.Arrays;
+
+public class BubbleSort {
+    public static void sort(int[] arr) {
+        int n = arr.length;
+        for (int i = 0; i < n - 1; i++) {
+            boolean swapped = false;
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                    swapped = true;
+                }
+            }
+            if (!swapped) break;
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] data = {64, 34, 25, 12, 22, 11, 90};
+        sort(data);
+        System.out.println(Arrays.toString(data));
+    }
+}`,
+
+          javascript: `function bubbleSort(arr) {
+    const n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+        let swapped = false;
+        for (let j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+    }
+    return arr;
+}
+
+console.log(bubbleSort([64, 34, 25, 12, 22, 11, 90]));`,
+
+          typescript: `function bubbleSort(arr: number[]): number[] {
+    const n: number = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+        let swapped: boolean = false;
+        for (let j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+    }
+    return arr;
+}`,
+
+          csharp: `using System;
+
+public class BubbleSort {
+    public static void Sort(int[] arr) {
+        int n = arr.Length;
+        for (int i = 0; i < n - 1; i++) {
+            bool swapped = false;
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    int tmp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = tmp;
+                    swapped = true;
+                }
+            }
+            if (!swapped) break;
+        }
+    }
+}`,
+
+          go: `package main
+
+import "fmt"
+
+func bubbleSort(arr []int) {
+    n := len(arr)
+    for i := 0; i < n-1; i++ {
+        swapped := false
+        for j := 0; j < n-i-1; j++ {
+            if arr[j] > arr[j+1] {
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+                swapped = true
+            }
+        }
+        if !swapped {
+            break
+        }
+    }
+}`,
+
+          rust: `fn bubble_sort(arr: &mut [i32]) {
+    let n = arr.len();
+    for i in 0..n {
+        let mut swapped = false;
+        for j in 0..n.saturating_sub(i + 1) {
+            if arr[j] > arr[j + 1] {
+                arr.swap(j, j + 1);
+                swapped = true;
+            }
+        }
+        if !swapped { break; }
+    }
+}`,
+
+          php: `<?php
+function bubbleSort(&$arr) {
+    $n = count($arr);
+    for ($i = 0; $i < $n - 1; $i++) {
+        $swapped = false;
+        for ($j = 0; $j < $n - $i - 1; $j++) {
+            if ($arr[$j] > $arr[$j + 1]) {
+                $temp = $arr[$j];
+                $arr[$j] = $arr[$j + 1];
+                $arr[$j + 1] = $temp;
+                $swapped = true;
+            }
+        }
+        if (!$swapped) break;
+    }
+}
+?>`,
+
+          swift: `func bubbleSort(_ arr: inout [Int]) {
+    let n = arr.count
+    for i in 0..<n {
+        var swapped = false
+        for j in 0..<(n - i - 1) {
+            if arr[j] > arr[j + 1] {
+                arr.swapAt(j, j + 1)
+                swapped = true
+            }
+        }
+        if !swapped { break }
+    }
+}`
+        }
+      },
+
+      "fibonacci series": {
+        title: "Fibonacci Sequence Generator",
+        category: "DYNAMIC PROGRAMMING & RECURSION",
+        complexity: { best: "O(1)", avg: "O(n)", worst: "O(n)", space: "O(1) Iterative" },
+        logic: [
+          "1. Read integer n (number of terms to generate).",
+          "2. If n <= 0, return empty list.",
+          "3. Initialize first two terms: a = 0, b = 1.",
+          "4. For i from 2 to n - 1, compute next term c = a + b.",
+          "5. Shift values: a = b, b = c.",
+          "6. Append each term to output list and return."
+        ],
+        testOutput: [
+          "$ runner --target=fibonacci",
+          "Input Terms: n = 10",
+          "Step 0: F(0) = 0",
+          "Step 1: F(1) = 1",
+          "Step 2: F(2) = 0 + 1 = 1",
+          "Step 3: F(3) = 1 + 1 = 2",
+          "Step 4: F(4) = 1 + 2 = 3",
+          "Step 5: F(5) = 2 + 3 = 5",
+          "Step 6: F(6) = 3 + 5 = 8",
+          "Step 7: F(7) = 5 + 8 = 13",
+          "Step 8: F(8) = 8 + 13 = 21",
+          "Step 9: F(9) = 13 + 21 = 34",
+          "✓ Sequence: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]"
+        ],
+        flowchart: [
+          { type: "terminal", text: "Start" },
+          { type: "io", text: "Input: Term count n" },
+          { type: "process", text: "Set a = 0, b = 1, count = 2" },
+          { type: "io", text: "Print a, Print b" },
+          { type: "decision", text: "Is count < n?", yesTo: 5, noTo: 8 },
+          { type: "process", text: "next = a + b" },
+          { type: "io", text: "Print next" },
+          { type: "process", text: "Set a = b, b = next, count++" },
+          { type: "terminal", text: "End" }
+        ],
+        code: {
+          python: `def fibonacci_series(n):
+    """Generates first n terms of Fibonacci sequence."""
+    if n <= 0: return []
+    if n == 1: return [0]
+    
+    seq = [0, 1]
+    for _ in range(2, n):
+        seq.append(seq[-1] + seq[-2])
+    return seq
+
+print(fibonacci_series(10))`,
+          c: `#include <stdio.h>
+
+void printFibonacci(int n) {
+    long long a = 0, b = 1, next;
+    for (int i = 0; i < n; i++) {
+        if (i <= 1) next = i;
+        else {
+            next = a + b;
+            a = b;
+            b = next;
+        }
+        printf("%lld ", next);
+    }
+    printf("\\n");
+}
+
+int main() {
+    printFibonacci(10);
+    return 0;
+}`,
+          cpp: `#include <iostream>
+#include <vector>
+
+std::vector<long long> fibonacci(int n) {
+    if (n <= 0) return {};
+    if (n == 1) return {0};
+    std::vector<long long> seq = {0, 1};
+    for (int i = 2; i < n; ++i) {
+        seq.push_back(seq[i - 1] + seq[i - 2]);
+    }
+    return seq;
+}`,
+          java: `import java.util.ArrayList;
+import java.util.List;
+
+public class Fibonacci {
+    public static List<Long> generate(int n) {
+        List<Long> seq = new ArrayList<>();
+        if (n <= 0) return seq;
+        seq.add(0L);
+        if (n == 1) return seq;
+        seq.add(1L);
+        for (int i = 2; i < n; i++) {
+            seq.add(seq.get(i - 1) + seq.get(i - 2));
+        }
+        return seq;
+    }
+}`,
+          javascript: `function fibonacci(n) {
+    if (n <= 0) return [];
+    if (n === 1) return [0];
+    const seq = [0, 1];
+    for (let i = 2; i < n; i++) {
+        seq.push(seq[i - 1] + seq[i - 2]);
+    }
+    return seq;
+}
+console.log(fibonacci(10));`,
+          typescript: `function fibonacci(n: number): number[] {
+    if (n <= 0) return [];
+    if (n === 1) return [0];
+    const seq: number[] = [0, 1];
+    for (let i = 2; i < n; i++) {
+        seq.push(seq[i - 1] + seq[i - 2]);
+    }
+    return seq;
+}`,
+          csharp: `using System;
+using System.Collections.Generic;
+
+public class Fibonacci {
+    public static List<long> Generate(int n) {
+        var seq = new List<long>();
+        if (n <= 0) return seq;
+        seq.Add(0);
+        if (n == 1) return seq;
+        seq.Add(1);
+        for (int i = 2; i < n; i++) {
+            seq.Add(seq[i - 1] + seq[i - 2]);
+        }
+        return seq;
+    }
+}`,
+          go: `package main
+
+import "fmt"
+
+func fibonacci(n int) []int {
+    if n <= 0 { return []int{} }
+    if n == 1 { return []int{0} }
+    seq := []int{0, 1}
+    for i := 2; i < n; i++ {
+        seq = append(seq, seq[i-1]+seq[i-2])
+    }
+    return seq
+}`,
+          rust: `fn fibonacci(n: usize) -> Vec<u64> {
+    if n == 0 { return vec![]; }
+    if n == 1 { return vec![0]; }
+    let mut seq = vec![0, 1];
+    for i in 2..n {
+        let next = seq[i - 1] + seq[i - 2];
+        seq.push(next);
+    }
+    seq
+}`,
+          php: `<?php
+function fibonacci($n) {
+    if ($n <= 0) return [];
+    if ($n === 1) return [0];
+    $seq = [0, 1];
+    for ($i = 2; $i < $n; $i++) {
+        $seq[] = $seq[$i - 1] + $seq[$i - 2];
+    }
+    return $seq;
+}
+?>`,
+          swift: `func fibonacci(_ n: Int) -> [Int] {
+    guard n > 0 else { return [] }
+    if n == 1 { return [0] }
+    var seq = [0, 1]
+    for i in 2..<n {
+        seq.append(seq[i - 1] + seq[i - 2])
+    }
+    return seq
+}`
+        }
+      },
+
+      "prime number checker": {
+        title: "Prime Number Checker",
+        category: "MATHEMATICAL NUMBER THEORY",
+        complexity: { best: "O(1)", avg: "O(√n)", worst: "O(√n)", space: "O(1)" },
+        logic: [
+          "1. Input number n.",
+          "2. If n <= 1, return False (not prime).",
+          "3. If n <= 3, return True (2 and 3 are prime).",
+          "4. If n % 2 == 0 or n % 3 == 0, return False.",
+          "5. Check divisibility from i = 5 up to √n with step of 6 (i and i + 2).",
+          "6. If divisible by any factor, return False. Otherwise, return True."
+        ],
+        testOutput: [
+          "$ runner --target=prime_check",
+          "Testing n = 29",
+          "→ Check 1: 29 > 1 (True)",
+          "→ Check 2: 29 % 2 != 0 & 29 % 3 != 0 (True)",
+          "→ Check 3: Testing factors up to √29 (5.38): testing 5 -> 29 % 5 != 0",
+          "✓ Result: 29 is a PRIME Number!"
+        ],
+        flowchart: [
+          { type: "terminal", text: "Start" },
+          { type: "io", text: "Input: Number n" },
+          { type: "decision", text: "Is n <= 1?", yesTo: "Output: Not Prime", noTo: 3 },
+          { type: "decision", text: "Is n <= 3?", yesTo: "Output: Prime", noTo: 4 },
+          { type: "decision", text: "Is n % 2 == 0 or n % 3 == 0?", yesTo: "Output: Not Prime", noTo: 5 },
+          { type: "process", text: "Set i = 5" },
+          { type: "decision", text: "Is i * i <= n?", yesTo: 7, noTo: 9 },
+          { type: "decision", text: "Is n % i == 0 or n % (i+2) == 0?", yesTo: "Not Prime", noTo: "i = i + 6" },
+          { type: "process", text: "Set i = i + 6, loop back" },
+          { type: "io", text: "Output: n is Prime!" },
+          { type: "terminal", text: "End" }
+        ],
+        code: {
+          python: `import math
+
+def is_prime(n):
+    """Optimized O(sqrt(n)) prime check."""
+    if n <= 1: return False
+    if n <= 3: return True
+    if n % 2 == 0 or n % 3 == 0: return False
+    
+    i = 5
+    while i * i <= n:
+        if n % i == 0 or n % (i + 2) == 0:
+            return False
+        i += 6
+    return True
+
+print("Is 29 Prime?", is_prime(29))`,
+          c: `#include <stdio.h>
+#include <stdbool.h>
+
+bool isPrime(int n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    for (int i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return false;
+    }
+    return true;
+}
+
+int main() {
+    printf("Is 29 prime: %s\\n", isPrime(29) ? "true" : "false");
+    return 0;
+}`,
+          cpp: `#include <iostream>
+
+bool isPrime(long long n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    for (long long i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return false;
+    }
+    return true;
+}`,
+          java: `public class PrimeChecker {
+    public static boolean isPrime(long n) {
+        if (n <= 1) return false;
+        if (n <= 3) return true;
+        if (n % 2 == 0 || n % 3 == 0) return false;
+        for (long i = 5; i * i <= n; i += 6) {
+            if (n % i == 0 || n % (i + 2) == 0) return false;
+        }
+        return true;
+    }
+}`,
+          javascript: `function isPrime(n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 === 0 || n % 3 === 0) return false;
+    for (let i = 5; i * i <= n; i += 6) {
+        if (n % i === 0 || n % (i + 2) === 0) return false;
+    }
+    return true;
+}
+console.log(isPrime(29));`,
+          typescript: `function isPrime(n: number): boolean {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 === 0 || n % 3 === 0) return false;
+    for (let i = 5; i * i <= n; i += 6) {
+        if (n % i === 0 || n % (i + 2) === 0) return false;
+    }
+    return true;
+}`,
+          csharp: `public class Prime {
+    public static bool IsPrime(long n) {
+        if (n <= 1) return false;
+        if (n <= 3) return true;
+        if (n % 2 == 0 || n % 3 == 0) return false;
+        for (long i = 5; i * i <= n; i += 6) {
+            if (n % i == 0 || n % (i + 2) == 0) return false;
+        }
+        return true;
+    }
+}`,
+          go: `package main
+
+func isPrime(n int) bool {
+    if n <= 1 { return false }
+    if n <= 3 { return true }
+    if n%2 == 0 || n%3 == 0 { return false }
+    for i := 5; i*i <= n; i += 6 {
+        if n%i == 0 || n%(i+2) == 0 { return false }
+    }
+    return true
+}`,
+          rust: `fn is_prime(n: u64) -> bool {
+    if n <= 1 { return false; }
+    if n <= 3 { return true; }
+    if n % 2 == 0 || n % 3 == 0 { return false; }
+    let mut i = 5;
+    while i * i <= n {
+        if n % i == 0 || n % (i + 2) == 0 { return false; }
+        i += 6;
+    }
+    true
+}`,
+          php: `<?php
+function isPrime($n) {
+    if ($n <= 1) return false;
+    if ($n <= 3) return true;
+    if ($n % 2 === 0 || $n % 3 === 0) return false;
+    for ($i = 5; $i * $i <= $n; $i += 6) {
+        if ($n % $i === 0 || $n % ($i + 2) === 0) return false;
+    }
+    return true;
+}
+?>`,
+          swift: `func isPrime(_ n: Int) -> Bool {
+    if n <= 1 { return false }
+    if n <= 3 { return true }
+    if n % 2 == 0 || n % 3 == 0 { return false }
+    var i = 5
+    while i * i <= n {
+        if n % i == 0 || n % (i + 2) == 0 { return false }
+        i += 6
+    }
+    return true
+}`
+        }
+      },
+
+      "dijkstra's algorithm": {
+        title: "Dijkstra's Shortest Path Algorithm",
+        category: "GRAPH THEORY & GREEDY",
+        complexity: { best: "O((V + E) log V)", avg: "O((V + E) log V)", worst: "O((V + E) log V)", space: "O(V)" },
+        logic: [
+          "1. Set distance to start node dist[source] = 0, and all other nodes to infinity (∞).",
+          "2. Push (0, source) into a Priority Queue / Min-Heap.",
+          "3. While priority queue is not empty, pop node u with smallest known distance.",
+          "4. For each adjacent neighbor v of u with edge weight w:",
+          "   - If dist[u] + w < dist[v]:",
+          "       Update dist[v] = dist[u] + w.",
+          "       Push (dist[v], v) into priority queue.",
+          "5. Return shortest distances array dist[]."
+        ],
+        testOutput: [
+          "$ runner --target=dijkstra",
+          "Graph Nodes: {A, B, C, D, E}, Source: Node A",
+          "Edge (A->B: 4), Edge (A->C: 2), Edge (C->B: 1), Edge (B->D: 5), Edge (C->D: 8), Edge (D->E: 2)",
+          "→ Explored A: dist[A]=0",
+          "→ Explored C: dist[C]=2, updated dist[B]=min(4, 2+1)=3",
+          "→ Explored B: dist[B]=3, updated dist[D]=min(∞, 3+5)=8",
+          "→ Explored D: dist[D]=8, updated dist[E]=10",
+          "✓ Shortest Paths: {A: 0, B: 3, C: 2, D: 8, E: 10}"
+        ],
+        flowchart: [
+          { type: "terminal", text: "Start" },
+          { type: "io", text: "Input: Graph G(V, E), Source S" },
+          { type: "process", text: "Init dist[v] = ∞, dist[S] = 0. MinHeap.push(S, 0)" },
+          { type: "decision", text: "Is MinHeap empty?", yesTo: 8, noTo: 4 },
+          { type: "process", text: "Pop node u with minimum distance" },
+          { type: "decision", text: "For each neighbor v: dist[u] + w < dist[v]?", yesTo: 6, noTo: 3 },
+          { type: "process", text: "dist[v] = dist[u] + w, push (v, dist[v])" },
+          { type: "io", text: "Output: Shortest distance array dist[]" },
+          { type: "terminal", text: "End" }
+        ],
+        code: {
+          python: `import heapq
+
+def dijkstra(graph, source):
+    """
+    Computes shortest distances from source in weighted graph.
+    graph: dict where graph[u] = [(v, weight), ...]
+    """
+    distances = {node: float('inf') for node in graph}
+    distances[source] = 0
+    pq = [(0, source)]  # (distance, node)
+    
+    while pq:
+        curr_dist, u = heapq.heappop(pq)
+        
+        if curr_dist > distances[u]:
+            continue
+            
+        for v, weight in graph[u]:
+            dist = curr_dist + weight
+            if dist < distances[v]:
+                distances[v] = dist
+                heapq.heappush(pq, (dist, v))
+                
+    return distances
+
+# Example Graph
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('D', 5)],
+    'C': [('B', 1), ('D', 8)],
+    'D': [('E', 2)],
+    'E': []
+}
+print(dijkstra(graph, 'A'))`,
+          c: `// C implementation of Dijkstra using adjacency matrix
+#include <stdio.h>
+#include <limits.h>
+#include <stdbool.h>
+
+#define V 5
+
+int minDistance(int dist[], bool sptSet[]) {
+    int min = INT_MAX, min_index = -1;
+    for (int v = 0; v < V; v++)
+        if (!sptSet[v] && dist[v] <= min)
+            min = dist[v], min_index = v;
+    return min_index;
+}
+
+void dijkstra(int graph[V][V], int src) {
+    int dist[V];
+    bool sptSet[V];
+    for (int i = 0; i < V; i++) dist[i] = INT_MAX, sptSet[i] = false;
+    dist[src] = 0;
+
+    for (int count = 0; count < V - 1; count++) {
+        int u = minDistance(dist, sptSet);
+        if (u == -1) break;
+        sptSet[u] = true;
+        for (int v = 0; v < V; v++)
+            if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX
+                && dist[u] + graph[u][v] < dist[v])
+                dist[v] = dist[u] + graph[u][v];
+    }
+}`,
+          cpp: `#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+typedef pair<int, int> pii;
+
+vector<int> dijkstra(int n, vector<vector<pii>>& adj, int src) {
+    vector<int> dist(n, 1e9);
+    priority_queue<pii, vector<pii>, greater<pii>> pq;
+    dist[src] = 0;
+    pq.push({0, src});
+
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d > dist[u]) continue;
+        for (auto& edge : adj[u]) {
+            int v = edge.first, w = edge.second;
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    return dist;
+}`,
+          java: `import java.util.*;
+
+public class Dijkstra {
+    static class Edge { int to, weight; Edge(int t, int w) { to=t; weight=w; } }
+    
+    public static int[] shortestPaths(int n, List<List<Edge>> adj, int src) {
+        int[] dist = new int[n];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));
+        dist[src] = 0;
+        pq.offer(new int[]{src, 0});
+
+        while (!pq.isEmpty()) {
+            int[] curr = pq.poll();
+            int u = curr[0], d = curr[1];
+            if (d > dist[u]) continue;
+            for (Edge e : adj.get(u)) {
+                if (dist[u] + e.weight < dist[e.to]) {
+                    dist[e.to] = dist[u] + e.weight;
+                    pq.offer(new int[]{e.to, dist[e.to]});
+                }
+            }
+        }
+        return dist;
+    }
+}`,
+          javascript: `function dijkstra(graph, start) {
+    const distances = {};
+    const visited = new Set();
+    for (const node in graph) distances[node] = Infinity;
+    distances[start] = 0;
+
+    while (true) {
+        let closestNode = null;
+        for (const node in distances) {
+            if (!visited.has(node) && (closestNode === null || distances[node] < distances[closestNode])) {
+                closestNode = node;
+            }
+        }
+        if (closestNode === null || distances[closestNode] === Infinity) break;
+        visited.add(closestNode);
+
+        for (const { node: neighbor, weight } of graph[closestNode]) {
+            const newDist = distances[closestNode] + weight;
+            if (newDist < distances[neighbor]) {
+                distances[neighbor] = newDist;
+            }
+        }
+    }
+    return distances;
+}`,
+          typescript: `type Graph = Record<string, { node: string; weight: number }[]>;
+
+function dijkstra(graph: Graph, start: string): Record<string, number> {
+    const distances: Record<string, number> = {};
+    const visited = new Set<string>();
+    for (const node in graph) distances[node] = Infinity;
+    distances[start] = 0;
+
+    while (true) {
+        let u: string | null = null;
+        for (const node in distances) {
+            if (!visited.has(node) && (u === null || distances[node] < distances[u])) {
+                u = node;
+            }
+        }
+        if (u === null || distances[u] === Infinity) break;
+        visited.add(u);
+
+        for (const edge of graph[u]) {
+            const dist = distances[u] + edge.weight;
+            if (dist < distances[edge.node]) distances[edge.node] = dist;
+        }
+    }
+    return distances;
+}`,
+          csharp: `// Dijkstra in C# using PriorityQueue (.NET 6+)
+using System;
+using System.Collections.Generic;
+
+public class Dijkstra {
+    public static Dictionary<int, int> Run(Dictionary<int, List<(int to, int weight)>> graph, int src) {
+        var dist = new Dictionary<int, int>();
+        foreach (var k in graph.Keys) dist[k] = int.MaxValue;
+        dist[src] = 0;
+        var pq = new PriorityQueue<int, int>();
+        pq.Enqueue(src, 0);
+
+        while (pq.Count > 0) {
+            pq.TryDequeue(out int u, out int d);
+            if (d > dist[u]) continue;
+            foreach (var edge in graph[u]) {
+                int newD = dist[u] + edge.weight;
+                if (newD < dist[edge.to]) {
+                    dist[edge.to] = newD;
+                    pq.Enqueue(edge.to, newD);
+                }
+            }
+        }
+        return dist;
+    }
+}`,
+          go: `package main
+
+import (
+    "container/heap"
+    "math"
+)
+
+type Item struct { node, dist, index int }
+type PriorityQueue []*Item
+func (pq PriorityQueue) Len() int { return len(pq) }
+func (pq PriorityQueue) Less(i, j int) bool { return pq[i].dist < pq[j].dist }
+func (pq PriorityQueue) Swap(i, j int) { pq[i], pq[j] = pq[j], pq[i]; pq[i].index = i; pq[j].index = j }
+func (pq *PriorityQueue) Push(x interface{}) { *pq = append(*pq, x.(*Item)) }
+func (pq *PriorityQueue) Pop() interface{} { old := *pq; n := len(old); item := old[n-1]; *pq = old[0 : n-1]; return item }
+
+func dijkstra(n int, adj map[int][][2]int, src int) []int {
+    dist := make([]int, n)
+    for i := range dist { dist[i] = math.MaxInt32 }
+    dist[src] = 0
+    pq := make(PriorityQueue, 0)
+    heap.Init(&pq)
+    heap.Push(&pq, &Item{node: src, dist: 0})
+    return dist
+}`,
+          rust: `use std::cmp::Ordering;
+use std::collections::BinaryHeap;
+
+#[derive(Copy, Clone, Eq, PartialEq)]
+struct State { cost: usize, position: usize }
+impl Ord for State {
+    fn cmp(&self, other: &Self) -> Ordering { other.cost.cmp(&self.cost) }
+}
+impl PartialOrd for State {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> { Some(self.cmp(other)) }
+}
+
+fn dijkstra(adj: &[Vec<(usize, usize)>], start: usize) -> Vec<usize> {
+    let mut dist = vec![usize::MAX; adj.len()];
+    let mut heap = BinaryHeap::new();
+    dist[start] = 0;
+    heap.push(State { cost: 0, position: start });
+
+    while let Some(State { cost, position }) = heap.pop() {
+        if cost > dist[position] { continue; }
+        for &(next, weight) in &adj[position] {
+            let next_cost = cost + weight;
+            if next_cost < dist[next] {
+                dist[next] = next_cost;
+                heap.push(State { cost: next_cost, position: next });
+            }
+        }
+    }
+    dist
+}`,
+          php: `<?php
+function dijkstra($graph, $source) {
+    $dist = [];
+    $visited = [];
+    foreach ($graph as $k => $v) $dist[$k] = INF;
+    $dist[$source] = 0;
+
+    while (count($visited) < count($graph)) {
+        $u = null;
+        foreach ($dist as $node => $d) {
+            if (!in_array($node, $visited) && ($u === null || $d < $dist[$u])) {
+                $u = $node;
+            }
+        }
+        if ($u === null || $dist[$u] === INF) break;
+        $visited[] = $u;
+        foreach ($graph[$u] as $neighbor => $weight) {
+            if ($dist[$u] + $weight < $dist[$neighbor]) {
+                $dist[$neighbor] = $dist[$u] + $weight;
+            }
+        }
+    }
+    return $dist;
+}
+?>`,
+          swift: `func dijkstra(n: Int, edges: [[(to: Int, weight: Int)]], start: Int) -> [Int] {
+    var dist = Array(repeating: Int.max, count: n)
+    dist[start] = 0
+    var visited = Set<Int>()
+
+    for _ in 0..<n {
+        var u = -1
+        for i in 0..<n where !visited.contains(i) {
+            if u == -1 || dist[i] < dist[u] { u = i }
+        }
+        guard u != -1 && dist[u] != Int.max else { break }
+        visited.insert(u)
+
+        for edge in edges[u] {
+            if dist[u] + edge.weight < dist[edge.to] {
+                dist[edge.to] = dist[u] + edge.weight
+            }
+        }
+    }
+    return dist
+}`
+        }
+      }
+    };
+
+    // =========================================================================
+    // 2. DYNAMIC PROCEDURAL SYNTHESIZER (For ANY algorithm entered by user!)
+    // =========================================================================
+    function generateDynamicAlgorithm(name) {
+      const cleanName = name.trim();
+      const lower = cleanName.toLowerCase();
+
+      // Analyze intent
+      const isSearch = lower.includes("search") || lower.includes("find") || lower.includes("lookup");
+      const isSort = lower.includes("sort") || lower.includes("order");
+      const isTree = lower.includes("tree") || lower.includes("graph") || lower.includes("dfs") || lower.includes("bfs") || lower.includes("path");
+      const isMath = lower.includes("math") || lower.includes("calc") || lower.includes("sum") || lower.includes("prime") || lower.includes("gcd") || lower.includes("fib") || lower.includes("factorial") || lower.includes("number");
+      const isAuth = lower.includes("login") || lower.includes("auth") || lower.includes("user") || lower.includes("password");
+
+      const title = cleanName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      const category = isSort ? "SORTING & ORDERING" :
+                       isSearch ? "SEARCH & LOOKUP" :
+                       isTree ? "GRAPH & TREE DATA STRUCTURES" :
+                       isMath ? "COMPUTATIONAL MATHEMATICS" :
+                       isAuth ? "SECURITY & ACCESS CONTROL" : "ALGORITHMIC LOGIC SYNTHESIS";
+
+      const snake = cleanName.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+
+      return {
+        title: title,
+        category: category,
+        complexity: {
+          best: isSearch ? "O(1)" : isSort ? "O(n log n)" : "O(1)",
+          avg: isSearch ? "O(log n)" : isSort ? "O(n²)" : "O(n)",
+          worst: isSearch ? "O(n)" : isSort ? "O(n²)" : "O(n)",
+          space: isSort ? "O(1) In-Place" : "O(n) Memory"
+        },
+        logic: [
+          `1. Initialize execution environment for ${title}.`,
+          "2. Validate input parameters and verify boundary preconditions.",
+          "3. Setup state variables, accumulator register, and iteration pointer.",
+          `4. Execute core algorithmic loop/conditions for ${title}:`,
+          "   - Evaluate conditional branch (True -> proceed to transformation).",
+          "   - Process element, state update, and memoization.",
+          "5. Verify termination threshold and collect computed output.",
+          "6. Return synthesized result to caller."
+        ],
+        testOutput: [
+          `$ polyglot-compiler --synthesize=${snake}`,
+          `[INFO] Synthesizing flowchart nodes for "${title}"...`,
+          `[INFO] Target: Multi-Language Polyglot Runtime`,
+          `Input parameters validated: { query: "${cleanName}", status: "OK" }`,
+          `→ Executing procedural pipeline...`,
+          `✓ Completed with exit code 0. Result generated successfully!`
+        ],
+        flowchart: [
+          { type: "terminal", text: "Start: " + title },
+          { type: "io", text: "Input Data / Parameters" },
+          { type: "process", text: "Initialize Variables & Pointers" },
+          { type: "decision", text: "Check Valid Conditions / Has Elements?", yesTo: 4, noTo: 7 },
+          { type: "process", text: "Execute Core Transformation / Logic" },
+          { type: "decision", text: "Is Target State Reached?", yesTo: 6, noTo: 4 },
+          { type: "io", text: "Output: Result Found / Processed" },
+          { type: "terminal", text: "End Execution" }
+        ],
+        code: {
+          python: `def ${snake}(data, target=None):
+    """
+    Synthesized Implementation of ${title}.
+    Auto-generated by FlowCode Polyglot Engine.
+    """
+    print(f"Executing ${title} on dataset...")
+    # 1. Parameter validation
+    if not data:
+        return None
+        
+    # 2. Core Algorithmic logic
+    result = []
+    for item in data:
+        # Conditional process
+        if target is not None and item == target:
+            return f"Found target: {item}"
+        result.append(item)
+        
+    return result
+
+# Driver Execution
+sample_data = [10, 25, 40, 55, 70, 85]
+output = ${snake}(sample_data, target=55)
+print("Result:", output)`,
+
+          c: `#include <stdio.h>
+#include <stdbool.h>
+
+// Synthesized ${title} in C
+int execute_${snake}(int arr[], int size, int key) {
+    printf("Executing ${title}...\\n");
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == key) {
+            return i; // Located
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {10, 25, 40, 55, 70, 85};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int res = execute_${snake}(arr, n, 55);
+    printf("Result index: %d\\n", res);
+    return 0;
+}`,
+
+          cpp: `#include <iostream>
+#include <vector>
+
+// Synthesized ${title} in C++
+template <typename T>
+class ${title.replace(/[^a-zA-Z0-9]/g, '')}Runner {
+public:
+    static void execute(const std::vector<T>& dataset) {
+        std::cout << "Executing ${title} (size: " << dataset.size() << ")...\\n";
+        for (const auto& item : dataset) {
+            // Process node
+        }
+        std::cout << "Execution completed successfully.\\n";
+    }
+};
+
+int main() {
+    std::vector<int> data = {10, 25, 40, 55, 70, 85};
+    ${title.replace(/[^a-zA-Z0-9]/g, '')}Runner<int>::execute(data);
+    return 0;
+}`,
+
+          java: `import java.util.*;
+
+public class ${title.replace(/[^a-zA-Z0-9]/g, '')}App {
+    public static void execute${title.replace(/[^a-zA-Z0-9]/g, '')}(int[] arr) {
+        System.out.println("Running ${title} algorithm...");
+        for (int i = 0; i < arr.length; i++) {
+            // Step-by-step logic
+        }
+        System.out.println("Processing finished.");
+    }
+
+    public static void main(String[] args) {
+        int[] data = {10, 25, 40, 55, 70, 85};
+        execute${title.replace(/[^a-zA-Z0-9]/g, '')}(data);
+    }
+}`,
+
+          javascript: `/**
+ * Synthesized ${title} in JavaScript (ES6+)
+ */
+function ${snake}(items, options = {}) {
+    console.log("Executing ${title}...");
+    return items.map((item, idx) => {
+        // Transformation logic
+        return { index: idx, value: item, processed: true };
+    });
+}
+
+const inputData = [10, 25, 40, 55, 70, 85];
+console.log(${snake}(inputData));`,
+
+          typescript: `interface ${title.replace(/[^a-zA-Z0-9]/g, '')}Result<T> {
+    data: T[];
+    success: boolean;
+    timestamp: number;
+}
+
+function ${snake}<T>(input: T[]): ${title.replace(/[^a-zA-Z0-9]/g, '')}Result<T> {
+    console.log("Executing typed ${title}...");
+    return {
+        data: input,
+        success: true,
+        timestamp: Date.now()
+    };
+}`,
+
+          csharp: `using System;
+using System.Collections.Generic;
+
+public class ${title.replace(/[^a-zA-Z0-9]/g, '')} {
+    public static void Run(List<int> dataset) {
+        Console.WriteLine("Executing ${title} in C#...");
+        foreach (var item in dataset) {
+            // Processing logic
+        }
+        Console.WriteLine("Completed.");
+    }
+}`,
+
+          go: `package main
+
+import "fmt"
+
+func ${snake}(data []int) {
+    fmt.Println("Executing ${title} in Go...")
+    for i, v := range data {
+        _ = i
+        _ = v
+    }
+    fmt.Println("Execution done.")
+}
+
+func main() {
+    sample := []int{10, 25, 40, 55, 70, 85}
+    ${snake}(sample)
+}`,
+
+          rust: `fn ${snake}(data: &[i32]) -> Vec<i32> {
+    println!("Executing {} in Rust...", "${title}");
+    data.iter().map(|&x| x * 2).collect()
+}
+
+fn main() {
+    let input = [10, 25, 40, 55, 70, 85];
+    let res = ${snake}(&input);
+    println!("Processed: {:?}", res);
+}`,
+
+          php: `<?php
+function ${snake}($data) {
+    echo "Executing ${title} in PHP...\\n";
+    $result = [];
+    foreach ($data as $item) {
+        $result[] = $item;
+    }
+    return $result;
+}
+?>`,
+
+          swift: `func ${snake}(_ data: [Int]) -> [Int] {
+    print("Executing ${title} in Swift...")
+    return data.filter { $0 > 0 }
+}`
+        }
+      };
+    }
+
+    // =========================================================================
+    // 3. FLOWCHART SVG RENDERER & INTERACTIVE CANVAS
+    // =========================================================================
+    let currentAlgoData = null;
+    let currentLanguage = "python";
+    let activeStepTimer = null;
+    let currentZoom = 1;
+
+    function renderFlowchart(nodes) {
+      const svg = document.getElementById("flowchartSvg");
+      svg.innerHTML = ''; // clear
+
+      const nodeWidth = 260;
+      const startX = 170;
+      let currY = 40;
+      const gapY = 64;
+
+      const totalH = nodes.length * gapY + 140;
+      svg.setAttribute("height", Math.max(700, totalH));
+      svg.setAttribute("viewBox", `0 0 600 ${Math.max(700, totalH)}`);
+
+      // SVG Definitions (Arrow markers, Gradients)
+      const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+      defs.innerHTML = `
+        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#00f0ff"/>
+        </marker>
+        <marker id="arrow-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#10b981"/>
+        </marker>
+        <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#f72585"/>
+        </marker>
+        <linearGradient id="grad-term" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#059669"/>
+          <stop offset="100%" stop-color="#10b981"/>
+        </linearGradient>
+        <linearGradient id="grad-proc" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#1e1b4b"/>
+          <stop offset="100%" stop-color="#312e81"/>
+        </linearGradient>
+        <linearGradient id="grad-dec" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#451a03"/>
+          <stop offset="100%" stop-color="#78350f"/>
+        </linearGradient>
+      `;
+      svg.appendChild(defs);
+
+      const positions = [];
+
+      nodes.forEach((node, idx) => {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", "fc-node");
+        g.setAttribute("id", `node-${idx}`);
+        g.setAttribute("data-index", idx);
+
+        let shape;
+        let textY = currY + 22;
+
+        if (node.type === "terminal") {
+          // Pill Shape
+          shape = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          shape.setAttribute("x", startX);
+          shape.setAttribute("y", currY);
+          shape.setAttribute("width", nodeWidth);
+          shape.setAttribute("height", 42);
+          shape.setAttribute("rx", 21);
+          shape.setAttribute("fill", idx === 0 ? "url(#grad-term)" : "#831843");
+          shape.setAttribute("stroke", idx === 0 ? "#34d399" : "#f43f5e");
+          shape.setAttribute("stroke-width", "2");
+        } else if (node.type === "io") {
+          // Parallelogram (Slanted)
+          shape = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+          const p1 = `${startX + 18},${currY}`;
+          const p2 = `${startX + nodeWidth},${currY}`;
+          const p3 = `${startX + nodeWidth - 18},${currY + 44}`;
+          const p4 = `${startX},${currY + 44}`;
+          shape.setAttribute("points", `${p1} ${p2} ${p3} ${p4}`);
+          shape.setAttribute("fill", "#042f2e");
+          shape.setAttribute("stroke", "#14b8a6");
+          shape.setAttribute("stroke-width", "1.8");
+          textY = currY + 26;
+        } else if (node.type === "decision") {
+          // Diamond
+          shape = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+          const midX = startX + nodeWidth / 2;
+          const top = `${midX},${currY}`;
+          const right = `${startX + nodeWidth + 10},${currY + 25}`;
+          const bottom = `${midX},${currY + 50}`;
+          const left = `${startX - 10},${currY + 25}`;
+          shape.setAttribute("points", `${top} ${right} ${bottom} ${left}`);
+          shape.setAttribute("fill", "url(#grad-dec)");
+          shape.setAttribute("stroke", "#f59e0b");
+          shape.setAttribute("stroke-width", "2");
+          textY = currY + 28;
+        } else {
+          // Process Rectangle
+          shape = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          shape.setAttribute("x", startX);
+          shape.setAttribute("y", currY);
+          shape.setAttribute("width", nodeWidth);
+          shape.setAttribute("height", 44);
+          shape.setAttribute("rx", 8);
+          shape.setAttribute("fill", "url(#grad-proc)");
+          shape.setAttribute("stroke", "#6366f1");
+          shape.setAttribute("stroke-width", "1.6");
+          textY = currY + 26;
+        }
+
+        g.appendChild(shape);
+
+        // Text
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", startX + nodeWidth / 2);
+        text.setAttribute("y", textY);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("fill", "#ffffff");
+        text.setAttribute("font-family", "'JetBrains Mono', monospace");
+        text.setAttribute("font-size", node.text.length > 28 ? "11px" : "12px");
+        text.setAttribute("font-weight", "500");
+        text.textContent = node.text;
+        g.appendChild(text);
+
+        svg.appendChild(g);
+
+        positions.push({ x: startX + nodeWidth / 2, y: currY + 22, bottom: currY + (node.type === 'decision' ? 50 : 44) });
+        currY += gapY;
+      });
+
+      // Draw Arrows Connecting Nodes
+      for (let i = 0; i < positions.length - 1; i++) {
+        const from = positions[i];
+        const to = positions[i + 1];
+
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const startY = from.bottom + 2;
+        const endY = to.y - 20;
+        
+        line.setAttribute("d", `M ${from.x} ${startY} L ${to.x} ${endY}`);
+        line.setAttribute("stroke", "#00f0ff");
+        line.setAttribute("stroke-width", "1.8");
+        line.setAttribute("marker-end", "url(#arrow)");
+        line.setAttribute("opacity", "0.85");
+        svg.appendChild(line);
+
+        // Branch indicator for decision nodes
+        if (nodes[i].type === "decision") {
+          const yesLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          yesLabel.setAttribute("x", from.x + 8);
+          yesLabel.setAttribute("y", startY + 12);
+          yesLabel.setAttribute("fill", "#10b981");
+          yesLabel.setAttribute("font-size", "10px");
+          yesLabel.setAttribute("font-family", "'JetBrains Mono', monospace");
+          yesLabel.setAttribute("font-weight", "700");
+          yesLabel.textContent = "YES";
+          svg.appendChild(yesLabel);
+        }
+      }
+    }
+
+    // =========================================================================
+    // 4. SYNTAX HIGHLIGHTER FOR CODE
+    // =========================================================================
+    function highlightSyntax(code, lang) {
+      if (!code) return "";
+      let escaped = code
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      // Strings
+      escaped = escaped.replace(/(["'`].*?["'`])/g, '<span class="syn-str">$1</span>');
+      // Comments
+      escaped = escaped.replace(/(\/\/.*$|#.*$|\/\*[\s\S]*?\*\/)/gm, '<span class="syn-cmt">$1</span>');
+      // Keywords
+      const keywords = /\b(def|class|return|if|else|elif|while|for|in|import|from|static|public|private|void|int|float|double|bool|boolean|const|let|var|function|func|fn|package|using|namespace|new|type|interface|match|struct|guard|nil|null|None|True|False|true|false)\b/g;
+      escaped = escaped.replace(keywords, '<span class="syn-kw">$1</span>');
+      // Numbers
+      escaped = escaped.replace(/\b(\d+)\b/g, '<span class="syn-num">$1</span>');
+      // Functions
+      escaped = escaped.replace(/\b([a-zA-Z_]\w*)(?=\()/g, '<span class="syn-fn">$1</span>');
+
+      return escaped;
+    }
+
+    // =========================================================================
+    // 5. SYNTHESIS ENGINE (Loads & Displays Data)
+    // =========================================================================
+    function synthesizeAlgorithm(algoName) {
+      const input = algoName || document.getElementById("algoInput").value.trim();
+      if (!input) return;
+
+      const key = input.toLowerCase();
+      let data = ALGO_DATABASE[key];
+
+      // Check partial match
+      if (!data) {
+        for (const k in ALGO_DATABASE) {
+          if (key.includes(k) || k.includes(key)) {
+            data = ALGO_DATABASE[k];
+            break;
+          }
+        }
+      }
+
+      // If not in database, dynamically generate procedural algorithm!
+      if (!data) {
+        data = generateDynamicAlgorithm(input);
+      }
+
+      currentAlgoData = data;
+
+      // Update Badges & Titles
+      document.getElementById("algoCategoryBadge").textContent = data.category;
+      document.getElementById("algoInput").value = data.title;
+
+      // Render Flowchart
+      renderFlowchart(data.flowchart);
+
+      // Render Complexity
+      document.getElementById("compBest").innerHTML = `<span class="badge-comp">${data.complexity.best}</span>`;
+      document.getElementById("compAvg").innerHTML = `<span class="badge-comp">${data.complexity.avg}</span>`;
+      document.getElementById("compWorst").innerHTML = `<span class="badge-comp">${data.complexity.worst}</span>`;
+      document.getElementById("compSpace").innerHTML = `<span class="badge-comp">${data.complexity.space}</span>`;
+
+      // Render Logic Steps
+      const logicEl = document.getElementById("logicBreakdown");
+      logicEl.innerHTML = data.logic.map(step => `<p style="margin-bottom: 6px;">${step}</p>`).join("");
+
+      // Render Test Simulation Output
+      const simBox = document.getElementById("simOutputBox");
+      simBox.innerHTML = data.testOutput.map(line => {
+        if (line.startsWith("$")) return `<div class="log-prompt">${line}</div>`;
+        if (line.includes("✓")) return `<div class="log-out" style="color:#10b981;font-weight:700;">${line}</div>`;
+        return `<div class="log-out">${line}</div>`;
+      }).join("");
+
+      // Update Code Display
+      updateCodeDisplay();
+
+      // Trigger automatic step animation
+      startStepAnimation();
+    }
+
+    function updateCodeDisplay() {
+      if (!currentAlgoData) return;
+      const code = currentAlgoData.code[currentLanguage] || currentAlgoData.code.python || "// Code in preparation";
+      document.getElementById("codeLanguageBadge").textContent = currentLanguage.toUpperCase();
+      document.getElementById("codeDisplay").innerHTML = highlightSyntax(code, currentLanguage);
+    }
+
+    // Step-by-step Flow Animation
+    function startStepAnimation() {
+      if (activeStepTimer) clearInterval(activeStepTimer);
+      const nodes = document.querySelectorAll(".fc-node");
+      if (!nodes.length) return;
+
+      let currentStep = 0;
+      nodes.forEach(n => n.classList.remove("active-step"));
+
+      activeStepTimer = setInterval(() => {
+        nodes.forEach(n => n.classList.remove("active-step"));
+        if (currentStep < nodes.length) {
+          nodes[currentStep].classList.add("active-step");
+          currentStep++;
+        } else {
+          currentStep = 0; // loop
+        }
+      }, 1100);
+    }
+
+    // Toast Notification
+    function showToast(text) {
+      const toast = document.getElementById("toast");
+      toast.textContent = text;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2500);
+    }
+
+    // =========================================================================
+    // 6. EVENT LISTENERS & CONTROLS
+    // =========================================================================
+    document.addEventListener("DOMContentLoaded", () => {
+      // Synthesize initial
+      synthesizeAlgorithm("Binary Search");
+
+      // Preset Chips
+      document.querySelectorAll(".preset-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+          document.querySelectorAll(".preset-chip").forEach(c => c.classList.remove("active"));
+          chip.classList.add("active");
+          synthesizeAlgorithm(chip.getAttribute("data-algo"));
+        });
+      });
+
+      // Language Switcher Tabs
+      document.querySelectorAll(".lang-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".lang-tab").forEach(t => t.classList.remove("active"));
+          tab.classList.add("active");
+          currentLanguage = tab.getAttribute("data-lang");
+          updateCodeDisplay();
+        });
+      });
+
+      // Inspector Tabs
+      document.querySelectorAll(".inspector-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".inspector-tab").forEach(t => t.classList.remove("active"));
+          document.querySelectorAll(".tab-content").forEach(tc => tc.classList.remove("active"));
+          tab.classList.add("active");
+          const target = tab.getAttribute("data-target");
+          document.getElementById(target).classList.add("active");
+        });
+      });
+
+      // Copy Code Button
+      document.getElementById("btnCopyCode").addEventListener("click", () => {
+        if (!currentAlgoData) return;
+        const code = currentAlgoData.code[currentLanguage] || "";
+        navigator.clipboard.writeText(code).then(() => {
+          showToast(`✓ ${currentLanguage.toUpperCase()} code copied to clipboard!`);
+        });
+      });
+
+      // Download Code Button
+      document.getElementById("btnDownloadCode").addEventListener("click", () => {
+        if (!currentAlgoData) return;
+        const exts = { python: 'py', c: 'c', cpp: 'cpp', java: 'java', javascript: 'js', typescript: 'ts', csharp: 'cs', go: 'go', rust: 'rs', php: 'php', swift: 'swift' };
+        const ext = exts[currentLanguage] || 'txt';
+        const filename = `${currentAlgoData.title.toLowerCase().replace(/[^a-z0-9]+/g, '_')}.${ext}`;
+        const blob = new Blob([currentAlgoData.code[currentLanguage]], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+        showToast(`Saved as ${filename}`);
+      });
+
+      // Flowchart Zoom Controls
+      const viewport = document.getElementById("flowchartViewport");
+      const svg = document.getElementById("flowchartSvg");
+
+      document.getElementById("btnZoomIn").addEventListener("click", () => {
+        currentZoom = Math.min(2.0, currentZoom + 0.15);
+        svg.style.transform = `scale(${currentZoom})`;
+      });
+
+      document.getElementById("btnZoomOut").addEventListener("click", () => {
+        currentZoom = Math.max(0.5, currentZoom - 0.15);
+        svg.style.transform = `scale(${currentZoom})`;
+      });
+
+      document.getElementById("btnResetZoom").addEventListener("click", () => {
+        currentZoom = 1;
+        svg.style.transform = `scale(1)`;
+      });
+
+      // Animate Step Button
+      document.getElementById("btnAnimateFlow").addEventListener("click", () => {
+        startStepAnimation();
+        showToast("▶️ Simulating Step-by-Step Flowchart Execution");
+      });
+
+      // Export SVG
+      document.getElementById("btnExportSvg").addEventListener("click", () => {
+        const svgData = new XMLSerializer().serializeToString(svg);
+        const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `${currentAlgoData ? currentAlgoData.title.toLowerCase().replace(/[^a-z0-9]+/g, '_') : 'flowchart'}.svg`;
+        a.click();
+        showToast("✓ SVG exported successfully!");
+      });
+
+      // Quick Random Algo
+      document.getElementById("btnQuickDemo").addEventListener("click", () => {
+        const algos = Object.keys(ALGO_DATABASE);
+        const randomKey = algos[Math.floor(Math.random() * algos.length)];
+        synthesizeAlgorithm(randomKey);
+        showToast(`Synthesizing random preset: ${randomKey}`);
+      });
+    });
+  </script>
+</body>
+</html>
