@@ -246,4 +246,83 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* -------------------------------------------------------------------
+     10. INTERACTIVE CERTIFICATE VIEWER MODAL
+     ------------------------------------------------------------------- */
+  const certModal = document.getElementById('certModal');
+  const certModalTitle = document.getElementById('certModalTitle');
+  const certModalImg = document.getElementById('certModalImg');
+  const certModalMeta = document.getElementById('certModalMeta');
+  const certModalDownload = document.getElementById('certModalDownload');
+  const certModalClose = document.getElementById('certModalClose');
+  const certModalDismiss = document.getElementById('certModalDismiss');
+
+  const CERT_DATA = {
+    'ml-spec': {
+      title: 'Machine Learning Specialization — DeepLearning.AI & Stanford Online',
+      file: 'cert-machine-learning.svg',
+      downloadName: 'Jaswanth_Kamaraj_Machine_Learning_Certificate.svg',
+      meta: 'Verified Credential: ID DLAI-ML-8492041 • DeepLearning.AI & Stanford Online'
+    },
+    'hackathon': {
+      title: 'Inter-College AI Hackathon Innovation Award — Top 10 Finalist',
+      file: 'cert-hackathon.svg',
+      downloadName: 'Jaswanth_Kamaraj_Hackathon_Certificate.svg',
+      meta: 'Verified Credential: Ref MZCET-HACK-T10 • Institution Innovation Council'
+    },
+    'data-science': {
+      title: 'Applied Data Science with Python — University of Michigan & Kaggle',
+      file: 'cert-data-science.svg',
+      downloadName: 'Jaswanth_Kamaraj_Data_Science_Certificate.svg',
+      meta: 'Verified Credential: ID UOM-DS-9382104 • University of Michigan & Kaggle'
+    }
+  };
+
+  window.openCertModal = function(certId) {
+    const cert = CERT_DATA[certId];
+    if (!cert || !certModal) return;
+
+    if (certModalTitle) certModalTitle.textContent = '📜 ' + cert.title;
+    if (certModalImg) {
+      certModalImg.src = cert.file;
+      certModalImg.alt = cert.title;
+    }
+    if (certModalMeta) certModalMeta.textContent = cert.meta;
+    if (certModalDownload) {
+      certModalDownload.href = cert.file;
+      certModalDownload.download = cert.downloadName;
+    }
+
+    certModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeCertModal = function() {
+    if (!certModal) return;
+    certModal.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  if (certModalClose) {
+    certModalClose.addEventListener('click', closeCertModal);
+  }
+  if (certModalDismiss) {
+    certModalDismiss.addEventListener('click', closeCertModal);
+  }
+
+  if (certModal) {
+    certModal.addEventListener('click', (e) => {
+      if (e.target === certModal) {
+        closeCertModal();
+      }
+    });
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && certModal && certModal.classList.contains('active')) {
+      closeCertModal();
+    }
+  });
+
 });
+

@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#faf5ff"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#581c87"/>
+      <stop offset="100%" stop-color="#7e22ce"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="50%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="700" fill="url(#bgGrad)"/>
+
+  <!-- Ornate Border System -->
+  <rect x="25" y="25" width="950" height="650" fill="none" stroke="#581c87" stroke-width="4"/>
+  <rect x="35" y="35" width="930" height="630" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+  <rect x="42" y="42" width="916" height="616" fill="none" stroke="#581c87" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- Corner Ornaments -->
+  <g fill="#f59e0b">
+    <polygon points="45,45 75,45 45,75"/>
+    <polygon points="955,45 925,45 955,75"/>
+    <polygon points="45,655 75,655 45,625"/>
+    <polygon points="955,655 925,655 955,625"/>
+  </g>
+
+  <!-- Header Section -->
+  <g text-anchor="middle">
+    <text x="500" y="95" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="14" font-weight="800" fill="#6b21a8" letter-spacing="4">
+      INSTITUTION INNOVATION COUNCIL &amp; TECHNICAL FESTIVAL
+    </text>
+
+    <text x="500" y="145" font-family="'Georgia', serif" font-size="36" font-weight="700" fill="#0f172a" letter-spacing="1">
+      Certificate of Achievement &amp; Honor
+    </text>
+
+    <text x="500" y="180" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="14" fill="#64748b" letter-spacing="1">
+      THIS CERTIFICATE IS AWARDED TO
+    </text>
+
+    <!-- Recipient Name -->
+    <text x="500" y="245" font-family="'Georgia', serif" font-size="44" font-weight="700" fill="#581c87">
+      Jaswanth Kamaraj J
+    </text>
+
+    <line x1="300" y1="265" x2="700" y2="265" stroke="url(#goldGrad)" stroke-width="3.5"/>
+
+    <text x="500" y="315" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="15" fill="#475569">
+      in recognition of outstanding innovation and competitive excellence as a
+    </text>
+
+    <text x="500" y="360" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="28" font-weight="800" fill="#0f172a">
+      Finalist (Top 10 out of 80+ Teams)
+    </text>
+
+    <text x="500" y="405" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="14" font-weight="600" fill="#581c87">
+      Inter-College AI Hackathon &amp; Engineering Tech Fest 2024
+    </text>
+    <text x="500" y="430" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" fill="#334155">
+      Project: "Smart Campus Real-Time Energy Monitoring &amp; Predictive Load Dashboard"
+    </text>
+  </g>
+
+  <!-- Trophy Gold Seal -->
+  <g transform="translate(180, 520)" filter="url(#shadow)">
+    <circle cx="0" cy="0" r="48" fill="url(#goldGrad)"/>
+    <circle cx="0" cy="0" r="42" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-dasharray="4,2"/>
+    <text x="0" y="-8" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="10" font-weight="800" fill="#581c87" text-anchor="middle" letter-spacing="1">INNOVATION</text>
+    <text x="0" y="7" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="800" fill="#581c87" text-anchor="middle">AWARD</text>
+    <text x="0" y="21" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="9" font-weight="700" fill="#581c87" text-anchor="middle">★ TOP 10 ★</text>
+    <path d="M -18 36 L -24 64 L 0 54 L 24 64 L 18 36 Z" fill="#7e22ce"/>
+  </g>
+
+  <!-- Signatures Section -->
+  <g transform="translate(520, 530)">
+    <!-- Signature 1 -->
+    <g transform="translate(0, 0)">
+      <path d="M 0 0 C 30 -20, 50 10, 80 -15 C 100 0, 120 -20, 150 5 C 165 15, 180 -5, 195 5" fill="none" stroke="#581c87" stroke-width="2.2"/>
+      <line x1="-10" y1="18" x2="190" y2="18" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="90" y="34" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">
+        Dr. S. Karthikeyan
+      </text>
+      <text x="90" y="50" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">
+        Convener, Innovation Council
+      </text>
+    </g>
+
+    <!-- Signature 2 -->
+    <g transform="translate(260, 0)">
+      <path d="M 0 -5 C 25 -15, 45 5, 75 -20 C 100 -5, 120 -15, 150 -5 C 165 5, 180 -10, 195 0" fill="none" stroke="#581c87" stroke-width="2.2"/>
+      <line x1="-10" y1="18" x2="190" y2="18" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="90" y="34" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">
+        Dr. P. Balamurugan
+      </text>
+      <text x="90" y="50" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">
+        Principal &amp; Dean of Academic Affairs
+      </text>
+    </g>
+  </g>
+
+  <!-- Credential Footer & ID -->
+  <g transform="translate(500, 645)" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="#64748b">
+    <text>
+      Certificate Ref: <tspan fill="#0f172a" font-weight="700">MZCET-HACK-2024-T10</tspan> • Date of Event: <tspan fill="#0f172a" font-weight="700">September 2024</tspan> • Anna University Zone
+    </text>
+  </g>
+</svg>

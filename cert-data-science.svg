@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+    <linearGradient id="michiganGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00274c"/>
+      <stop offset="100%" stop-color="#ffcb05"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="700" fill="url(#bgGrad)"/>
+
+  <!-- Ornate Border System -->
+  <rect x="25" y="25" width="950" height="650" fill="none" stroke="#00274c" stroke-width="4"/>
+  <rect x="35" y="35" width="930" height="630" fill="none" stroke="#ffcb05" stroke-width="2.5"/>
+  <rect x="42" y="42" width="916" height="616" fill="none" stroke="#00274c" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- Corner Ornaments -->
+  <g fill="#ffcb05">
+    <polygon points="45,45 75,45 45,75"/>
+    <polygon points="955,45 925,45 955,75"/>
+    <polygon points="45,655 75,655 45,625"/>
+    <polygon points="955,655 925,655 955,625"/>
+  </g>
+
+  <!-- Header Section -->
+  <g text-anchor="middle">
+    <text x="500" y="95" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="14" font-weight="800" fill="#00274c" letter-spacing="4">
+      UNIVERSITY OF MICHIGAN &amp; KAGGLE CREDENTIALS
+    </text>
+
+    <text x="500" y="145" font-family="'Georgia', serif" font-size="36" font-weight="700" fill="#0f172a" letter-spacing="1">
+      Certificate of Competency
+    </text>
+
+    <text x="500" y="180" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="14" fill="#64748b" letter-spacing="1">
+      THIS IS PROUDLY CONFERRED UPON
+    </text>
+
+    <!-- Recipient Name -->
+    <text x="500" y="245" font-family="'Georgia', serif" font-size="44" font-weight="700" fill="#00274c">
+      Jaswanth Kamaraj J
+    </text>
+
+    <!-- Gold Accent Line -->
+    <line x1="300" y1="265" x2="700" y2="265" stroke="#ffcb05" stroke-width="3.5"/>
+
+    <text x="500" y="315" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="15" fill="#475569">
+      for demonstrated mastery and practical problem solving in
+    </text>
+
+    <text x="500" y="360" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="28" font-weight="800" fill="#0f172a">
+      Applied Data Science with Python
+    </text>
+
+    <text x="500" y="405" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13.5" fill="#334155">
+      Data Cleaning, Wrangling &amp; Analysis with Pandas • Mathematical Computing with NumPy
+    </text>
+    <text x="500" y="428" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13.5" fill="#334155">
+      Exploratory Statistical Charting with Matplotlib &amp; Seaborn • Relational SQL Querying
+    </text>
+  </g>
+
+  <!-- Blue & Gold University Seal -->
+  <g transform="translate(180, 520)" filter="url(#shadow)">
+    <circle cx="0" cy="0" r="48" fill="#00274c"/>
+    <circle cx="0" cy="0" r="42" fill="none" stroke="#ffcb05" stroke-width="2.5" stroke-dasharray="4,2"/>
+    <text x="0" y="-8" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="10" font-weight="800" fill="#ffcb05" text-anchor="middle" letter-spacing="1">MICHIGAN</text>
+    <text x="0" y="7" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="800" fill="#ffffff" text-anchor="middle">VERIFIED</text>
+    <text x="0" y="21" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="8.5" font-weight="700" fill="#ffcb05" text-anchor="middle">★ DATA SCIENCE ★</text>
+    <path d="M -18 36 L -24 64 L 0 54 L 24 64 L 18 36 Z" fill="#ffcb05"/>
+  </g>
+
+  <!-- Signatures Section -->
+  <g transform="translate(520, 530)">
+    <!-- Signature 1 -->
+    <g transform="translate(0, 0)">
+      <path d="M 0 5 C 20 -15, 45 10, 75 -20 C 100 -5, 120 -25, 145 5 C 160 15, 175 -5, 190 8" fill="none" stroke="#00274c" stroke-width="2.2"/>
+      <line x1="-10" y1="18" x2="190" y2="18" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="90" y="34" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">
+        Christopher Brooks
+      </text>
+      <text x="90" y="50" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">
+        Research Assistant Professor, School of Information
+      </text>
+    </g>
+
+    <!-- Signature 2 -->
+    <g transform="translate(260, 0)">
+      <path d="M 0 -8 C 25 -20, 50 0, 75 -15 C 95 10, 115 -10, 140 -5 C 155 5, 170 -10, 185 2" fill="none" stroke="#00274c" stroke-width="2.2"/>
+      <line x1="-10" y1="18" x2="190" y2="18" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="90" y="34" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">
+        Kaggle Certifications Board
+      </text>
+      <text x="90" y="50" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">
+        Lead Verification Council
+      </text>
+    </g>
+  </g>
+
+  <!-- Credential Footer & ID -->
+  <g transform="translate(500, 645)" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="#64748b">
+    <text>
+      Credential ID: <tspan fill="#0f172a" font-weight="700">UOM-DS-9382104</tspan> • Issue Date: <tspan fill="#0f172a" font-weight="700">June 2024</tspan> • Verified via Kaggle / Coursera
+    </text>
+  </g>
+</svg>
