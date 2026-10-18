@@ -324,5 +324,143 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  /* -------------------------------------------------------------------
+     11. PHOTOGRAPHY GALLERY FILTERING & INTERACTIVE LIGHTBOX
+     ------------------------------------------------------------------- */
+  const photoFilterBtns = document.querySelectorAll('.photo-filter-btn');
+  const photoItems = document.querySelectorAll('.photo-item');
+  const photoLightbox = document.getElementById('photoLightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxTitle = document.getElementById('lightboxTitle');
+  const lightboxMeta = document.getElementById('lightboxMeta');
+  const lightboxCounter = document.getElementById('lightboxCounter');
+  const lightboxDownload = document.getElementById('lightboxDownload');
+  const lightboxClose = document.getElementById('lightboxClose');
+  const lightboxPrev = document.getElementById('lightboxPrev');
+  const lightboxNext = document.getElementById('lightboxNext');
+
+  const PHOTO_GALLERY_DATA = [
+    {
+      src: 'photography/photo1-campus.jpg',
+      title: 'Campus Horizon & Symmetry',
+      meta: 'Mount Zion College Campus • Golden Hour Framing',
+      category: 'architecture'
+    },
+    {
+      src: 'photography/photo2-nature.jpg',
+      title: 'Nature & Science Park',
+      meta: 'Lush Greenery & Open Skies • Natural Daylight',
+      category: 'nature'
+    },
+    {
+      src: 'photography/photo3-interior.jpg',
+      title: 'Grand Atrium & Ambient Glow',
+      meta: 'Atmospheric Indoor Lighting & Architectural Scale',
+      category: 'cinematic'
+    },
+    {
+      src: 'photography/photo4-architecture.jpg',
+      title: 'Heritage Monumental Facade',
+      meta: 'Tirunelveli Science Center • Architectural Geometry',
+      category: 'architecture'
+    },
+    {
+      src: 'photography/photo5-cinematic.jpg',
+      title: 'Celestial Tech & Deep Indigo',
+      meta: 'Aerospace Gallery • Nightscape Color Grade',
+      category: 'cinematic'
+    },
+    {
+      src: 'photography/photo6-macro.jpg',
+      title: 'Optical Physics & Light Dispersion',
+      meta: 'Discovery Lab • Micro Exploration Framing',
+      category: 'macro'
+    }
+  ];
+
+  let currentPhotoIndex = 0;
+
+  // Filter Categories
+  if (photoFilterBtns.length && photoItems.length) {
+    photoFilterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        photoFilterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.getAttribute('data-filter');
+
+        photoItems.forEach(item => {
+          const cat = item.getAttribute('data-category');
+          if (filter === 'all' || cat === filter) {
+            item.classList.remove('hidden');
+          } else {
+            item.classList.add('hidden');
+          }
+        });
+      });
+    });
+  }
+
+  // Lightbox functions
+  window.openPhotoLightbox = function(index) {
+    if (!photoLightbox || index < 0 || index >= PHOTO_GALLERY_DATA.length) return;
+    currentPhotoIndex = index;
+    updateLightboxContent();
+    photoLightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closePhotoLightbox = function() {
+    if (!photoLightbox) return;
+    photoLightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  function updateLightboxContent() {
+    const data = PHOTO_GALLERY_DATA[currentPhotoIndex];
+    if (!data) return;
+
+    if (lightboxImg) {
+      lightboxImg.src = data.src;
+      lightboxImg.alt = data.title;
+    }
+    if (lightboxTitle) lightboxTitle.textContent = data.title;
+    if (lightboxMeta) lightboxMeta.textContent = data.meta;
+    if (lightboxCounter) lightboxCounter.textContent = `${currentPhotoIndex + 1} of ${PHOTO_GALLERY_DATA.length}`;
+    if (lightboxDownload) {
+      lightboxDownload.href = data.src;
+      lightboxDownload.download = `Jaswanth_Kamaraj_Shot_${currentPhotoIndex + 1}.jpg`;
+    }
+  }
+
+  function showNextPhoto() {
+    currentPhotoIndex = (currentPhotoIndex + 1) % PHOTO_GALLERY_DATA.length;
+    updateLightboxContent();
+  }
+
+  function showPrevPhoto() {
+    currentPhotoIndex = (currentPhotoIndex - 1 + PHOTO_GALLERY_DATA.length) % PHOTO_GALLERY_DATA.length;
+    updateLightboxContent();
+  }
+
+  if (lightboxClose) lightboxClose.addEventListener('click', closePhotoLightbox);
+  if (lightboxNext) lightboxNext.addEventListener('click', showNextPhoto);
+  if (lightboxPrev) lightboxPrev.addEventListener('click', showPrevPhoto);
+
+  if (photoLightbox) {
+    photoLightbox.addEventListener('click', (e) => {
+      if (e.target === photoLightbox) {
+        closePhotoLightbox();
+      }
+    });
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (!photoLightbox || !photoLightbox.classList.contains('active')) return;
+    if (e.key === 'Escape') closePhotoLightbox();
+    if (e.key === 'ArrowRight') showNextPhoto();
+    if (e.key === 'ArrowLeft') showPrevPhoto();
+  });
+
 });
 

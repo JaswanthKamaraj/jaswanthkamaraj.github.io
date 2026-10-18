@@ -66,6 +66,7 @@
           <li><a href="#about" class="nav-link">About</a></li>
           <li><a href="#skills" class="nav-link">Skills</a></li>
           <li><a href="#projects" class="nav-link">Projects</a></li>
+          <li><a href="#photography" class="nav-link">Photography</a></li>
           <li><a href="#education" class="nav-link">Education</a></li>
           <li><a href="#certifications" class="nav-link">Certifications</a></li>
           <li><a href="#contact" class="nav-link">Contact</a></li>
@@ -635,6 +636,137 @@
     </section>
 
     <!-- ===================================================================
+         4B. PHOTOGRAPHY & CREATIVE GALLERY SECTION
+         =================================================================== -->
+    <section class="section" id="photography">
+      <div class="container">
+        
+        <div class="section-header reveal">
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.3); padding: 4px 14px; border-radius: var(--radius-full); font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent-cyan); margin-bottom: 12px;">
+            📸 Lens &amp; Frames • Shot &amp; Edited by Jaswanth Kamaraj
+          </div>
+          <h2 class="section-title">Photography &amp; Visual Works</h2>
+          <p class="section-subtitle">Moments frozen in time, architectural geometries, and color-graded cinematic perspectives captured through my camera lens.</p>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="photo-filter-bar reveal">
+          <button type="button" class="photo-filter-btn active" data-filter="all">All Works</button>
+          <button type="button" class="photo-filter-btn" data-filter="architecture">🏛️ Architecture</button>
+          <button type="button" class="photo-filter-btn" data-filter="nature">🌿 Nature &amp; Landscape</button>
+          <button type="button" class="photo-filter-btn" data-filter="cinematic">🎬 Cinematic &amp; Moody</button>
+          <button type="button" class="photo-filter-btn" data-filter="macro">🔬 Science &amp; Macro</button>
+        </div>
+
+        <!-- Photo Grid -->
+        <div class="photo-gallery-grid reveal">
+          
+          <!-- Photo 1: Campus Architecture -->
+          <figure class="photo-item spotlight-card" data-category="architecture" onclick="openPhotoLightbox(0)">
+            <div class="photo-img-wrap">
+              <img src="photography/photo1-campus.jpg" alt="Mount Zion Campus Architecture" loading="lazy" class="photo-thumb">
+              <div class="photo-overlay">
+                <span class="photo-zoom-icon">🔍</span>
+                <span class="photo-cat-badge">Architecture</span>
+              </div>
+            </div>
+            <figcaption class="photo-caption">
+              <h3 class="photo-title">Campus Horizon &amp; Symmetry</h3>
+              <p class="photo-meta">Mount Zion College Campus • Golden Hour</p>
+            </figcaption>
+          </figure>
+
+          <!-- Photo 2: Nature & Park -->
+          <figure class="photo-item spotlight-card" data-category="nature" onclick="openPhotoLightbox(1)">
+            <div class="photo-img-wrap">
+              <img src="photography/photo2-nature.jpg" alt="Outdoor Science Park & Greenery" loading="lazy" class="photo-thumb">
+              <div class="photo-overlay">
+                <span class="photo-zoom-icon">🔍</span>
+                <span class="photo-cat-badge">Nature &amp; Landscape</span>
+              </div>
+            </div>
+            <figcaption class="photo-caption">
+              <h3 class="photo-title">Nature &amp; Science Park</h3>
+              <p class="photo-meta">Lush Greenery &amp; Open Skies • Daylight</p>
+            </figcaption>
+          </figure>
+
+          <!-- Photo 3: Interior Atrium -->
+          <figure class="photo-item spotlight-card" data-category="cinematic" onclick="openPhotoLightbox(2)">
+            <div class="photo-img-wrap">
+              <img src="photography/photo3-interior.jpg" alt="Grand Atrium & Interior Lighting" loading="lazy" class="photo-thumb">
+              <div class="photo-overlay">
+                <span class="photo-zoom-icon">🔍</span>
+                <span class="photo-cat-badge">Cinematic &amp; Moody</span>
+              </div>
+            </div>
+            <figcaption class="photo-caption">
+              <h3 class="photo-title">Grand Atrium &amp; Ambient Glow</h3>
+              <p class="photo-meta">Atmospheric Indoor Lighting &amp; Symmetry</p>
+            </figcaption>
+          </figure>
+
+          <!-- Photo 4: Architectural Facade -->
+          <figure class="photo-item spotlight-card" data-category="architecture" onclick="openPhotoLightbox(3)">
+            <div class="photo-img-wrap">
+              <img src="photography/photo4-architecture.jpg" alt="Heritage Science Centre Facade" loading="lazy" class="photo-thumb">
+              <div class="photo-overlay">
+                <span class="photo-zoom-icon">🔍</span>
+                <span class="photo-cat-badge">Architecture</span>
+              </div>
+            </div>
+            <figcaption class="photo-caption">
+              <h3 class="photo-title">Heritage Monumental Facade</h3>
+              <p class="photo-meta">Tirunelveli Science Center • Architectural Framing</p>
+            </figcaption>
+          </figure>
+
+          <!-- Photo 5: Night Aerospace -->
+          <figure class="photo-item spotlight-card" data-category="cinematic" onclick="openPhotoLightbox(4)">
+            <div class="photo-img-wrap">
+              <img src="photography/photo5-cinematic.jpg" alt="Space & Aerospace Gallery Night Lights" loading="lazy" class="photo-thumb">
+              <div class="photo-overlay">
+                <span class="photo-zoom-icon">🔍</span>
+                <span class="photo-cat-badge">Cinematic &amp; Moody</span>
+              </div>
+            </div>
+            <figcaption class="photo-caption">
+              <h3 class="photo-title">Celestial Tech &amp; Deep Indigo</h3>
+              <p class="photo-meta">Aerospace Gallery • Nightscape Colors</p>
+            </figcaption>
+          </figure>
+
+          <!-- Photo 6: Physics Macro -->
+          <figure class="photo-item spotlight-card" data-category="macro" onclick="openPhotoLightbox(5)">
+            <div class="photo-img-wrap">
+              <img src="photography/photo6-macro.jpg" alt="Scientific Discovery & Experiments" loading="lazy" class="photo-thumb">
+              <div class="photo-overlay">
+                <span class="photo-zoom-icon">🔍</span>
+                <span class="photo-cat-badge">Science &amp; Macro</span>
+              </div>
+            </div>
+            <figcaption class="photo-caption">
+              <h3 class="photo-title">Optical Physics &amp; Light Dispersion</h3>
+              <p class="photo-meta">Discovery Lab • Micro Exploration</p>
+            </figcaption>
+          </figure>
+
+        </div>
+
+        <!-- Add Your Own Photos Guide Note -->
+        <div style="margin-top: 32px; text-align: center; background: rgba(13, 17, 30, 0.6); border: 1px dashed rgba(0,240,255,0.25); border-radius: var(--radius-md); padding: 18px 24px;" class="reveal">
+          <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 6px;">
+            📸 <strong style="color: #ffffff;">Want to display your own clicked shots?</strong>
+          </p>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">
+            Simply drop any JPG or PNG photos you clicked into the <code style="color: var(--accent-cyan); background: rgba(0,240,255,0.08); padding: 2px 6px; border-radius: 4px;">portfolio/photography/</code> folder!
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
          5. EDUCATION SECTION
          =================================================================== -->
     <section class="section" id="education">
@@ -1051,6 +1183,32 @@
             Close
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       PHOTOGRAPHY LIGHTBOX MODAL
+       =================================================================== -->
+  <div id="photoLightbox" class="lightbox-modal" role="dialog" aria-modal="true" aria-labelledby="lightboxTitle">
+    <div class="lightbox-content-wrap">
+      <div class="lightbox-controls">
+        <span id="lightboxCounter" class="lightbox-counter">1 of 6</span>
+        <button type="button" class="lightbox-btn-close" id="lightboxClose" aria-label="Close photography viewer">&times;</button>
+      </div>
+
+      <button type="button" class="lightbox-nav-btn lightbox-nav-prev" id="lightboxPrev" aria-label="Previous photo">&#8249;</button>
+      <img id="lightboxImg" src="photography/photo1-campus.jpg" alt="High Resolution Photograph" class="lightbox-main-img">
+      <button type="button" class="lightbox-nav-btn lightbox-nav-next" id="lightboxNext" aria-label="Next photo">&#8250;</button>
+
+      <div class="lightbox-caption-bar">
+        <div class="lightbox-caption-text">
+          <h4 id="lightboxTitle">Campus Horizon &amp; Symmetry</h4>
+          <p id="lightboxMeta">Mount Zion College Campus • Golden Hour</p>
+        </div>
+        <a id="lightboxDownload" href="photography/photo1-campus.jpg" download="Jaswanth_Kamaraj_Photography.jpg" class="btn-cert-download" style="font-size: 0.78rem; padding: 6px 14px;">
+          📥 Download Original
+        </a>
       </div>
     </div>
   </div>
