@@ -341,40 +341,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const PHOTO_GALLERY_DATA = [
     {
-      src: 'photography/photo1-campus.jpg',
-      title: 'Campus Horizon & Symmetry',
-      meta: 'Mount Zion College Campus • Golden Hour Framing',
-      category: 'architecture'
+      src: 'photography/shot1-still-life-reading.jpg',
+      title: 'Atomic Habits & Morning Reflections',
+      meta: 'Flat-lay Composition • Sunglasses & Phone Portrait',
+      category: 'creative'
     },
     {
-      src: 'photography/photo2-nature.jpg',
-      title: 'Nature & Science Park',
-      meta: 'Lush Greenery & Open Skies • Natural Daylight',
+      src: 'photography/shot2-macro-sprout-natural.jpg',
+      title: 'Genesis of Life • The Sprout',
+      meta: 'Ground-Level Perspective • Red Soil & Soft Bokeh',
       category: 'nature'
     },
     {
-      src: 'photography/photo3-interior.jpg',
-      title: 'Grand Atrium & Ambient Glow',
-      meta: 'Atmospheric Indoor Lighting & Architectural Scale',
+      src: 'photography/shot3-miniature-perspective.jpg',
+      title: 'Miniature Flight & Spatial Depth',
+      meta: 'Handheld Perspective • Depth of Field & Campus Backdrop',
+      category: 'creative'
+    },
+    {
+      src: 'photography/shot4-jasmine-buds-macro.jpg',
+      title: 'Jasmine Bloom Cluster (Mogra)',
+      meta: 'Botanical Macro • Delicate Petals & Soft Textures',
+      category: 'nature'
+    },
+    {
+      src: 'photography/shot5-artistic-sprout-grading.jpg',
+      title: 'Ethereal Flora • Cinematic Grade',
+      meta: 'Color Grading & Lighting • Atmospheric Particle Edit',
       category: 'cinematic'
-    },
-    {
-      src: 'photography/photo4-architecture.jpg',
-      title: 'Heritage Monumental Facade',
-      meta: 'Tirunelveli Science Center • Architectural Geometry',
-      category: 'architecture'
-    },
-    {
-      src: 'photography/photo5-cinematic.jpg',
-      title: 'Celestial Tech & Deep Indigo',
-      meta: 'Aerospace Gallery • Nightscape Color Grade',
-      category: 'cinematic'
-    },
-    {
-      src: 'photography/photo6-macro.jpg',
-      title: 'Optical Physics & Light Dispersion',
-      meta: 'Discovery Lab • Micro Exploration Framing',
-      category: 'macro'
     }
   ];
 
@@ -390,8 +384,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const filter = btn.getAttribute('data-filter');
 
         photoItems.forEach(item => {
-          const cat = item.getAttribute('data-category');
-          if (filter === 'all' || cat === filter) {
+          const cat = item.getAttribute('data-category') || '';
+          const catList = cat.split(' ');
+          if (filter === 'all' || catList.includes(filter)) {
             item.classList.remove('hidden');
           } else {
             item.classList.add('hidden');
