@@ -541,64 +541,90 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Explode 3D Deck into Full Interactive Grid
+  let isExploding = false;
   function explodePhotoDeck(shouldScroll = false) {
+    if (isExploding) return;
+    isExploding = true;
+
     playCameraShutterSound();
 
-    if (photoDeckShowcase) {
-      photoDeckShowcase.style.display = 'none';
-    }
-    if (photoExpandedShowcase) {
-      photoExpandedShowcase.style.display = 'block';
-    }
+    // 1. Flip sealed cards in 3D to reveal photos on the deck first
+    const flippers = document.querySelectorAll('.card-inner-flip');
+    flippers.forEach((flip, idx) => {
+      setTimeout(() => {
+        flip.classList.add('flipped');
+      }, idx * 50);
+    });
 
-    const flash = document.getElementById('cameraFlashOverlay');
-    const items = document.querySelectorAll('.photo-item');
-    const filterBtns = document.querySelectorAll('.photo-filter-btn');
-
-    // Reset filter to 'All Frames (5)'
-    filterBtns.forEach(btn => {
-      if (btn.getAttribute('data-filter') === 'all') {
-        btn.classList.add('active');
-      } else if (btn.getAttribute('data-filter')) {
-        btn.classList.remove('active');
+    // 2. Explode outward into the full interactive grid
+    setTimeout(() => {
+      if (photoDeckShowcase) {
+        photoDeckShowcase.style.display = 'none';
       }
-    });
-
-    // Unhide all photos and trigger staggered explosion entrance
-    items.forEach(item => {
-      item.classList.remove('hidden');
-      item.classList.remove('animating-in');
-    });
-
-    // Camera flash burst
-    if (flash) {
-      flash.classList.remove('flashing');
-      void flash.offsetWidth;
-      flash.classList.add('flashing');
-    }
-
-    // Staggered 3D spring cascade
-    items.forEach((item, index) => {
-      item.style.animationDelay = `${index * 0.08}s`;
-      void item.offsetWidth;
-      item.classList.add('animating-in');
-    });
-
-    if (shouldScroll) {
-      const photoSection = document.getElementById('photography');
-      if (photoSection) {
-        photoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (photoExpandedShowcase) {
+        photoExpandedShowcase.classList.add('active');
+        photoExpandedShowcase.style.display = 'block';
       }
-    }
+
+      const flash = document.getElementById('cameraFlashOverlay');
+      const items = document.querySelectorAll('.photo-item');
+      const filterBtns = document.querySelectorAll('.photo-filter-btn');
+
+      // Reset filter to 'All Frames (5)'
+      filterBtns.forEach(btn => {
+        if (btn.getAttribute('data-filter') === 'all') {
+          btn.classList.add('active');
+        } else if (btn.getAttribute('data-filter')) {
+          btn.classList.remove('active');
+        }
+      });
+
+      // Unhide all photos and trigger staggered explosion entrance
+      items.forEach(item => {
+        item.classList.remove('hidden');
+        item.classList.remove('animating-in');
+      });
+
+      // Camera flash burst
+      if (flash) {
+        flash.classList.remove('flashing');
+        void flash.offsetWidth;
+        flash.classList.add('flashing');
+      }
+
+      // Staggered 3D spring cascade
+      items.forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.08}s`;
+        void item.offsetWidth;
+        item.classList.add('animating-in');
+      });
+
+      if (shouldScroll) {
+        const photoSection = document.getElementById('photography');
+        if (photoSection) {
+          photoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+
+      isExploding = false;
+    }, 320);
   }
 
-  // Collapse Full Grid back into 3D Photo Deck
+  // Collapse Full Grid back into 3D Photo Deck (Re-seal vault)
   function collapseToPhotoDeck() {
     playCameraShutterSound();
 
     if (photoExpandedShowcase) {
+      photoExpandedShowcase.classList.remove('active');
       photoExpandedShowcase.style.display = 'none';
     }
+
+    // Reset card flips back to sealed state
+    const flippers = document.querySelectorAll('.card-inner-flip');
+    flippers.forEach(flip => {
+      flip.classList.remove('flipped');
+    });
+
     if (photoDeckShowcase) {
       photoDeckShowcase.style.display = 'flex';
       photoDeckShowcase.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -674,22 +700,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Clicking "Photography" in Navbar: Explodes deck & scrolls
+  // Clicking "Photography" in Navbar: Smoothly scrolls to photography section
   const navPhotographyLinks = document.querySelectorAll('a[href="#photography"]');
   navPhotographyLinks.forEach(link => {
     link.addEventListener('click', (e) => {
-      setTimeout(() => {
-        explodePhotoDeck(true);
-      }, 100);
+      const photoSection = document.getElementById('photography');
+      if (photoSection) {
+        e.preventDefault();
+        photoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
   });
-
-  // Automatically trigger if page loaded with #photography hash
-  if (window.location.hash === '#photography') {
-    setTimeout(() => {
-      explodePhotoDeck(false);
-    }, 450);
-  }
 
 });
 
