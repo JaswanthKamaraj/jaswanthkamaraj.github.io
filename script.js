@@ -400,6 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.openPhotoLightbox = function(index) {
     if (!photoLightbox || index < 0 || index >= PHOTO_GALLERY_DATA.length) return;
     currentPhotoIndex = index;
+    renderLightboxFilmstrip();
     updateLightboxContent();
     photoLightbox.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -426,6 +427,39 @@ document.addEventListener('DOMContentLoaded', () => {
       lightboxDownload.href = data.src;
       lightboxDownload.download = `Jaswanth_Kamaraj_Shot_${currentPhotoIndex + 1}.jpg`;
     }
+
+    // Update filmstrip active state
+    const allThumbs = document.querySelectorAll('.filmstrip-thumb-btn');
+    allThumbs.forEach((th, i) => {
+      if (i === currentPhotoIndex) {
+        th.classList.add('active');
+        th.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      } else {
+        th.classList.remove('active');
+      }
+    });
+  }
+
+  function renderLightboxFilmstrip() {
+    const track = document.getElementById('lightboxFilmstripTrack');
+    if (!track) return;
+    track.innerHTML = '';
+
+    PHOTO_GALLERY_DATA.forEach((photo, idx) => {
+      const thumbBtn = document.createElement('button');
+      thumbBtn.type = 'button';
+      thumbBtn.className = `filmstrip-thumb-btn ${idx === currentPhotoIndex ? 'active' : ''}`;
+      thumbBtn.setAttribute('aria-label', `Switch to Photo ${idx + 1}: ${photo.title}`);
+      thumbBtn.innerHTML = `
+        <img src="${photo.src}" alt="${photo.title}" class="filmstrip-thumb-img">
+        <span class="filmstrip-thumb-num">${idx + 1}</span>
+      `;
+      thumbBtn.addEventListener('click', () => {
+        currentPhotoIndex = idx;
+        updateLightboxContent();
+      });
+      track.appendChild(thumbBtn);
+    });
   }
 
   function showNextPhoto() {
@@ -456,6 +490,114 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'ArrowRight') showNextPhoto();
     if (e.key === 'ArrowLeft') showPrevPhoto();
   });
+
+  /* -------------------------------------------------------------------
+     15. PHOTOGRAPHY ANIMATION TRIGGER ("WHEN I CLICK PHOTOGRAPHY")
+     ------------------------------------------------------------------- */
+  function triggerAllPhotosAnimation(shouldScroll = false) {
+    const flash = document.getElementById('cameraFlashOverlay');
+    const items = document.querySelectorAll('.photo-item');
+    const bannerBtn = document.getElementById('btnBannerTrigger');
+    const filterBtns = document.querySelectorAll('.photo-filter-btn');
+
+    // 1. Set filter to 'All Frames (5)'
+    filterBtns.forEach(btn => {
+      if (btn.getAttribute('data-filter') === 'all') {
+        btn.classList.add('active');
+      } else if (btn.getAttribute('data-filter')) {
+        btn.classList.remove('active');
+      }
+    });
+
+    // 2. Unhide all items and reset previous animation
+    items.forEach(item => {
+      item.classList.remove('hidden');
+      item.classList.remove('animating-in');
+    });
+
+    // 3. Camera Flash Burst Effect
+    if (flash) {
+      flash.classList.remove('flashing');
+      void flash.offsetWidth; // Force CSS reflow
+      flash.classList.add('flashing');
+    }
+
+    // 4. Staggered 3D cascade reveal on all 5 photos
+    items.forEach((item, index) => {
+      item.style.animationDelay = `${index * 0.08}s`;
+      void item.offsetWidth; // Force reflow
+      item.classList.add('animating-in');
+    });
+
+    // 5. Visual button feedback
+    if (bannerBtn) {
+      const textSpan = bannerBtn.querySelector('.btn-trigger-text');
+      if (textSpan) {
+        const originalText = textSpan.textContent;
+        textSpan.textContent = '✨ All 5 Photos Shown!';
+        setTimeout(() => {
+          textSpan.textContent = originalText;
+        }, 1800);
+      }
+    }
+
+    // 6. Smooth scroll to photography section if initiated from navbar or external link
+    if (shouldScroll) {
+      const photoSection = document.getElementById('photography');
+      if (photoSection) {
+        photoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
+
+  // Bind trigger to Showcase Banner & Action Buttons
+  const photoRevealBanner = document.getElementById('photoRevealBanner');
+  const btnBannerTrigger = document.getElementById('btnBannerTrigger');
+  const btnReplayAnim = document.getElementById('btnReplayAnim');
+  const filterAllBtn = document.getElementById('filterAllBtn');
+
+  if (photoRevealBanner) {
+    photoRevealBanner.addEventListener('click', (e) => {
+      triggerAllPhotosAnimation(false);
+    });
+  }
+
+  if (btnBannerTrigger) {
+    btnBannerTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      triggerAllPhotosAnimation(false);
+    });
+  }
+
+  if (btnReplayAnim) {
+    btnReplayAnim.addEventListener('click', (e) => {
+      e.preventDefault();
+      triggerAllPhotosAnimation(false);
+    });
+  }
+
+  if (filterAllBtn) {
+    filterAllBtn.addEventListener('click', () => {
+      triggerAllPhotosAnimation(false);
+    });
+  }
+
+  // Bind trigger to ANY navbar link targeting #photography (desktop & mobile)
+  const navPhotographyLinks = document.querySelectorAll('a[href="#photography"]');
+  navPhotographyLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      setTimeout(() => {
+        triggerAllPhotosAnimation(true);
+      }, 120);
+    });
+  });
+
+  // Automatically trigger if page loaded with #photography hash
+  if (window.location.hash === '#photography') {
+    setTimeout(() => {
+      triggerAllPhotosAnimation(false);
+    }, 450);
+  }
 
 });
 
