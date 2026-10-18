@@ -369,6 +369,24 @@ document.addEventListener('DOMContentLoaded', () => {
       title: 'Ethereal Flora • Cinematic Grade',
       meta: 'Color Grading & Lighting • Atmospheric Particle Edit',
       category: 'cinematic'
+    },
+    {
+      src: 'photography/shot6-wild-daisy-macro.jpg',
+      title: 'Wild Blossom in the Shadows',
+      meta: 'Low-Key Botanical Macro • Single Wild Daisy on Deep Foliage',
+      category: 'nature'
+    },
+    {
+      src: 'photography/shot7-skoda-chrome-raindrops.jpg',
+      title: 'Chrome & Raindrops (Automotive)',
+      meta: 'Automotive Macro • Water Beading & Specular Glare',
+      category: 'creative'
+    },
+    {
+      src: 'photography/shot8-panda-ambient-glow.jpg',
+      title: 'Amber Luminescence • The Night Lamp',
+      meta: 'Low-Light Still Life • Warm Internal Glow & Woven Mat',
+      category: 'creative'
     }
   ];
 
