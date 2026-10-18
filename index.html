@@ -649,120 +649,223 @@
           <p class="section-subtitle">Moments frozen in time, architectural geometries, and color-graded cinematic perspectives captured through my camera lens.</p>
         </div>
 
-        <!-- Interactive Photography Animation Showcase Trigger -->
-        <div class="photo-interactive-banner reveal" id="photoRevealBanner" title="Click anywhere here to trigger camera flash and reveal all photos with animation">
-          <div class="banner-lens-wrap">
-            <div class="camera-shutter-icon">
-              <span class="aperture-ring"></span>
-              <span class="aperture-core">📸</span>
+        <!-- ===============================================================
+             STATE 1: 3D FANNED-OUT INTERACTIVE PHOTO DECK (DEFAULT VIEW)
+             =============================================================== -->
+        <div class="photo-deck-showcase reveal" id="photoDeckShowcase">
+          
+          <div class="deck-ambient-glow"></div>
+          
+          <div class="deck-3d-stage" id="deck3dStage" title="Click to explode &amp; reveal all 5 photos!">
+            
+            <!-- Card 5 (Back left) -->
+            <div class="deck-card deck-card-5" data-index="4">
+              <img src="photography/shot5-artistic-sprout-grading.jpg" alt="Ethereal Flora Cinematic Grade" class="deck-card-img">
+              <div class="deck-card-border"></div>
+              <div class="deck-card-label">#05 • Cinematic Flora</div>
+            </div>
+
+            <!-- Card 4 (Back right) -->
+            <div class="deck-card deck-card-4" data-index="3">
+              <img src="photography/shot4-jasmine-buds-macro.jpg" alt="Jasmine Bloom Cluster" class="deck-card-img">
+              <div class="deck-card-border"></div>
+              <div class="deck-card-label">#04 • Jasmine Macro</div>
+            </div>
+
+            <!-- Card 3 (Mid left) -->
+            <div class="deck-card deck-card-3" data-index="2">
+              <img src="photography/shot3-miniature-perspective.jpg" alt="Miniature Flight &amp; Spatial Depth" class="deck-card-img">
+              <div class="deck-card-border"></div>
+              <div class="deck-card-label">#03 • Perspective</div>
+            </div>
+
+            <!-- Card 2 (Mid right) -->
+            <div class="deck-card deck-card-2" data-index="1">
+              <img src="photography/shot2-macro-sprout-natural.jpg" alt="Genesis of Life The Sprout" class="deck-card-img">
+              <div class="deck-card-border"></div>
+              <div class="deck-card-label">#02 • Nature Sprout</div>
+            </div>
+
+            <!-- Card 1 (Front Center Hero) -->
+            <div class="deck-card deck-card-1" data-index="0">
+              <img src="photography/shot1-still-life-reading.jpg" alt="Atomic Habits &amp; Morning Reflections" class="deck-card-img">
+              <div class="deck-card-border"></div>
+              <div class="deck-card-badge">✨ RAW • 4K</div>
+              <div class="deck-card-label">#01 • Still Life Flat-lay</div>
+            </div>
+
+            <!-- Interactive Click Prompt Overlay -->
+            <div class="deck-click-prompt" id="deckClickPrompt">
+              <div class="prompt-pulse-ring"></div>
+              <div class="prompt-icon-box">📸</div>
+              <div class="prompt-text-group">
+                <span class="prompt-title">CLICK TO EXPAND GALLERY</span>
+                <span class="prompt-sub">Explode deck &amp; reveal all 5 frames</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Action Row -->
+          <div class="deck-bottom-actions">
+            <button type="button" class="btn-deck-explode" id="btnDeckExplode">
+              <span class="btn-explode-flash"></span>
+              <span class="btn-explode-icon">⚡</span>
+              <span class="btn-explode-text">Explode &amp; Reveal All (5) Photos</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <p class="deck-hint-text">🖱️ Hover over the 3D deck to preview fan-out • Click anywhere to unfold</p>
+          </div>
+
+        </div>
+
+        <!-- ===============================================================
+             STATE 2: EXPANDED FULL GALLERY & INTERACTIVE MASONRY GRID
+             =============================================================== -->
+        <div class="photo-expanded-showcase" id="photoExpandedShowcase" style="display: none;">
+
+          <!-- Top Control Header: Re-Stack Button + Filter Categories -->
+          <div class="photo-expanded-toolbar">
+            <button type="button" class="btn-restack-deck" id="btnRestackDeck" title="Collapse back into 3D deck">
+              <span>🎴 Stack Photos Back (Collapse)</span>
+            </button>
+
+            <!-- Filter Controls -->
+            <div class="photo-filter-bar">
+              <button type="button" class="photo-filter-btn active" data-filter="all" id="filterAllBtn">All Frames (5)</button>
+              <button type="button" class="photo-filter-btn" data-filter="nature">🌿 Nature &amp; Macro</button>
+              <button type="button" class="photo-filter-btn" data-filter="creative">🎨 Creative &amp; Concept</button>
+              <button type="button" class="photo-filter-btn" data-filter="cinematic">🎬 Cinematic &amp; Color Grade</button>
+              <button type="button" class="photo-filter-btn photo-replay-btn" id="btnReplayAnim" title="Replay camera entrance animation">
+                ⚡ Re-Explode
+              </button>
             </div>
           </div>
-          <div class="banner-text-wrap">
-            <span class="banner-pill-tag">✨ Interactive Showcase</span>
-            <h3 class="banner-title">Click to Animate &amp; Show All Photos</h3>
-            <p class="banner-desc">Tap this card to trigger a camera flash &amp; watch all 5 original captures cascade into view!</p>
+
+          <!-- Photo Grid Container with Camera Flash Overlay -->
+          <div class="photo-gallery-wrapper" id="photoGalleryWrapper">
+            <div class="camera-flash-overlay" id="cameraFlashOverlay"></div>
+            
+            <div class="photo-gallery-grid" id="photoGalleryGrid">
+              
+              <!-- Photo 1: Still Life Reading & Atomic Habits -->
+              <figure class="photo-item spotlight-card tilt-card" data-category="creative cinematic" onclick="openPhotoLightbox(0)">
+                <div class="photo-img-wrap">
+                  <img src="photography/shot1-still-life-reading.jpg" alt="Atomic Habits Still Life Flat-lay by Jaswanth Kamaraj" loading="lazy" class="photo-thumb">
+                  <div class="photo-hud-corners">
+                    <span class="hud-tl"></span><span class="hud-tr"></span>
+                    <span class="hud-bl"></span><span class="hud-br"></span>
+                  </div>
+                  <div class="photo-hud-exif">50mm • f/1.8 • 1/200s • ISO 100</div>
+                  <div class="photo-overlay">
+                    <span class="photo-zoom-icon">🔍</span>
+                    <span class="photo-cat-badge">Creative &amp; Still Life</span>
+                  </div>
+                </div>
+                <figcaption class="photo-caption">
+                  <div class="photo-card-head">
+                    <h3 class="photo-title">Atomic Habits &amp; Morning Reflections</h3>
+                    <span class="photo-num-tag">#01</span>
+                  </div>
+                  <p class="photo-meta">Flat-lay Composition • Sunglasses &amp; Phone Portrait</p>
+                </figcaption>
+              </figure>
+
+              <!-- Photo 2: Green Sprout Macro Natural -->
+              <figure class="photo-item spotlight-card tilt-card" data-category="nature macro" onclick="openPhotoLightbox(1)">
+                <div class="photo-img-wrap">
+                  <img src="photography/shot2-macro-sprout-natural.jpg" alt="Macro Nature Sprout by Jaswanth Kamaraj" loading="lazy" class="photo-thumb">
+                  <div class="photo-hud-corners">
+                    <span class="hud-tl"></span><span class="hud-tr"></span>
+                    <span class="hud-bl"></span><span class="hud-br"></span>
+                  </div>
+                  <div class="photo-hud-exif">90mm Macro • f/2.8 • 1/400s • ISO 160</div>
+                  <div class="photo-overlay">
+                    <span class="photo-zoom-icon">🔍</span>
+                    <span class="photo-cat-badge">Nature &amp; Macro</span>
+                  </div>
+                </div>
+                <figcaption class="photo-caption">
+                  <div class="photo-card-head">
+                    <h3 class="photo-title">Genesis of Life • The Sprout</h3>
+                    <span class="photo-num-tag">#02</span>
+                  </div>
+                  <p class="photo-meta">Ground-Level Perspective • Red Soil &amp; Soft Bokeh</p>
+                </figcaption>
+              </figure>
+
+              <!-- Photo 3: Miniature Perspective Drone -->
+              <figure class="photo-item spotlight-card tilt-card" data-category="creative" onclick="openPhotoLightbox(2)">
+                <div class="photo-img-wrap">
+                  <img src="photography/shot3-miniature-perspective.jpg" alt="Miniature Drone Perspective by Jaswanth Kamaraj" loading="lazy" class="photo-thumb">
+                  <div class="photo-hud-corners">
+                    <span class="hud-tl"></span><span class="hud-tr"></span>
+                    <span class="hud-bl"></span><span class="hud-br"></span>
+                  </div>
+                  <div class="photo-hud-exif">35mm • f/2.0 • 1/640s • ISO 200</div>
+                  <div class="photo-overlay">
+                    <span class="photo-zoom-icon">🔍</span>
+                    <span class="photo-cat-badge">Perspective &amp; Miniature</span>
+                  </div>
+                </div>
+                <figcaption class="photo-caption">
+                  <div class="photo-card-head">
+                    <h3 class="photo-title">Miniature Flight &amp; Spatial Depth</h3>
+                    <span class="photo-num-tag">#03</span>
+                  </div>
+                  <p class="photo-meta">Handheld Perspective • Depth of Field &amp; Campus Backdrop</p>
+                </figcaption>
+              </figure>
+
+              <!-- Photo 4: Jasmine Flower Buds Macro -->
+              <figure class="photo-item spotlight-card tilt-card" data-category="nature macro" onclick="openPhotoLightbox(3)">
+                <div class="photo-img-wrap">
+                  <img src="photography/shot4-jasmine-buds-macro.jpg" alt="Botanical Jasmine Buds Macro by Jaswanth Kamaraj" loading="lazy" class="photo-thumb">
+                  <div class="photo-hud-corners">
+                    <span class="hud-tl"></span><span class="hud-tr"></span>
+                    <span class="hud-bl"></span><span class="hud-br"></span>
+                  </div>
+                  <div class="photo-hud-exif">100mm Macro • f/2.8 • 1/320s • ISO 125</div>
+                  <div class="photo-overlay">
+                    <span class="photo-zoom-icon">🔍</span>
+                    <span class="photo-cat-badge">Botanical &amp; Macro</span>
+                  </div>
+                </div>
+                <figcaption class="photo-caption">
+                  <div class="photo-card-head">
+                    <h3 class="photo-title">Jasmine Bloom Cluster (Mogra)</h3>
+                    <span class="photo-num-tag">#04</span>
+                  </div>
+                  <p class="photo-meta">Botanical Macro • Delicate Petals &amp; Soft Textures</p>
+                </figcaption>
+              </figure>
+
+              <!-- Photo 5: Ethereal Sprout Cinematic Grade -->
+              <figure class="photo-item spotlight-card tilt-card" data-category="cinematic nature" onclick="openPhotoLightbox(4)">
+                <div class="photo-img-wrap">
+                  <img src="photography/shot5-artistic-sprout-grading.jpg" alt="Cinematic Color Graded Sprout by Jaswanth Kamaraj" loading="lazy" class="photo-thumb">
+                  <div class="photo-hud-corners">
+                    <span class="hud-tl"></span><span class="hud-tr"></span>
+                    <span class="hud-bl"></span><span class="hud-br"></span>
+                  </div>
+                  <div class="photo-hud-exif">85mm • f/1.8 • 1/500s • ISO 100</div>
+                  <div class="photo-overlay">
+                    <span class="photo-zoom-icon">🔍</span>
+                    <span class="photo-cat-badge">Cinematic &amp; Color Grade</span>
+                  </div>
+                </div>
+                <figcaption class="photo-caption">
+                  <div class="photo-card-head">
+                    <h3 class="photo-title">Ethereal Flora • Cinematic Grade</h3>
+                    <span class="photo-num-tag">#05</span>
+                  </div>
+                  <p class="photo-meta">Color Grading &amp; Lighting • Atmospheric Particle Edit</p>
+                </figcaption>
+              </figure>
+
+            </div>
           </div>
-          <button type="button" class="btn-banner-trigger" id="btnBannerTrigger" aria-label="Trigger photo animation">
-            <span class="btn-trigger-glow"></span>
-            <span class="btn-trigger-text">📸 Reveal All Photos</span>
-            <svg class="btn-trigger-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
         </div>
-
-        <!-- Filter Controls + Replay Animation Button -->
-        <div class="photo-filter-bar reveal">
-          <button type="button" class="photo-filter-btn active" data-filter="all" id="filterAllBtn">All Frames (5)</button>
-          <button type="button" class="photo-filter-btn" data-filter="nature">🌿 Nature &amp; Macro</button>
-          <button type="button" class="photo-filter-btn" data-filter="creative">🎨 Creative &amp; Concept</button>
-          <button type="button" class="photo-filter-btn" data-filter="cinematic">🎬 Cinematic &amp; Color Grade</button>
-          <button type="button" class="photo-filter-btn photo-replay-btn" id="btnReplayAnim" title="Replay entrance animation">
-            ⚡ Play Animation
-          </button>
-        </div>
-
-        <!-- Photo Grid Container with Camera Flash Overlay -->
-        <div class="photo-gallery-wrapper reveal" id="photoGalleryWrapper">
-          <div class="camera-flash-overlay" id="cameraFlashOverlay"></div>
-          
-          <div class="photo-gallery-grid" id="photoGalleryGrid">
-          
-          <!-- Photo 1: Still Life Reading & Atomic Habits -->
-          <figure class="photo-item spotlight-card" data-category="creative cinematic" onclick="openPhotoLightbox(0)">
-            <div class="photo-img-wrap">
-              <img src="photography/shot1-still-life-reading.jpg" alt="Atomic Habits Still Life Flat-lay by Jaswanth Kamaraj" loading="lazy" class="photo-thumb">
-              <div class="photo-overlay">
-                <span class="photo-zoom-icon">🔍</span>
-                <span class="photo-cat-badge">Creative &amp; Still Life</span>
-              </div>
-            </div>
-            <figcaption class="photo-caption">
-              <h3 class="photo-title">Atomic Habits &amp; Morning Reflections</h3>
-              <p class="photo-meta">Flat-lay Composition • Sunglasses &amp; Phone Portrait</p>
-            </figcaption>
-          </figure>
-
-          <!-- Photo 2: Green Sprout Macro Natural -->
-          <figure class="photo-item spotlight-card" data-category="nature macro" onclick="openPhotoLightbox(1)">
-            <div class="photo-img-wrap">
-              <img src="photography/shot2-macro-sprout-natural.jpg" alt="Macro Nature Sprout by Jaswanth Kamaraj" loading="lazy" class="photo-thumb">
-              <div class="photo-overlay">
-                <span class="photo-zoom-icon">🔍</span>
-                <span class="photo-cat-badge">Nature &amp; Macro</span>
-              </div>
-            </div>
-            <figcaption class="photo-caption">
-              <h3 class="photo-title">Genesis of Life • The Sprout</h3>
-              <p class="photo-meta">Ground-Level Perspective • Red Soil &amp; Soft Bokeh</p>
-            </figcaption>
-          </figure>
-
-          <!-- Photo 3: Miniature Perspective Drone -->
-          <figure class="photo-item spotlight-card" data-category="creative" onclick="openPhotoLightbox(2)">
-            <div class="photo-img-wrap">
-              <img src="photography/shot3-miniature-perspective.jpg" alt="Miniature Drone Perspective by Jaswanth Kamaraj" loading="lazy" class="photo-thumb">
-              <div class="photo-overlay">
-                <span class="photo-zoom-icon">🔍</span>
-                <span class="photo-cat-badge">Perspective &amp; Miniature</span>
-              </div>
-            </div>
-            <figcaption class="photo-caption">
-              <h3 class="photo-title">Miniature Flight &amp; Spatial Depth</h3>
-              <p class="photo-meta">Handheld Perspective • Depth of Field &amp; Campus Backdrop</p>
-            </figcaption>
-          </figure>
-
-          <!-- Photo 4: Jasmine Flower Buds Macro -->
-          <figure class="photo-item spotlight-card" data-category="nature macro" onclick="openPhotoLightbox(3)">
-            <div class="photo-img-wrap">
-              <img src="photography/shot4-jasmine-buds-macro.jpg" alt="Botanical Jasmine Buds Macro by Jaswanth Kamaraj" loading="lazy" class="photo-thumb">
-              <div class="photo-overlay">
-                <span class="photo-zoom-icon">🔍</span>
-                <span class="photo-cat-badge">Botanical &amp; Macro</span>
-              </div>
-            </div>
-            <figcaption class="photo-caption">
-              <h3 class="photo-title">Jasmine Bloom Cluster (Mogra)</h3>
-              <p class="photo-meta">Botanical Macro • Delicate Petals &amp; Soft Textures</p>
-            </figcaption>
-          </figure>
-
-          <!-- Photo 5: Ethereal Sprout Cinematic Grade -->
-          <figure class="photo-item spotlight-card" data-category="cinematic nature" onclick="openPhotoLightbox(4)">
-            <div class="photo-img-wrap">
-              <img src="photography/shot5-artistic-sprout-grading.jpg" alt="Cinematic Color Graded Sprout by Jaswanth Kamaraj" loading="lazy" class="photo-thumb">
-              <div class="photo-overlay">
-                <span class="photo-zoom-icon">🔍</span>
-                <span class="photo-cat-badge">Cinematic &amp; Color Grade</span>
-              </div>
-            </div>
-            <figcaption class="photo-caption">
-              <h3 class="photo-title">Ethereal Flora • Cinematic Grade</h3>
-              <p class="photo-meta">Color Grading &amp; Lighting • Atmospheric Particle Edit</p>
-            </figcaption>
-          </figure>
-
-        </div>
-      </div>
 
         <!-- Add Your Own Photos Guide Note -->
         <div style="margin-top: 32px; text-align: center; background: rgba(13, 17, 30, 0.6); border: 1px dashed rgba(0,240,255,0.25); border-radius: var(--radius-md); padding: 18px 24px;" class="reveal">

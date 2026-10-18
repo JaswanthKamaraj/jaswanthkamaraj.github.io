@@ -492,15 +492,70 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* -------------------------------------------------------------------
-     15. PHOTOGRAPHY ANIMATION TRIGGER ("WHEN I CLICK PHOTOGRAPHY")
+     15. 3D FANNED-OUT PHOTO DECK & EXPLOSION LOGIC
      ------------------------------------------------------------------- */
-  function triggerAllPhotosAnimation(shouldScroll = false) {
+  const photoDeckShowcase = document.getElementById('photoDeckShowcase');
+  const photoExpandedShowcase = document.getElementById('photoExpandedShowcase');
+  const deck3dStage = document.getElementById('deck3dStage');
+  const btnDeckExplode = document.getElementById('btnDeckExplode');
+  const btnRestackDeck = document.getElementById('btnRestackDeck');
+  const btnReplayAnim = document.getElementById('btnReplayAnim');
+  const filterAllBtn = document.getElementById('filterAllBtn');
+
+  // Web Audio Synthesized Camera Shutter Click Sound
+  function playCameraShutterSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+
+      // Shutter snap 1
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'triangle';
+      osc1.frequency.setValueAtTime(850, ctx.currentTime);
+      osc1.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.07);
+      gain1.gain.setValueAtTime(0.28, ctx.currentTime);
+      gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(ctx.currentTime);
+      osc1.stop(ctx.currentTime + 0.08);
+
+      // Shutter mirror return snap 2
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(1200, ctx.currentTime + 0.08);
+      osc2.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.16);
+      gain2.gain.setValueAtTime(0.2, ctx.currentTime + 0.08);
+      gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(ctx.currentTime + 0.08);
+      osc2.stop(ctx.currentTime + 0.17);
+    } catch (err) {
+      // Audio playback silently ignored if device doesn't permit
+    }
+  }
+
+  // Explode 3D Deck into Full Interactive Grid
+  function explodePhotoDeck(shouldScroll = false) {
+    playCameraShutterSound();
+
+    if (photoDeckShowcase) {
+      photoDeckShowcase.style.display = 'none';
+    }
+    if (photoExpandedShowcase) {
+      photoExpandedShowcase.style.display = 'block';
+    }
+
     const flash = document.getElementById('cameraFlashOverlay');
     const items = document.querySelectorAll('.photo-item');
-    const bannerBtn = document.getElementById('btnBannerTrigger');
     const filterBtns = document.querySelectorAll('.photo-filter-btn');
 
-    // 1. Set filter to 'All Frames (5)'
+    // Reset filter to 'All Frames (5)'
     filterBtns.forEach(btn => {
       if (btn.getAttribute('data-filter') === 'all') {
         btn.classList.add('active');
@@ -509,39 +564,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // 2. Unhide all items and reset previous animation
+    // Unhide all photos and trigger staggered explosion entrance
     items.forEach(item => {
       item.classList.remove('hidden');
       item.classList.remove('animating-in');
     });
 
-    // 3. Camera Flash Burst Effect
+    // Camera flash burst
     if (flash) {
       flash.classList.remove('flashing');
-      void flash.offsetWidth; // Force CSS reflow
+      void flash.offsetWidth;
       flash.classList.add('flashing');
     }
 
-    // 4. Staggered 3D cascade reveal on all 5 photos
+    // Staggered 3D spring cascade
     items.forEach((item, index) => {
       item.style.animationDelay = `${index * 0.08}s`;
-      void item.offsetWidth; // Force reflow
+      void item.offsetWidth;
       item.classList.add('animating-in');
     });
 
-    // 5. Visual button feedback
-    if (bannerBtn) {
-      const textSpan = bannerBtn.querySelector('.btn-trigger-text');
-      if (textSpan) {
-        const originalText = textSpan.textContent;
-        textSpan.textContent = '✨ All 5 Photos Shown!';
-        setTimeout(() => {
-          textSpan.textContent = originalText;
-        }, 1800);
-      }
-    }
-
-    // 6. Smooth scroll to photography section if initiated from navbar or external link
     if (shouldScroll) {
       const photoSection = document.getElementById('photography');
       if (photoSection) {
@@ -550,52 +592,102 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Bind trigger to Showcase Banner & Action Buttons
-  const photoRevealBanner = document.getElementById('photoRevealBanner');
-  const btnBannerTrigger = document.getElementById('btnBannerTrigger');
-  const btnReplayAnim = document.getElementById('btnReplayAnim');
-  const filterAllBtn = document.getElementById('filterAllBtn');
+  // Collapse Full Grid back into 3D Photo Deck
+  function collapseToPhotoDeck() {
+    playCameraShutterSound();
 
-  if (photoRevealBanner) {
-    photoRevealBanner.addEventListener('click', (e) => {
-      triggerAllPhotosAnimation(false);
+    if (photoExpandedShowcase) {
+      photoExpandedShowcase.style.display = 'none';
+    }
+    if (photoDeckShowcase) {
+      photoDeckShowcase.style.display = 'flex';
+      photoDeckShowcase.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // 3D Mouse Parallax Tilt on Hovering the Deck Stage
+  if (deck3dStage) {
+    deck3dStage.addEventListener('mousemove', (e) => {
+      const rect = deck3dStage.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      const rotateX = -(y / (rect.height / 2)) * 14;
+      const rotateY = (x / (rect.width / 2)) * 18;
+      deck3dStage.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+
+    deck3dStage.addEventListener('mouseleave', () => {
+      deck3dStage.style.transform = 'rotateX(0deg) rotateY(0deg)';
+    });
+
+    deck3dStage.addEventListener('click', () => {
+      explodePhotoDeck(false);
     });
   }
 
-  if (btnBannerTrigger) {
-    btnBannerTrigger.addEventListener('click', (e) => {
+  if (btnDeckExplode) {
+    btnDeckExplode.addEventListener('click', (e) => {
       e.stopPropagation();
-      triggerAllPhotosAnimation(false);
+      explodePhotoDeck(false);
+    });
+  }
+
+  if (btnRestackDeck) {
+    btnRestackDeck.addEventListener('click', (e) => {
+      e.preventDefault();
+      collapseToPhotoDeck();
     });
   }
 
   if (btnReplayAnim) {
-    btnReplayAnim.addEventListener('click', (e) => {
-      e.preventDefault();
-      triggerAllPhotosAnimation(false);
+    btnReplayAnim.addEventListener('click', () => {
+      explodePhotoDeck(false);
     });
   }
 
   if (filterAllBtn) {
     filterAllBtn.addEventListener('click', () => {
-      triggerAllPhotosAnimation(false);
+      const items = document.querySelectorAll('.photo-item');
+      items.forEach((item, index) => {
+        item.classList.remove('animating-in');
+        item.style.animationDelay = `${index * 0.08}s`;
+        void item.offsetWidth;
+        item.classList.add('animating-in');
+      });
     });
   }
 
-  // Bind trigger to ANY navbar link targeting #photography (desktop & mobile)
+  // 3D Parallax Tilt on Expanded Photo Cards
+  const tiltCards = document.querySelectorAll('.tilt-card');
+  tiltCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      const rotateX = -(y / (rect.height / 2)) * 8;
+      const rotateY = (x / (rect.width / 2)) * 8;
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px) scale(1.02)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
+    });
+  });
+
+  // Clicking "Photography" in Navbar: Explodes deck & scrolls
   const navPhotographyLinks = document.querySelectorAll('a[href="#photography"]');
   navPhotographyLinks.forEach(link => {
     link.addEventListener('click', (e) => {
       setTimeout(() => {
-        triggerAllPhotosAnimation(true);
-      }, 120);
+        explodePhotoDeck(true);
+      }, 100);
     });
   });
 
   // Automatically trigger if page loaded with #photography hash
   if (window.location.hash === '#photography') {
     setTimeout(() => {
-      triggerAllPhotosAnimation(false);
+      explodePhotoDeck(false);
     }, 450);
   }
 
