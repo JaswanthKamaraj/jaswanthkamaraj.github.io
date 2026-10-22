@@ -387,6 +387,12 @@ document.addEventListener('DOMContentLoaded', () => {
       title: 'Amber Luminescence • The Night Lamp',
       meta: 'Low-Light Still Life • Warm Internal Glow & Woven Mat',
       category: 'creative'
+    },
+    {
+      src: 'photography/shot9-macro-black-ant.jpg',
+      title: 'Titan of the Soil • Wildlife Macro',
+      meta: 'Extreme Wildlife Macro • Iridescent Chitin & Natural Habitat',
+      category: 'nature'
     }
   ];
 
