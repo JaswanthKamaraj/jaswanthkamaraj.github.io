@@ -46,7 +46,7 @@ const server = http.createServer((req, res) => {
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
       res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
-      res.end(`<h1>404 Not Found</h1><p>Path: ${cleanUrl}</p><p><a href="/">Go to Home</a> | <a href="/code-debugger/">Go to Code Debugger</a> | <a href="/flowchart-generator/">Go to Flowchart Generator</a></p>`);
+      res.end(`<h1>404 Not Found</h1><p>Path: ${cleanUrl}</p><p><a href="/">Go to Home</a> | <a href="/code-executor/">Go to Code Executor</a> | <a href="/flowchart-generator/">Go to Flowchart Generator</a></p>`);
       return;
     }
 
@@ -61,6 +61,6 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Portfolio Server running at:`);
   console.log(`- http://localhost:${PORT}/`);
-  console.log(`- http://localhost:${PORT}/code-debugger/`);
+  console.log(`- http://localhost:${PORT}/code-executor/`);
   console.log(`- http://localhost:${PORT}/flowchart-generator/`);
 });

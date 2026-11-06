@@ -1,0 +1,203 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="ceBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#04060e"/>
+      <stop offset="50%" stop-color="#080c1c"/>
+      <stop offset="100%" stop-color="#03050c"/>
+    </linearGradient>
+
+    <linearGradient id="ceEditorBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f24"/>
+      <stop offset="100%" stop-color="#060917"/>
+    </linearGradient>
+
+    <linearGradient id="ceTermBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#03050e"/>
+      <stop offset="100%" stop-color="#020308"/>
+    </linearGradient>
+
+    <linearGradient id="ceCyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+
+    <linearGradient id="ceGreenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="ceGlowCyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="ceGlowGreen" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="800" height="450" fill="url(#ceBg)"/>
+
+  <!-- Cyber Grid -->
+  <g stroke="rgba(0, 240, 255, 0.04)" stroke-width="1">
+    <line x1="0" y1="50" x2="800" y2="50"/>
+    <line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="150" x2="800" y2="150"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="250" x2="800" y2="250"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="350" x2="800" y2="350"/>
+    <line x1="0" y1="400" x2="800" y2="400"/>
+
+    <line x1="100" y1="0" x2="100" y2="450"/>
+    <line x1="200" y1="0" x2="200" y2="450"/>
+    <line x1="300" y1="0" x2="300" y2="450"/>
+    <line x1="400" y1="0" x2="400" y2="450"/>
+    <line x1="500" y1="0" x2="500" y2="450"/>
+    <line x1="600" y1="0" x2="600" y2="450"/>
+    <line x1="700" y1="0" x2="700" y2="450"/>
+  </g>
+
+  <!-- Glow Accents -->
+  <circle cx="200" cy="120" r="160" fill="#00f0ff" opacity="0.07" filter="blur(70px)"/>
+  <circle cx="650" cy="240" r="150" fill="#10b981" opacity="0.08" filter="blur(70px)"/>
+
+  <!-- Main IDE Window -->
+  <g transform="translate(36, 30)">
+    <!-- Container Box -->
+    <rect width="728" height="388" rx="14" fill="#000" opacity="0.6"/>
+    <rect width="728" height="388" rx="14" fill="url(#ceEditorBg)" stroke="rgba(0, 240, 255, 0.28)" stroke-width="1.5"/>
+
+    <!-- Top Window Bar -->
+    <path d="M 0 14 Q 0 0 14 0 L 714 0 Q 728 0 728 14 L 728 44 L 0 44 Z" fill="#050814"/>
+    <line x1="0" y1="44" x2="728" y2="44" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
+
+    <!-- Window Control Dots -->
+    <circle cx="24" cy="22" r="5.5" fill="#ef4444"/>
+    <circle cx="42" cy="22" r="5.5" fill="#f59e0b"/>
+    <circle cx="60" cy="22" r="5.5" fill="#10b981"/>
+
+    <!-- Language Selector Pill -->
+    <rect x="86" y="9" width="134" height="26" rx="6" fill="rgba(0, 240, 255, 0.12)" stroke="rgba(0, 240, 255, 0.3)" stroke-width="1"/>
+    <text x="100" y="26" fill="#00f0ff" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700">🐍 Python 3.12</text>
+
+    <!-- Run Code Button -->
+    <rect x="230" y="8" width="132" height="28" rx="14" fill="url(#ceGreenGrad)" filter="url(#ceGlowGreen)"/>
+    <polygon points="248,16 248,28 259,22" fill="#fff"/>
+    <text x="268" y="27" fill="#ffffff" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800">RUN CODE</text>
+
+    <!-- Execution Stats Pill -->
+    <rect x="580" y="9" width="132" height="26" rx="13" fill="rgba(16, 185, 129, 0.12)" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1"/>
+    <circle cx="594" cy="22" r="4" fill="#10b981"/>
+    <text x="606" y="26" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700">STATUS: READY</text>
+
+    <!-- Code Editor Section (Left 420px) -->
+    <g transform="translate(0, 44)">
+      <!-- Gutter -->
+      <rect width="44" height="344" fill="#040610"/>
+      <line x1="44" y1="0" x2="44" y2="344" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+      <text x="22" y="32" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">1</text>
+      <text x="22" y="60" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">2</text>
+      <text x="22" y="88" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">3</text>
+      <text x="22" y="116" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">4</text>
+      <text x="22" y="144" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">5</text>
+      <text x="22" y="172" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">6</text>
+      <text x="22" y="200" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">7</text>
+      <text x="22" y="228" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">8</text>
+      <text x="22" y="256" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">9</text>
+      <text x="22" y="284" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">10</text>
+
+      <!-- Code Lines -->
+      <g transform="translate(56, 0)">
+        <text x="0" y="32" font-family="'JetBrains Mono', monospace" font-size="12">
+          <tspan fill="#64748b" font-style="italic"># Online Compiler &amp; Polyglot Execution Engine</tspan>
+        </text>
+        <text x="0" y="60" font-family="'JetBrains Mono', monospace" font-size="12">
+          <tspan fill="#a855f7" font-weight="600">def</tspan> <tspan fill="#00f0ff">fibonacci_sequence</tspan><tspan fill="#94a3b8">(n):</tspan>
+        </text>
+        <text x="16" y="88" font-family="'JetBrains Mono', monospace" font-size="12">
+          <tspan fill="#f8fafc">seq = [</tspan><tspan fill="#f59e0b">0</tspan><tspan fill="#94a3b8">, </tspan><tspan fill="#f59e0b">1</tspan><tspan fill="#f8fafc">]</tspan>
+        </text>
+        <text x="16" y="116" font-family="'JetBrains Mono', monospace" font-size="12">
+          <tspan fill="#a855f7" font-weight="600">for</tspan> <tspan fill="#f8fafc">_ </tspan><tspan fill="#a855f7" font-weight="600">in</tspan> <tspan fill="#00f0ff">range</tspan><tspan fill="#94a3b8">(</tspan><tspan fill="#f59e0b">2</tspan><tspan fill="#94a3b8">, n):</tspan>
+        </text>
+        <text x="32" y="144" font-family="'JetBrains Mono', monospace" font-size="12">
+          <tspan fill="#f8fafc">seq.append(seq[-</tspan><tspan fill="#f59e0b">1</tspan><tspan fill="#f8fafc">] + seq[-</tspan><tspan fill="#f59e0b">2</tspan><tspan fill="#f8fafc">])</tspan>
+        </text>
+        <text x="16" y="172" font-family="'JetBrains Mono', monospace" font-size="12">
+          <tspan fill="#a855f7" font-weight="600">return</tspan> <tspan fill="#f8fafc">seq</tspan>
+        </text>
+        <text x="0" y="200" font-family="'JetBrains Mono', monospace" font-size="12">
+          <tspan fill="#64748b" font-style="italic"># Execute calculation</tspan>
+        </text>
+        <text x="0" y="228" font-family="'JetBrains Mono', monospace" font-size="12">
+          <tspan fill="#00f0ff">result</tspan> <tspan fill="#94a3b8">=</tspan> <tspan fill="#f8fafc">fibonacci_sequence(</tspan><tspan fill="#f59e0b">8</tspan><tspan fill="#f8fafc">)</tspan>
+        </text>
+        <text x="0" y="256" font-family="'JetBrains Mono', monospace" font-size="12">
+          <tspan fill="#00f0ff">print</tspan><tspan fill="#94a3b8">(</tspan><tspan fill="#34d399">"Fibonacci series:"</tspan><tspan fill="#94a3b8">, </tspan><tspan fill="#f8fafc">result</tspan><tspan fill="#94a3b8">)</tspan>
+        </text>
+        <text x="0" y="284" font-family="'JetBrains Mono', monospace" font-size="12">
+          <tspan fill="#00f0ff">print</tspan><tspan fill="#94a3b8">(</tspan><tspan fill="#34d399">"Sum of sequence:"</tspan><tspan fill="#94a3b8">, </tspan><tspan fill="#00f0ff">sum</tspan><tspan fill="#94a3b8">(</tspan><tspan fill="#f8fafc">result</tspan><tspan fill="#94a3b8">))</tspan>
+        </text>
+      </g>
+    </g>
+
+    <!-- Terminal Section (Right 300px) -->
+    <g transform="translate(424, 44)">
+      <!-- Divider -->
+      <line x1="0" y1="0" x2="0" y2="344" stroke="rgba(0, 240, 255, 0.2)" stroke-width="1.5"/>
+      <rect width="304" height="344" fill="url(#ceTermBg)"/>
+
+      <!-- Terminal Header -->
+      <rect width="304" height="32" fill="#040612"/>
+      <line x1="0" y1="32" x2="304" y2="32" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+      <text x="14" y="21" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="700">TERMINAL OUTPUT (STDOUT)</text>
+      <circle cx="288" cy="16" r="3.5" fill="#10b981"/>
+
+      <!-- Terminal Logs -->
+      <g transform="translate(14, 48)">
+        <text x="0" y="16" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="10.5">
+          $ python3 main.py
+        </text>
+        
+        <text x="0" y="44" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10.5">
+          [NexusEngine] Compiling &amp; executing...
+        </text>
+
+        <text x="0" y="74" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">
+          Fibonacci series: [0, 1, 1, 2, 3, 5, 8, 13]
+        </text>
+
+        <text x="0" y="102" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">
+          Sum of sequence: 33
+        </text>
+
+        <!-- Success Exit Box -->
+        <rect x="0" y="130" width="276" height="54" rx="8" fill="rgba(16, 185, 129, 0.1)" stroke="rgba(16, 185, 129, 0.3)" stroke-width="1"/>
+        <text x="14" y="152" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="700">
+          ✔ Process finished with exit code 0
+        </text>
+        <text x="14" y="172" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="9.5">
+          Execution Time: 14.8 ms | Memory: 3.2 MB
+        </text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom Brand Subtext -->
+  <g transform="translate(36, 432)">
+    <text x="0" y="0" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="9.5" letter-spacing="1.5">
+      NEXUSCODE • UNIVERSAL ONLINE COMPILER &amp; REAL-TIME CODE EXECUTION ENGINE
+    </text>
+  </g>
+</svg>
