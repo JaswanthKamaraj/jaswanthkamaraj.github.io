@@ -1,0 +1,241 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="dbBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050814"/>
+      <stop offset="50%" stop-color="#0a0f26"/>
+      <stop offset="100%" stop-color="#030611"/>
+    </linearGradient>
+
+    <linearGradient id="dbEditorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1326"/>
+      <stop offset="100%" stop-color="#090d1b"/>
+    </linearGradient>
+
+    <linearGradient id="dbRedGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#b91c1c"/>
+    </linearGradient>
+
+    <linearGradient id="dbGreenGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+
+    <linearGradient id="dbCyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+
+    <linearGradient id="dbPurpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="dbGlowCyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="dbGlowRed" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="dbGlowGreen" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="800" height="450" fill="url(#dbBgGrad)"/>
+
+  <!-- Cyber Grid Lines -->
+  <g stroke="rgba(0, 240, 255, 0.05)" stroke-width="1">
+    <line x1="0" y1="50" x2="800" y2="50"/>
+    <line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="150" x2="800" y2="150"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="250" x2="800" y2="250"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="350" x2="800" y2="350"/>
+    <line x1="0" y1="400" x2="800" y2="400"/>
+
+    <line x1="100" y1="0" x2="100" y2="450"/>
+    <line x1="200" y1="0" x2="200" y2="450"/>
+    <line x1="300" y1="0" x2="300" y2="450"/>
+    <line x1="400" y1="0" x2="400" y2="450"/>
+    <line x1="500" y1="0" x2="500" y2="450"/>
+    <line x1="600" y1="0" x2="600" y2="450"/>
+    <line x1="700" y1="0" x2="700" y2="450"/>
+  </g>
+
+  <!-- Ambient Glow Blobs -->
+  <circle cx="160" cy="120" r="140" fill="#a855f7" opacity="0.08" filter="blur(60px)"/>
+  <circle cx="680" cy="220" r="160" fill="#00f0ff" opacity="0.08" filter="blur(70px)"/>
+  <circle cx="340" cy="280" r="90" fill="#ef4444" opacity="0.07" filter="blur(50px)"/>
+
+  <!-- Main IDE Window Container -->
+  <g transform="translate(36, 32)">
+    <!-- Window Shadow & Frame -->
+    <rect width="470" height="386" rx="14" fill="#000" opacity="0.5"/>
+    <rect width="470" height="386" rx="14" fill="url(#dbEditorGrad)" stroke="rgba(0, 240, 255, 0.28)" stroke-width="1.5"/>
+
+    <!-- Window Title Bar -->
+    <path d="M 0 14 Q 0 0 14 0 L 456 0 Q 470 0 470 14 L 470 42 L 0 42 Z" fill="#070a16"/>
+    <line x1="0" y1="42" x2="470" y2="42" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
+
+    <!-- Window Control Buttons -->
+    <circle cx="22" cy="21" r="5.5" fill="#ef4444"/>
+    <circle cx="38" cy="21" r="5.5" fill="#f59e0b"/>
+    <circle cx="54" cy="21" r="5.5" fill="#10b981"/>
+
+    <!-- Tab -->
+    <rect x="74" y="8" width="168" height="26" rx="6" fill="rgba(0, 240, 255, 0.12)" stroke="rgba(0, 240, 255, 0.3)" stroke-width="1"/>
+    <circle cx="88" cy="21" r="3.5" fill="#00f0ff"/>
+    <text x="98" y="25" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">binary_search.py</text>
+
+    <!-- Debug Status Badge -->
+    <rect x="330" y="8" width="126" height="26" rx="13" fill="rgba(239, 68, 68, 0.15)" stroke="rgba(239, 68, 68, 0.4)" stroke-width="1"/>
+    <circle cx="344" cy="21" r="4" fill="#ef4444" filter="url(#dbGlowRed)"/>
+    <text x="354" y="25" fill="#fca5a5" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="700">DEBUG HALT: L5</text>
+
+    <!-- Code Editor Gutter -->
+    <rect x="0" y="42" width="46" height="344" fill="#060813"/>
+    <line x1="46" y1="42" x2="46" y2="386" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"/>
+
+    <!-- Line Numbers & Breakpoint Pin -->
+    <text x="28" y="74" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">1</text>
+    <text x="28" y="104" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">2</text>
+    <text x="28" y="134" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">3</text>
+    <text x="28" y="164" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">4</text>
+    
+    <!-- Line 5 Breakpoint Gutter Indicator -->
+    <circle cx="16" cy="190" r="5.5" fill="#ef4444" filter="url(#dbGlowRed)"/>
+    <text x="32" y="194" fill="#ef4444" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">5</text>
+
+    <text x="28" y="224" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">6</text>
+    <text x="28" y="254" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">7</text>
+    <text x="28" y="284" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">8</text>
+    <text x="28" y="314" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">9</text>
+    <text x="28" y="344" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">10</text>
+
+    <!-- Code Line 5 Error Highlight Banner -->
+    <rect x="46" y="176" width="424" height="26" fill="rgba(239, 68, 68, 0.16)"/>
+    <line x1="46" y1="176" x2="46" y2="202" stroke="#ef4444" stroke-width="3"/>
+
+    <!-- Code Content -->
+    <!-- L1 -->
+    <text x="62" y="74" font-family="'JetBrains Mono', monospace" font-size="12">
+      <tspan fill="#a855f7" font-weight="600">def</tspan> <tspan fill="#00f0ff">binary_search</tspan><tspan fill="#94a3b8">(</tspan><tspan fill="#f8fafc">arr, target</tspan><tspan fill="#94a3b8">):</tspan>
+    </text>
+
+    <!-- L2 -->
+    <text x="76" y="104" font-family="'JetBrains Mono', monospace" font-size="12">
+      <tspan fill="#94a3b8">low, high =</tspan> <tspan fill="#f59e0b">0</tspan><tspan fill="#94a3b8">, </tspan><tspan fill="#00f0ff">len</tspan><tspan fill="#94a3b8">(arr) - </tspan><tspan fill="#f59e0b">1</tspan>
+    </text>
+
+    <!-- L3 -->
+    <text x="76" y="134" font-family="'JetBrains Mono', monospace" font-size="12">
+      <tspan fill="#a855f7" font-weight="600">while</tspan> <tspan fill="#f8fafc">low &lt;= high</tspan><tspan fill="#94a3b8">:</tspan>
+    </text>
+
+    <!-- L4 -->
+    <text x="92" y="164" font-family="'JetBrains Mono', monospace" font-size="12">
+      <tspan fill="#94a3b8">mid = (low + high) // </tspan><tspan fill="#f59e0b">2</tspan>
+    </text>
+
+    <!-- L5: BUGGY LINE -->
+    <text x="92" y="194" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="600">
+      <tspan fill="#a855f7">if</tspan> <tspan fill="#f8fafc">arr[mid] == target</tspan><tspan fill="#94a3b8">:</tspan> <tspan fill="#a855f7">return</tspan> <tspan fill="#ef4444" text-decoration="underline">arr[mid + 1]</tspan>
+    </text>
+
+    <!-- L6 -->
+    <text x="92" y="224" font-family="'JetBrains Mono', monospace" font-size="12">
+      <tspan fill="#a855f7">elif</tspan> <tspan fill="#f8fafc">arr[mid] &lt; target</tspan><tspan fill="#94a3b8">:</tspan> <tspan fill="#f8fafc">low = mid + </tspan><tspan fill="#f59e0b">1</tspan>
+    </text>
+
+    <!-- L7 -->
+    <text x="92" y="254" font-family="'JetBrains Mono', monospace" font-size="12">
+      <tspan fill="#a855f7">else</tspan><tspan fill="#94a3b8">:</tspan> <tspan fill="#f8fafc">high = mid - </tspan><tspan fill="#f59e0b">1</tspan>
+    </text>
+
+    <!-- L8 -->
+    <text x="76" y="284" font-family="'JetBrains Mono', monospace" font-size="12">
+      <tspan fill="#a855f7" font-weight="600">return</tspan> <tspan fill="#64748b">-1</tspan>
+    </text>
+
+    <!-- Terminal Output Strip -->
+    <rect x="14" y="318" width="442" height="54" rx="8" fill="rgba(3, 6, 15, 0.9)" stroke="rgba(239, 68, 68, 0.3)" stroke-width="1"/>
+    <text x="26" y="336" fill="#ef4444" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700">🔴 IndexError: list index out of range at line 5</text>
+    <text x="26" y="354" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10">   When target is at end of array (mid=4), mid+1 accesses index 5 (size 5).</text>
+  </g>
+
+  <!-- Right Side Panel 1: Live Scope Inspector -->
+  <g transform="translate(524, 32)">
+    <rect width="240" height="136" rx="12" fill="#0a0f24" stroke="rgba(0, 240, 255, 0.25)" stroke-width="1.2"/>
+    <rect width="240" height="30" rx="12" fill="rgba(0, 240, 255, 0.08)"/>
+    <text x="14" y="20" fill="#00f0ff" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700">🔍 SCOPE WATCHER</text>
+    <circle cx="222" cy="15" r="4" fill="#10b981"/>
+
+    <!-- Variables -->
+    <text x="14" y="52" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">arr = <tspan fill="#f8fafc">[2, 5, 8, 12, 16]</tspan></text>
+    <text x="14" y="72" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">target = <tspan fill="#f59e0b">16</tspan></text>
+    <text x="14" y="92" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">low = <tspan fill="#00f0ff">4</tspan>, high = <tspan fill="#00f0ff">4</tspan></text>
+    <text x="14" y="112" fill="#ef4444" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700">mid+1 = <tspan fill="#ef4444" filter="url(#dbGlowRed)">5 (OUT OF BOUNDS!)</tspan></text>
+  </g>
+
+  <!-- Right Side Panel 2: AI Bug Explanation & Auto-Patcher -->
+  <g transform="translate(524, 180)">
+    <rect width="240" height="238" rx="12" fill="#0c1229" stroke="rgba(168, 85, 247, 0.3)" stroke-width="1.2"/>
+    
+    <!-- Header -->
+    <rect width="240" height="32" rx="12" fill="rgba(168, 85, 247, 0.12)"/>
+    <text x="14" y="21" fill="#c084fc" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700">💡 LOGIC EXPLAINER</text>
+
+    <!-- Explanation Text -->
+    <text x="14" y="54" fill="#f8fafc" font-family="'Plus Jakarta Sans', sans-serif" font-size="11.5" font-weight="600">Off-by-One Return Bug</text>
+    <text x="14" y="74" fill="#94a3b8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10.5">Binary search found match at index</text>
+    <text x="14" y="90" fill="#94a3b8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10.5">mid, but incorrectly returned</text>
+    <text x="14" y="106" fill="#fca5a5" font-family="'Plus Jakarta Sans', sans-serif" font-size="10.5" font-weight="600">arr[mid+1] instead of mid.</text>
+
+    <!-- Auto-Patch Pill -->
+    <rect x="12" y="124" width="216" height="54" rx="8" fill="rgba(16, 185, 129, 0.12)" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1"/>
+    <text x="22" y="142" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700">⚡ ONE-CLICK AUTO-FIX</text>
+    <text x="22" y="160" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="11">
+      <tspan fill="#ef4444">- return arr[mid+1]</tspan>
+    </text>
+    <text x="22" y="174" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="11">
+      <tspan fill="#10b981" font-weight="700">+ return mid</tspan>
+    </text>
+
+    <!-- Complexity Badge -->
+    <g transform="translate(12, 190)">
+      <rect width="102" height="34" rx="6" fill="rgba(0, 240, 255, 0.08)" stroke="rgba(0, 240, 255, 0.2)" stroke-width="1"/>
+      <text x="51" y="17" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="8.5" text-anchor="middle">TIME COMPLEXITY</text>
+      <text x="51" y="29" fill="#00f0ff" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">O(log n)</text>
+
+      <rect x="114" y="0" width="102" height="34" rx="6" fill="rgba(168, 85, 247, 0.08)" stroke="rgba(168, 85, 247, 0.2)" stroke-width="1"/>
+      <text x="165" y="17" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="8.5" text-anchor="middle">SPACE COMPLEXITY</text>
+      <text x="165" y="29" fill="#c084fc" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">O(1) Aux</text>
+    </g>
+  </g>
+
+  <!-- Bottom Brand Pill -->
+  <g transform="translate(36, 424)">
+    <text x="0" y="0" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="9" letter-spacing="1.5">
+      BUGTRACE AI • UNIVERSAL CODE DEBUGGER &amp; STEP-BY-STEP LOGIC EXPLAINER
+    </text>
+  </g>
+</svg>

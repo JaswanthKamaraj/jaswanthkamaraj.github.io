@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BugTrace AI | Intelligent Code Debugger & Line-by-Line Logic Explainer</title>
+  <meta name="description" content="AI-powered code debugger, runtime simulator, and line-by-line logic explainer across Python, JavaScript, Java, C++, and TypeScript. Created by Jaswanth Kamaraj.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-pitch: #04060d;
+      --bg-surface: #090d1a;
+      --bg-card: rgba(12, 17, 33, 0.88);
+      --bg-card-hover: rgba(18, 25, 48, 0.95);
+      --border-color: rgba(0, 240, 255, 0.16);
+      --border-color-hover: rgba(0, 240, 255, 0.45);
+      --border-red: rgba(239, 68, 68, 0.4);
+      --border-green: rgba(16, 185, 129, 0.4);
+      --accent-cyan: #00f0ff;
+      --accent-purple: #9d4edd;
+      --accent-pink: #f72585;
+      --accent-amber: #f59e0b;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+      --shadow-cyan: 0 0 25px rgba(0, 240, 255, 0.2);
+      --shadow-red: 0 0 25px rgba(239, 68, 68, 0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-pitch);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image:
+        radial-gradient(ellipse 70% 45% at 50% -10%, rgba(157, 78, 221, 0.15), transparent),
+        radial-gradient(ellipse 60% 40% at 90% 70%, rgba(0, 240, 255, 0.08), transparent),
+        radial-gradient(ellipse 50% 30% at 10% 85%, rgba(239, 68, 68, 0.06), transparent);
+      background-attachment: fixed;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 16px 24px 60px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Top Navigation Header */
+    .header-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(239,68,68,0.25), rgba(0,240,255,0.25));
+      border: 1px solid var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      box-shadow: 0 0 16px rgba(0,240,255,0.3);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 80%, #ef4444 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-sub {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulseGreen 2s infinite;
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-primary);
+    }
+
+    .btn:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.1);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(157, 78, 221, 0.35));
+      border-color: var(--accent-cyan);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.4), rgba(157, 78, 221, 0.5));
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-fix {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.35));
+      border-color: var(--accent-green);
+      color: #6ee7b7;
+      font-weight: 700;
+    }
+
+    .btn-fix:hover {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(5, 150, 105, 0.5));
+      color: #fff;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-voice {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(247, 37, 133, 0.2));
+      border-color: var(--accent-purple);
+      color: #e9d5ff;
+    }
+
+    .btn-voice:hover {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(247, 37, 133, 0.35));
+      color: #fff;
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+    }
+
+    /* Preset & Configuration Bar */
+    .config-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(12px);
+    }
+
+    .config-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .select-label {
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .styled-select {
+      background: rgba(6, 10, 24, 0.95);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      padding: 7px 14px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .styled-select:focus, .styled-select:hover {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+    }
+
+    .config-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Main Workspace Grid: Dual Column Studio */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      min-height: 720px;
+    }
+
+    @media (max-width: 1200px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Column: Code Studio & Virtual Stepper */
+    .code-studio {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .editor-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.45);
+    }
+
+    .editor-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: #060915;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .editor-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.08);
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+    }
+
+    .editor-modes {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mode-btn {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active, .mode-btn:hover {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--accent-cyan);
+      color: #fff;
+    }
+
+    /* Interactive Code Viewer / Editor Area */
+    .editor-body {
+      position: relative;
+      display: flex;
+      background: #080c1d;
+      min-height: 380px;
+      max-height: 480px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.86rem;
+      line-height: 1.7;
+    }
+
+    /* Line Numbers Gutter */
+    .code-gutter {
+      width: 58px;
+      background: #060814;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 12px 0;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .gutter-line {
+      height: 25.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      transition: color 0.15s;
+    }
+
+    .gutter-line:hover {
+      color: var(--text-primary);
+    }
+
+    .gutter-line.has-breakpoint .bp-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent-red);
+      box-shadow: 0 0 10px var(--accent-red);
+      display: inline-block;
+    }
+
+    .gutter-line.active-step {
+      color: var(--accent-cyan);
+      font-weight: 700;
+      background: rgba(0, 240, 255, 0.12);
+    }
+
+    /* Code Lines Area */
+    .code-lines {
+      flex: 1;
+      padding: 12px 16px;
+      overflow-x: auto;
+    }
+
+    .code-line {
+      height: 25.5px;
+      display: flex;
+      align-items: center;
+      white-space: pre;
+      border-radius: 4px;
+      padding: 0 8px;
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+
+    .code-line:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .code-line.active-executing {
+      background: rgba(0, 240, 255, 0.18) !important;
+      border-left: 3px solid var(--accent-cyan);
+      box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.15);
+    }
+
+    .code-line.buggy-line {
+      background: rgba(239, 68, 68, 0.22) !important;
+      border-left: 3px solid var(--accent-red);
+      position: relative;
+    }
+
+    .code-line.buggy-line::after {
+      content: '🚨 BUG HERE';
+      margin-left: auto;
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      background: rgba(239, 68, 68, 0.25);
+      border: 1px solid var(--accent-red);
+      color: #fca5a5;
+      padding: 1px 7px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+    }
+
+    /* Editable Textarea Mode */
+    .code-textarea {
+      width: 100%;
+      height: 380px;
+      background: #080c1d;
+      color: #f8fafc;
+      border: none;
+      outline: none;
+      padding: 16px 20px;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      line-height: 1.7;
+      resize: vertical;
+      display: none;
+      tab-size: 4;
+    }
+
+    /* Step Debugger Control Toolbar */
+    .stepper-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 18px;
+      background: #080d20;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .stepper-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stepper-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .stepper-btn:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.15);
+      color: var(--accent-cyan);
+    }
+
+    .stepper-btn.active {
+      background: var(--accent-cyan);
+      color: #050814;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+    }
+
+    .stepper-info {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-pill {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--accent-cyan);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+    }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Bottom Sub-Panels: Console & Diff View */
+    .subpanels-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .subpanel-tabs {
+      display: flex;
+      background: #060914;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .subpanel-tab {
+      padding: 10px 18px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .subpanel-tab.active {
+      color: var(--accent-cyan);
+      border-bottom-color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.05);
+    }
+
+    .subpanel-content {
+      padding: 16px;
+      min-height: 180px;
+      max-height: 240px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+
+    .console-line {
+      margin-bottom: 6px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .console-line.error { color: #f87171; }
+    .console-line.success { color: #34d399; }
+    .console-line.info { color: #38bdf8; }
+    .console-line.warn { color: #fbbf24; }
+
+    /* Diff View Styling */
+    .diff-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .diff-line {
+      display: flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    .diff-line.del {
+      background: rgba(239, 68, 68, 0.18);
+      color: #fca5a5;
+      border-left: 3px solid #ef4444;
+    }
+
+    .diff-line.add {
+      background: rgba(16, 185, 129, 0.18);
+      color: #6ee7b7;
+      border-left: 3px solid #10b981;
+    }
+
+    /* Right Column: Intelligence & Explanation Hub */
+    .intel-hub {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hub-tabs {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .hub-tab {
+      flex: 1;
+      text-align: center;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .hub-tab.active {
+      background: rgba(0, 240, 255, 0.14);
+      color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    }
+
+    .hub-pane {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.45);
+    }
+
+    /* Bug Diagnosis Card */
+    .diagnosis-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-badge.critical {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid var(--accent-red);
+      color: #f87171;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .status-badge.clean {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid var(--accent-green);
+      color: #34d399;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .diag-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .diag-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-cyan);
+    }
+
+    .diag-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .diag-box {
+      background: rgba(4, 7, 18, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .diag-box.red-border {
+      border-left: 3px solid var(--accent-red);
+      background: rgba(239, 68, 68, 0.06);
+    }
+
+    .diag-box.green-border {
+      border-left: 3px solid var(--accent-green);
+      background: rgba(16, 185, 129, 0.06);
+    }
+
+    /* Scope Watcher Table */
+    .watch-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    .watch-table th {
+      text-align: left;
+      padding: 8px 10px;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.72rem;
+    }
+
+    .watch-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .var-name { color: var(--accent-cyan); font-weight: 600; }
+    .var-val { color: #f8fafc; }
+    .var-val.changed {
+      color: #fde047;
+      animation: varPulse 0.8s ease;
+    }
+
+    @keyframes varPulse {
+      0% { background: rgba(253, 224, 71, 0.3); }
+      100% { background: transparent; }
+    }
+
+    /* Line-by-Line Cards */
+    .line-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .line-card {
+      background: rgba(5, 8, 20, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .line-card:hover, .line-card.active {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 240, 255, 0.08);
+    }
+
+    .line-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .line-num-badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      background: rgba(0, 240, 255, 0.15);
+      color: var(--accent-cyan);
+      padding: 1px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .line-role-badge {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .line-snippet {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      background: #03050c;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .line-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Complexity Card */
+    .complexity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .complexity-box {
+      background: rgba(4, 7, 18, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .complexity-title {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .complexity-val {
+      font-size: 1.25rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--accent-cyan);
+    }
+
+    /* Audio Wave Animation */
+    .audio-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      height: 14px;
+    }
+
+    .audio-bar {
+      width: 2px;
+      height: 100%;
+      background: var(--accent-pink);
+      border-radius: 1px;
+      animation: wave 0.8s ease infinite alternate;
+    }
+
+    .audio-bar:nth-child(2) { animation-delay: 0.2s; }
+    .audio-bar:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes wave {
+      0% { height: 3px; }
+      100% { height: 14px; }
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(5, 8, 20, 0.95);
+      border: 1px solid var(--accent-cyan);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      box-shadow: 0 10px 30px rgba(0, 240, 255, 0.3);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Modal Tour */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #090e22;
+      border: 1px solid var(--accent-cyan);
+      border-radius: var(--radius-lg);
+      max-width: 620px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(0, 240, 255, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="header-nav">
+      <a href="../index.html#projects" class="brand" title="Return to Jaswanth Kamaraj Portfolio">
+        <div class="brand-icon">🐛</div>
+        <div>
+          <h1 class="brand-title">BugTrace AI</h1>
+          <div class="brand-sub">
+            <span class="live-dot"></span>
+            Universal Code Debugger &amp; Line-by-Line Logic Explainer
+          </div>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <button class="btn btn-voice" id="btnAudioExplain" title="Listen to synthesized AI voice explanation">
+          <span>🔊</span>
+          <span id="btnAudioText">Listen to Explainer</span>
+        </button>
+        <button class="btn" id="btnExportReport" title="Export markdown debug report">
+          <span>📥</span> Export Report
+        </button>
+        <a href="../index.html#projects" class="btn" title="Back to Portfolio Projects">
+          <span>←</span> Back to Portfolio
+        </a>
+      </div>
+    </header>
+
+    <!-- Preset & Configuration Toolbar -->
+    <section class="config-bar">
+      <div class="config-left">
+        <!-- Language Selector -->
+        <div class="select-label">
+          <span>🌐 Language:</span>
+          <select id="langSelect" class="styled-select">
+            <option value="python">Python</option>
+            <option value="javascript">JavaScript</option>
+            <option value="cpp">C++</option>
+            <option value="java">Java</option>
+          </select>
+        </div>
+
+        <!-- Bug Scenario Presets -->
+        <div class="select-label">
+          <span>🎯 Bug Scenario Presets:</span>
+          <select id="presetSelect" class="styled-select" style="max-width: 380px;">
+            <option value="py_off_by_one">1. [Python] Off-by-One Array Index (IndexError)</option>
+            <option value="py_recursion">2. [Python] Infinite Recursion &amp; Stack Overflow</option>
+            <option value="py_binsearch">3. [Python] Binary Search Loop Freeze &amp; Bounds</option>
+            <option value="py_mutable_default">4. [Python] Mutable Default Argument Memory Trap</option>
+            <option value="js_null_prop">5. [JavaScript] Undefined Property / Null Pointer</option>
+            <option value="js_async_race">6. [JavaScript] Async Await Race Condition</option>
+            <option value="js_float_precision">7. [JavaScript] Float Precision Comparison Trap</option>
+            <option value="cpp_bubblesort">8. [C++] Vector Bounds Buffer Overflow</option>
+            <option value="java_linkedlist">9. [Java] NullPointerException in Linked List</option>
+            <option value="custom">✏️ Custom Code (Paste / Type Your Own)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="config-right">
+        <button class="btn btn-primary" id="btnAnalyze">
+          <span>⚡</span> Analyze &amp; Debug
+        </button>
+        <button class="btn btn-fix" id="btnAutoFix">
+          <span>🩹</span> One-Click Auto-Fix
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Dual Column Studio Grid -->
+    <main class="studio-grid">
+
+      <!-- Left Column: Code Studio & Step Debugger -->
+      <section class="code-studio">
+        
+        <div class="editor-card">
+          <!-- Editor Top Bar -->
+          <div class="editor-topbar">
+            <div class="editor-tab">
+              <span id="tabFilename">find_max.py</span>
+              <span style="opacity: 0.5;">•</span>
+              <span id="tabBugStatus" style="color: var(--accent-red); font-weight: 700;">1 Bug Detected</span>
+            </div>
+
+            <div class="editor-modes">
+              <button class="mode-btn active" id="btnModeVisual" title="Interactive visual stepper mode">Visual Stepper</button>
+              <button class="mode-btn" id="btnModeEdit" title="Direct raw text editor mode">Edit Code</button>
+              <button class="mode-btn" id="btnClearCode" title="Reset snippet">Reset</button>
+            </div>
+          </div>
+
+          <!-- Code View Area -->
+          <div class="editor-body" id="editorVisualArea">
+            <!-- Gutter for line numbers & Breakpoints -->
+            <div class="code-gutter" id="codeGutter">
+              <!-- Populated dynamically via JS -->
+            </div>
+
+            <!-- Code Lines -->
+            <div class="code-lines" id="codeLinesContainer">
+              <!-- Populated dynamically via JS -->
+            </div>
+          </div>
+
+          <!-- Raw Editable Textarea Mode -->
+          <textarea class="code-textarea" id="codeTextarea" spellcheck="false"></textarea>
+
+          <!-- Step Debugger Control Toolbar -->
+          <div class="stepper-bar">
+            <div class="stepper-controls">
+              <button class="stepper-btn" id="stepPrevBtn" title="Step Back (Previous Line)">⏮</button>
+              <button class="stepper-btn" id="stepPlayBtn" title="Play / Auto-Step">▶</button>
+              <button class="stepper-btn" id="stepNextBtn" title="Step Forward (Next Line)">⏭</button>
+              <button class="stepper-btn" id="stepResetBtn" title="Reset to Beginning">🔄</button>
+            </div>
+
+            <div class="stepper-info">
+              <span>Step: <strong class="step-pill" id="stepCounterPill">1 / 8</strong></span>
+              <span>Line: <strong id="stepLinePill" style="color: #fff;">1</strong></span>
+              <span id="stepExecState" style="color: var(--accent-cyan);">Running</span>
+            </div>
+
+            <div class="speed-control">
+              <span>Speed:</span>
+              <select id="speedSelect" class="styled-select" style="padding: 3px 8px; font-size: 0.72rem;">
+                <option value="1200">0.5x Slow</option>
+                <option value="650" selected>1.0x Normal</option>
+                <option value="350">2.0x Fast</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Panels: Terminal Output & Unified Diff -->
+        <div class="subpanels-card">
+          <div class="subpanel-tabs">
+            <button class="subpanel-tab active" data-tab="console" id="tabBtnConsole">
+              <span>💻</span> Virtual Console &amp; Traceback
+            </button>
+            <button class="subpanel-tab" data-tab="diff" id="tabBtnDiff">
+              <span>🔀</span> Code Diff (Buggy vs Fixed)
+            </button>
+            <button class="subpanel-tab" data-tab="tests" id="tabBtnTests">
+              <span>🧪</span> Test Suite (3 Cases)
+            </button>
+          </div>
+
+          <div class="subpanel-content" id="subpanelOutput">
+            <!-- Console Output Default -->
+            <div id="consolePane">
+              <!-- Rendered via JS -->
+            </div>
+
+            <!-- Diff View Pane (Hidden initially) -->
+            <div id="diffPane" style="display: none;">
+              <!-- Rendered via JS -->
+            </div>
+
+            <!-- Unit Tests Pane (Hidden initially) -->
+            <div id="testsPane" style="display: none;">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right Column: Intelligence & Explanation Hub -->
+      <section class="intel-hub">
+        
+        <!-- Tab Navigation -->
+        <div class="hub-tabs">
+          <button class="hub-tab active" data-target="diagPane">🐞 Bug Diagnosis</button>
+          <button class="hub-tab" data-target="explainerPane">📖 Line-by-Line</button>
+          <button class="hub-tab" data-target="scopePane">🔬 Scope Watcher</button>
+          <button class="hub-tab" data-target="theoryPane">📊 Complexity</button>
+        </div>
+
+        <!-- Main Display Pane -->
+        <div class="hub-pane" id="hubMainPane">
+          
+          <!-- Pane 1: Bug Diagnosis (Active Default) -->
+          <div id="diagPane" class="tab-pane active" style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="diagnosis-header">
+              <div>
+                <span class="diag-label">ANALYSIS VERDICT</span>
+                <h3 class="diag-title" id="diagTitle">IndexError in Array Bound</h3>
+              </div>
+              <span class="status-badge critical" id="diagStatusBadge">🔴 CRITICAL BUG</span>
+            </div>
+
+            <div class="diag-section">
+              <span class="diag-label">WHAT HAPPENED</span>
+              <div class="diag-box red-border" id="diagWhatHappened">
+                Loading analysis...
+              </div>
+            </div>
+
+            <div class="diag-section">
+              <span class="diag-label">ROOT CAUSE &amp; MEMORY STATE</span>
+              <div class="diag-box" id="diagRootCause">
+                Loading root cause...
+              </div>
+            </div>
+
+            <div class="diag-section">
+              <span class="diag-label">RECOMMENDED FIX</span>
+              <div class="diag-box green-border" id="diagFixSolution">
+                Loading solution...
+              </div>
+            </div>
+          </div>
+
+          <!-- Pane 2: Line-by-Line Explainer -->
+          <div id="explainerPane" class="tab-pane" style="display: none; flex-direction: column; gap: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <span class="diag-label">ALGORITHM BREAKDOWN</span>
+                <h3 class="diag-title">Line-by-Line Logic Guide</h3>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button class="mode-btn active" id="btnExplainEli5">👶 ELI5 Mode</button>
+                <button class="mode-btn" id="btnExplainTech">🧠 Deep Tech</button>
+              </div>
+            </div>
+
+            <p style="font-size: 0.8rem; color: var(--text-muted);">
+              Click on any line below or in the code editor to highlight its mechanical logic.
+            </p>
+
+            <div class="line-card-list" id="lineExplainerList">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Pane 3: Scope Watcher & Call Stack -->
+          <div id="scopePane" class="tab-pane" style="display: none; flex-direction: column; gap: 14px;">
+            <div class="diagnosis-header">
+              <div>
+                <span class="diag-label">MEMORY INSPECTOR</span>
+                <h3 class="diag-title">Active Scope Variables</h3>
+              </div>
+              <span class="status-badge" style="background: rgba(0,240,255,0.1); border-color: var(--accent-cyan); color: var(--accent-cyan);">
+                STEP DEBUGGING
+              </span>
+            </div>
+
+            <div style="background: rgba(4,7,18,0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); overflow: hidden;">
+              <table class="watch-table">
+                <thead>
+                  <tr>
+                    <th>VARIABLE</th>
+                    <th>TYPE</th>
+                    <th>CURRENT VALUE</th>
+                  </tr>
+                </thead>
+                <tbody id="scopeWatchTbody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="diag-section" style="margin-top: 10px;">
+              <span class="diag-label">VIRTUAL CALL STACK</span>
+              <div class="diag-box" id="callStackBox" style="font-family: var(--font-mono); font-size: 0.8rem;">
+                main() → find_max_element(numbers)
+              </div>
+            </div>
+          </div>
+
+          <!-- Pane 4: Algorithmic Complexity -->
+          <div id="theoryPane" class="tab-pane" style="display: none; flex-direction: column; gap: 16px;">
+            <div class="diagnosis-header">
+              <div>
+                <span class="diag-label">ASYMPTOTIC ANALYSIS</span>
+                <h3 class="diag-title">Big-O Complexity Metrics</h3>
+              </div>
+            </div>
+
+            <div class="complexity-grid">
+              <div class="complexity-box">
+                <div class="complexity-title">TIME COMPLEXITY</div>
+                <div class="complexity-val" id="complexityTime">O(N)</div>
+                <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Single-pass linear iteration</p>
+              </div>
+
+              <div class="complexity-box">
+                <div class="complexity-title">SPACE COMPLEXITY</div>
+                <div class="complexity-val" id="complexitySpace">O(1)</div>
+                <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Constant auxiliary memory</p>
+              </div>
+            </div>
+
+            <div class="diag-section">
+              <span class="diag-label">ALGORITHM CLASSIFICATION</span>
+              <div class="diag-box" id="algoClassification">
+                Linear Scan / Extreme Value Search. Requires checking every item once because the input list is unsorted.
+              </div>
+            </div>
+
+            <div class="diag-section">
+              <span class="diag-label">OPTIMAL PATTERN &amp; BEST PRACTICES</span>
+              <div class="diag-box green-border" id="algoBestPractices">
+                In production Python code, prefer built-in <code>max(numbers)</code> which is implemented in optimized C. Always validate input against empty collections before accessing index 0.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="appToast">
+    <span id="toastIcon">📋</span>
+    <span id="toastMsg">Fixed code applied to editor!</span>
+  </div>
+
+  <!-- JavaScript Engine & Preset Data -->
+  <script>
+    /* ===================================================================
+       BUGTRACE AI: COMPREHENSIVE PRESET DATA & ENGINE
+       =================================================================== */
+    const PRESETS = {
+      py_off_by_one: {
+        lang: 'python',
+        filename: 'find_max.py',
+        title: 'Off-by-One Array Index (IndexError)',
+        severity: 'critical',
+        buggyLine: 4,
+        code: `def find_max_element(numbers):
+    max_val = numbers[0]
+    # BUG: range(0, len + 1) generates an index equal to len, which is out of range!
+    for i in range(0, len(numbers) + 1):
+        if numbers[i] > max_val:
+            max_val = numbers[i]
+    return max_val
+
+# Test execution
+data = [14, 28, 92, 45, 67]
+print("Max value is:", find_max_element(data))`,
+        fixedCode: `def find_max_element(numbers):
+    if not numbers:
+        return None
+    max_val = numbers[0]
+    # FIXED: range(0, len(numbers)) covers valid 0-based indices 0 to N-1
+    for i in range(0, len(numbers)):
+        if numbers[i] > max_val:
+            max_val = numbers[i]
+    return max_val
+
+# Test execution
+data = [14, 28, 92, 45, 67]
+print("Max value is:", find_max_element(data))`,
+        diagnosis: {
+          title: "IndexError: list index out of range",
+          whatHappened: "The loop attempts to read numbers[5] from a 5-element list. Because Python lists are 0-indexed, valid indices are strictly 0, 1, 2, 3, and 4. Accessing index 5 causes the runtime to halt immediately with an IndexError.",
+          rootCause: "In Python, range(start, stop) runs while index < stop. By writing range(0, len(numbers) + 1), the stop condition was set to 6. On the final iteration, i reaches 5, overflowing the allocated list buffer.",
+          fixSolution: "Change range(0, len(numbers) + 1) to range(0, len(numbers)) or simply iterate over elements directly with: for num in numbers:"
+        },
+        timeComp: "O(N)",
+        spaceComp: "O(1)",
+        classification: "Linear Search / Bounds Checking. Traverses collection to find the global optimum.",
+        bestPractices: "Always use Pythonic idioms like `for val in numbers:` or built-in `max()` rather than manual range indexing whenever the index itself is not required for computation.",
+        steps: [
+          { line: 1, vars: { numbers: '[14, 28, 92, 45, 67]' }, log: "Invoking find_max_element(numbers)" },
+          { line: 2, vars: { max_val: 14, numbers: '[14, 28, 92, 45, 67]' }, log: "max_val initialized to numbers[0] = 14" },
+          { line: 4, vars: { i: 0, 'numbers[0]': 14, max_val: 14 }, log: "Iteration i=0: numbers[0] is 14" },
+          { line: 4, vars: { i: 1, 'numbers[1]': 28, max_val: 28 }, log: "Iteration i=1: 28 > 14 -> max_val becomes 28" },
+          { line: 4, vars: { i: 2, 'numbers[2]': 92, max_val: 92 }, log: "Iteration i=2: 92 > 28 -> max_val becomes 92" },
+          { line: 4, vars: { i: 3, 'numbers[3]': 45, max_val: 92 }, log: "Iteration i=3: 45 < 92 -> max_val remains 92" },
+          { line: 4, vars: { i: 4, 'numbers[4]': 67, max_val: 92 }, log: "Iteration i=4: 67 < 92 -> max_val remains 92" },
+          { line: 4, isCrash: true, vars: { i: 5, 'numbers[5]': 'CRASH!' }, log: "🔴 IndexError: list index out of range (i=5 >= length 5)" }
+        ],
+        eli5Explain: [
+          { line: 1, role: "Function Header", desc: "Sets up our tool called find_max_element which expects a box of numbers." },
+          { line: 2, role: "Initial Guess", desc: "Assumes the very first number (14) is the biggest until proven otherwise." },
+          { line: 4, role: "Faulty Counter Loop", desc: "Counts through items, but tries to look into locker #5 when only lockers 0, 1, 2, 3, 4 exist!" },
+          { line: 5, role: "Comparison", desc: "Checks if the number we are looking at right now is bigger than our best guess so far." },
+          { line: 6, role: "Update", desc: "Remembers the new bigger number as our champion." },
+          { line: 7, role: "Deliver Result", desc: "Hands back the biggest number found to whoever asked." }
+        ],
+        techExplain: [
+          { line: 1, role: "Function Signature", desc: "Allocates a new stack frame for find_max_element with local reference pointer to input list." },
+          { line: 2, role: "Pointer Subscript", desc: "Reads index 0 from list array buffer and stores reference in max_val." },
+          { line: 4, role: "Iterator Range Trap", desc: "range(0, len+1) generates PyLong object up to N. Subscripting PyList_GetItem with index == ob_size raises IndexError exception." },
+          { line: 5, role: "Conditional Branch", desc: "Evaluates __gt__ comparison between PyObject integers." },
+          { line: 6, role: "Register Store", desc: "Updates local reference max_val." },
+          { line: 7, role: "Opcode Return", desc: "Pushes max_val to evaluation stack and tears down frame." }
+        ],
+        tests: [
+          { input: "[14, 28, 92, 45, 67]", expected: "92", status: "Fail (IndexError on buggy)" },
+          { input: "[5]", expected: "5", status: "Fail (IndexError on buggy)" },
+          { input: "[-10, -5, -20]", expected: "-5", status: "Fail (IndexError on buggy)" }
+        ]
+      },
+
+      py_recursion: {
+        lang: 'python',
+        filename: 'factorial.py',
+        title: 'Infinite Recursion & Call Stack Overflow',
+        severity: 'critical',
+        buggyLine: 4,
+        code: `def calculate_factorial(n):
+    # BUG: Missing base case (if n <= 1: return 1)
+    # Recurses infinitely into negative numbers!
+    return n * calculate_factorial(n - 1)
+
+# Execution
+print("Factorial of 5:", calculate_factorial(5))`,
+        fixedCode: `def calculate_factorial(n):
+    # FIXED: Added terminating base case
+    if n <= 1:
+        return 1
+    return n * calculate_factorial(n - 1)
+
+# Execution
+print("Factorial of 5:", calculate_factorial(5))`,
+        diagnosis: {
+          title: "RecursionError: maximum recursion depth exceeded",
+          whatHappened: "calculate_factorial calls itself indefinitely without ever reaching a stopping point. The call stack builds up frames for n=5, 4, 3, 2, 1, 0, -1, -2... until the Python interpreter stack limit (typically 1000 frames) is exceeded.",
+          rootCause: "Every recursive function requires two fundamental components: a base case that returns a concrete value without recursing, and a recursive step that progresses toward that base case. Here, the base case was omitted entirely.",
+          fixSolution: "Add a base condition at the top of the function: 'if n <= 1: return 1' before calling calculate_factorial(n - 1)."
+        },
+        timeComp: "O(N)",
+        spaceComp: "O(N) Stack Frames",
+        classification: "Divide & Conquer / Mathematical Recursion.",
+        bestPractices: "For large values of N in Python, prefer iterative calculation or math.factorial() to avoid call stack limits.",
+        steps: [
+          { line: 1, vars: { n: 5 }, log: "calculate_factorial(5) entered" },
+          { line: 4, vars: { n: 4 }, log: "Stack Push -> calculate_factorial(4)" },
+          { line: 4, vars: { n: 3 }, log: "Stack Push -> calculate_factorial(3)" },
+          { line: 4, vars: { n: 2 }, log: "Stack Push -> calculate_factorial(2)" },
+          { line: 4, vars: { n: 1 }, log: "Stack Push -> calculate_factorial(1)" },
+          { line: 4, vars: { n: 0 }, log: "Stack Push -> calculate_factorial(0) (SHOULD HAVE STOPPED!)" },
+          { line: 4, vars: { n: -1 }, log: "Stack Push -> calculate_factorial(-1)" },
+          { line: 4, isCrash: true, vars: { stack_depth: 1000 }, log: "🔴 RecursionError: maximum recursion depth exceeded in comparison" }
+        ],
+        eli5Explain: [
+          { line: 1, role: "Recipe Rule", desc: "Defines how to find factorial, which means multiplying a number by every smaller number." },
+          { line: 4, role: "Runaway Chain Reaction", desc: "Tells the helper to keep asking the next smaller person, but forgets to tell them to stop at 1! So they keep asking negative numbers forever." },
+          { line: 7, role: "Start Order", desc: "Asks for the factorial of 5." }
+        ],
+        techExplain: [
+          { line: 1, role: "Frame Creation", desc: "Allocates PyFrameObject on CPython call stack." },
+          { line: 4, role: "Unbounded Activation Record", desc: "Without conditional base case, sys.getrecursionlimit() is exhausted, triggering RecursionError." }
+        ],
+        tests: [
+          { input: "5", expected: "120", status: "Fail (RecursionError on buggy)" },
+          { input: "1", expected: "1", status: "Fail (RecursionError on buggy)" },
+          { input: "0", expected: "1", status: "Fail (RecursionError on buggy)" }
+        ]
+      },
+
+      py_binsearch: {
+        lang: 'python',
+        filename: 'binary_search.py',
+        title: 'Binary Search Loop Freeze & Bounds Flaw',
+        severity: 'high',
+        buggyLine: 9,
+        code: `def binary_search(arr, target):
+    low = 0
+    high = len(arr) - 1
+
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid  # BUG: Must be mid + 1, otherwise low never advances!
+        else:
+            high = mid - 1
+
+    return -1
+
+numbers = [2, 5, 8, 12, 16, 23, 38]
+print("Index of 16:", binary_search(numbers, 16))`,
+        fixedCode: `def binary_search(arr, target):
+    low = 0
+    high = len(arr) - 1
+
+    while low <= high:
+        # FIXED: Prevents integer overflow and advances low properly
+        mid = low + (high - low) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid + 1  # FIXED: Shrinks search boundary
+        else:
+            high = mid - 1
+
+    return -1
+
+numbers = [2, 5, 8, 12, 16, 23, 38]
+print("Index of 16:", binary_search(numbers, 16))`,
+        diagnosis: {
+          title: "Logic Defect: Infinite Loop / Search Freeze",
+          whatHappened: "When low and high become adjacent (or mid == low), setting 'low = mid' fails to eliminate any elements from the search space. 'mid' recalculates to the exact same value in every iteration, causing the CPU to loop forever.",
+          rootCause: "In integer arithmetic, (low + high) // 2 truncates toward zero. When low + 1 == high and arr[mid] < target, setting low = mid leaves low unchanged. The loop condition low <= high remains true indefinitely.",
+          fixSolution: "Advance the lower boundary past the evaluated midpoint by updating low = mid + 1."
+        },
+        timeComp: "O(log N)",
+        spaceComp: "O(1)",
+        classification: "Binary Divide & Conquer / Logarithmic Search.",
+        bestPractices: "Always update low = mid + 1 and high = mid - 1 to guarantee the search window strictly shrinks in each iteration.",
+        steps: [
+          { line: 2, vars: { low: 0, high: 6 }, log: "low=0, high=6 (window size 7)" },
+          { line: 6, vars: { low: 0, high: 6, mid: 3, 'arr[3]': 12 }, log: "mid=3: arr[3]=12 < 16" },
+          { line: 9, vars: { low: 3, high: 6 }, log: "low set to mid (3) instead of 4!" },
+          { line: 6, vars: { low: 3, high: 6, mid: 4, 'arr[4]': 16 }, log: "mid=4: arr[4]=16 == target (found!)" },
+          { line: 8, vars: { matchIndex: 4 }, log: "Returned index 4 (Note: if target is missing, loop hangs infinitely!)" }
+        ],
+        eli5Explain: [
+          { line: 5, role: "Halfway Guess", desc: "Splits the phonebook directly in half to check the middle name." },
+          { line: 9, role: "Trap Step", desc: "If the name is on the right side, forgetting to add +1 causes you to re-read the exact same page forever!" }
+        ],
+        techExplain: [
+          { line: 6, role: "Midpoint Calculation", desc: "Computes pivot index." },
+          { line: 9, role: "Boundary Update", desc: "Must strictly reduce search interval length to satisfy loop termination invariant." }
+        ],
+        tests: [
+          { input: "arr=[2,5,8,12,16], target=16", expected: "4", status: "Pass" },
+          { input: "arr=[2,5,8,12,16], target=15 (Missing)", expected: "-1", status: "Fail (Hangs Infinitely)" },
+          { input: "arr=[2,5,8,12,16], target=2", expected: "0", status: "Pass" }
+        ]
+      },
+
+      js_null_prop: {
+        lang: 'javascript',
+        filename: 'userProfile.js',
+        title: 'Undefined Object Property / Null Pointer Crash',
+        severity: 'critical',
+        buggyLine: 4,
+        code: `function getUserCoordinates(profile) {
+  // BUG: Accesses .coordinates.lat when coordinates is undefined!
+  const cityName = profile.address.city;
+  const latitude = profile.address.coordinates.lat; // Crash here!
+  return cityName + ": " + latitude;
+}
+
+const user = {
+  name: "Jaswanth",
+  address: {
+    city: "Chennai"
+    // coordinates object is not provided!
+  }
+};
+
+console.log(getUserCoordinates(user));`,
+        fixedCode: `function getUserCoordinates(profile) {
+  // FIXED: Using optional chaining (?.) and nullish coalescing (??)
+  const cityName = profile?.address?.city || "Unknown City";
+  const latitude = profile?.address?.coordinates?.lat ?? "N/A";
+  return cityName + ": " + latitude;
+}
+
+const user = {
+  name: "Jaswanth",
+  address: {
+    city: "Chennai"
+  }
+};
+
+console.log(getUserCoordinates(user));`,
+        diagnosis: {
+          title: "TypeError: Cannot read properties of undefined (reading 'lat')",
+          whatHappened: "The code looks for 'coordinates' inside user.address, but that property is undefined. Attempting to look up '.lat' on undefined triggers a fatal JavaScript runtime TypeError.",
+          rootCause: "Unchecked deep property traversal on nested JSON objects without verifying parent key existence or using modern optional chaining.",
+          fixSolution: "Use optional chaining (profile?.address?.coordinates?.lat) or guard with a conditional check before accessing nested fields."
+        },
+        timeComp: "O(1)",
+        spaceComp: "O(1)",
+        classification: "Defensive Programming / Object Property Inspection.",
+        bestPractices: "Always use optional chaining (?.) and nullish coalescing (??) when parsing external APIs or optional object graphs.",
+        steps: [
+          { line: 1, vars: { profile: '{ name: "Jaswanth", address: {...} }' }, log: "Called getUserCoordinates(profile)" },
+          { line: 3, vars: { cityName: '"Chennai"' }, log: "profile.address.city successfully read: 'Chennai'" },
+          { line: 4, isCrash: true, vars: { 'profile.address.coordinates': 'undefined' }, log: "🔴 TypeError: Cannot read properties of undefined (reading 'lat')" }
+        ],
+        eli5Explain: [
+          { line: 3, role: "Safe Read", desc: "Opens the address envelope and finds the city card: 'Chennai'." },
+          { line: 4, role: "Empty Pocket Trap", desc: "Tries to read GPS coordinates from an empty box that was never put in the envelope!" }
+        ],
+        techExplain: [
+          { line: 4, role: "Member Expression", desc: "V8 engine attempts [[Get]] on primitive undefined, throwing TypeError exception." }
+        ],
+        tests: [
+          { input: "user with coordinates", expected: "Chennai: 13.08", status: "Pass" },
+          { input: "user without coordinates", expected: "Chennai: N/A", status: "Fail (TypeError on buggy)" },
+          { input: "null profile", expected: "Unknown City: N/A", status: "Fail (TypeError on buggy)" }
+        ]
+      },
+
+      py_mutable_default: {
+        lang: 'python',
+        filename: 'enrollment.py',
+        title: 'Mutable Default Argument Memory Trap',
+        severity: 'high',
+        buggyLine: 1,
+        code: `def enroll_student(student_name, registered_list=[]):
+    # BUG: registered_list=[] is instantiated ONCE at function definition!
+    registered_list.append(student_name)
+    return registered_list
+
+# Two distinct classes
+class_a = enroll_student("Jaswanth")
+class_b = enroll_student("Alex") # BUG: Unexpectedly has ["Jaswanth", "Alex"]!
+
+print("Class A:", class_a)
+print("Class B:", class_b)`,
+        fixedCode: `def enroll_student(student_name, registered_list=None):
+    # FIXED: Allocate a fresh new list on each invocation
+    if registered_list is None:
+        registered_list = []
+    registered_list.append(student_name)
+    return registered_list
+
+class_a = enroll_student("Jaswanth")
+class_b = enroll_student("Alex")
+
+print("Class A:", class_a)
+print("Class B:", class_b)`,
+        diagnosis: {
+          title: "Logic Trap: Shared Mutable Default Argument",
+          whatHappened: "Class B unexpectedly contains Jaswanth from Class A! In Python, default arguments are created once when the function is defined, not on every function call. Every call that omits registered_list shares and mutates the exact same list in memory.",
+          rootCause: "Python binds default parameter expressions during function compilation into the function's __defaults__ tuple. When a mutable object (like a list or dict) is mutated, changes persist across all future invocations.",
+          fixSolution: "Set the default argument to None (registered_list=None) and instantiate a new list inside the function body if the argument is None."
+        },
+        timeComp: "O(1) append",
+        spaceComp: "O(N) items",
+        classification: "Memory Scope & Argument Lifecycle in Python.",
+        bestPractices: "Never use mutable objects ([], {}, set()) as default parameters in Python functions. Always use None.",
+        steps: [
+          { line: 1, vars: { __defaults__: '[]' }, log: "Function defined; single list allocated in __defaults__" },
+          { line: 7, vars: { registered_list: "['Jaswanth']" }, log: "Call 1: appended 'Jaswanth' to shared list" },
+          { line: 8, vars: { registered_list: "['Jaswanth', 'Alex']" }, log: "Call 2: appended 'Alex' to THE SAME shared list!" }
+        ],
+        eli5Explain: [
+          { line: 1, role: "Shared Notebook", desc: "Instead of giving each classroom its own fresh notepad, the teacher accidentally left one shared notepad on the desk." },
+          { line: 8, role: "Leak", desc: "Students from Class B find names of students from Class A already written in their book!" }
+        ],
+        techExplain: [
+          { line: 1, role: "Default Tuple", desc: "PyFunctionObject stores PyListObject in func_defaults." }
+        ],
+        tests: [
+          { input: "Call 1: Jaswanth", expected: "['Jaswanth']", status: "Pass" },
+          { input: "Call 2: Alex", expected: "['Alex']", status: "Fail (Got ['Jaswanth', 'Alex'])" }
+        ]
+      },
+
+      js_async_race: {
+        lang: 'javascript',
+        filename: 'asyncFetch.js',
+        title: 'Async Execution Order & Missing Await Race',
+        severity: 'high',
+        buggyLine: 5,
+        code: `async function fetchUserProfile(userId) {
+  let profileData = null;
+
+  // BUG: fetchUserData returns a Promise, but code doesn't await!
+  fetchUserData(userId).then(data => {
+    profileData = data;
+  });
+
+  // BUG: Returns null before the Promise resolves!
+  return profileData;
+}
+
+function fetchUserData(id) {
+  return new Promise(resolve => setTimeout(() => resolve({ id, name: "Jaswanth" }), 50));
+}
+
+fetchUserProfile(101).then(res => console.log("Result:", res)); // Prints null!`,
+        fixedCode: `async function fetchUserProfile(userId) {
+  // FIXED: Properly awaiting the asynchronous Promise
+  const profileData = await fetchUserData(userId);
+  return profileData;
+}
+
+function fetchUserData(id) {
+  return new Promise(resolve => setTimeout(() => resolve({ id, name: "Jaswanth" }), 50));
+}
+
+fetchUserProfile(101).then(res => console.log("Result:", res));`,
+        diagnosis: {
+          title: "Concurrency Flaw: Asynchronous Promise Race",
+          whatHappened: "fetchUserProfile immediately returns null instead of the user data! The promise resolution callback is queued on the microtask queue, while the synchronous return statement executes first.",
+          rootCause: "Calling an asynchronous function without 'await' returns control synchronously before the promise settles.",
+          fixSolution: "Use 'const profileData = await fetchUserData(userId);' to suspend execution until the promise resolves."
+        },
+        timeComp: "O(1) async",
+        spaceComp: "O(1)",
+        classification: "Event Loop & Promise Concurrency.",
+        bestPractices: "Always await asynchronous promises in async functions rather than mixing .then() callbacks with immediate returns.",
+        steps: [
+          { line: 2, vars: { profileData: 'null' }, log: "profileData initialized to null" },
+          { line: 5, vars: { promise: 'Promise <pending>' }, log: "fetchUserData called; Promise returned but NOT awaited" },
+          { line: 10, vars: { returned: 'null' }, log: "Returned null immediately!" },
+          { line: 6, vars: { profileData: '{ id: 101, name: "Jaswanth" }' }, log: "Callback fired too late; caller already received null" }
+        ],
+        eli5Explain: [
+          { line: 5, role: "Ordering Food", desc: "You ordered a pizza delivery." },
+          { line: 10, role: "Impatience", desc: "Instead of waiting for the pizza to arrive, you walked into the dining room with an empty plate and said dinner is served!" }
+        ],
+        techExplain: [
+          { line: 5, role: "Microtask Queue", desc: "Promise resolution callback is deferred; synchronous execution continues." }
+        ],
+        tests: [
+          { input: "userId=101", expected: "{ id: 101, name: 'Jaswanth' }", status: "Fail (Returned null)" }
+        ]
+      },
+
+      js_float_precision: {
+        lang: 'javascript',
+        filename: 'checkout.js',
+        title: 'Float Precision Comparison Trap',
+        severity: 'high',
+        buggyLine: 9,
+        code: `function checkoutCart(items) {
+  let total = 0.0;
+  for (const price of items) {
+    total += price;
+  }
+  
+  const expectedTotal = 0.3;
+  // BUG: In IEEE 754 floating point, 0.1 + 0.2 === 0.30000000000000004!
+  if (total === expectedTotal) {
+    return "Payment Approved";
+  } else {
+    return "Payment Mismatch: got " + total;
+  }
+}
+
+console.log(checkoutCart([0.1, 0.2]));`,
+        fixedCode: `function checkoutCart(items) {
+  let total = 0.0;
+  for (const price of items) {
+    total += price;
+  }
+  
+  const expectedTotal = 0.3;
+  // FIXED: Epsilon threshold comparison
+  if (Math.abs(total - expectedTotal) < Number.EPSILON) {
+    return "Payment Approved";
+  } else {
+    return "Payment Mismatch: got " + total;
+  }
+}
+
+console.log(checkoutCart([0.1, 0.2]));`,
+        diagnosis: {
+          title: "Precision Defect: IEEE 754 Floating-Point Inaccuracy",
+          whatHappened: "0.1 + 0.2 produces 0.30000000000000004, causing strict equality comparison with 0.3 to evaluate to FALSE. Payment is unexpectedly rejected!",
+          rootCause: "Standard binary floating-point numbers cannot represent fractional decimal powers of 10 exactly. Accumulation leads to rounding discrepancies.",
+          fixSolution: "Compare floating point values using Math.abs(a - b) < Number.EPSILON or store currency in integer cents."
+        },
+        timeComp: "O(N)",
+        spaceComp: "O(1)",
+        classification: "Numerical Computing & Binary Representation.",
+        bestPractices: "For financial or currency calculations, store amounts as integer cents (e.g. 30 cents) rather than decimal floats.",
+        steps: [
+          { line: 2, vars: { total: 0 }, log: "total=0" },
+          { line: 4, vars: { total: 0.1 }, log: "total=0.1" },
+          { line: 4, vars: { total: 0.30000000000000004 }, log: "total=0.30000000000000004 (Binary float discrepancy)" },
+          { line: 9, vars: { comparison: 'false' }, log: "0.30000000000000004 === 0.3 is FALSE!" }
+        ],
+        eli5Explain: [
+          { line: 9, role: "Microscopic Difference", desc: "Like trying to measure dust particles with a giant ruler. Computers count in powers of 2, so 0.1 + 0.2 is off by 0.00000000000000004!" }
+        ],
+        techExplain: [
+          { line: 9, role: "IEEE 754 Double Precision", desc: "Binary fraction roundoff prevents exact representation of decimal 0.1." }
+        ],
+        tests: [
+          { input: "[0.1, 0.2]", expected: "Payment Approved", status: "Fail (Payment Mismatch)" }
+        ]
+      },
+
+      cpp_bubblesort: {
+        lang: 'cpp',
+        filename: 'bubbleSort.cpp',
+        title: 'Buffer Overflow / Out of Bounds in Vector',
+        severity: 'critical',
+        buggyLine: 8,
+        code: `#include <iostream>
+#include <vector>
+
+void bubbleSort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n; i++) {
+        // BUG: j + 1 accesses arr[n] when j == n - 1 (out of bounds memory read/write!)
+        for (int j = 0; j < n; j++) {
+            if (arr[j] > arr[j + 1]) {
+                std::swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+}
+
+int main() {
+    std::vector<int> nums = {64, 34, 25, 12, 22};
+    bubbleSort(nums);
+    return 0;
+}`,
+        fixedCode: `#include <iostream>
+#include <vector>
+
+void bubbleSort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        // FIXED: Inner loop bounds restricted to n - i - 1
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                std::swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+}
+
+int main() {
+    std::vector<int> nums = {64, 34, 25, 12, 22};
+    bubbleSort(nums);
+    return 0;
+}`,
+        diagnosis: {
+          title: "Segmentation Fault / Undefined Behavior",
+          whatHappened: "When j reaches n - 1 (index 4 in a 5-element vector), arr[j + 1] accesses arr[5], which is outside the vector's allocated memory buffer.",
+          rootCause: "Inner loop runs up to j < n instead of j < n - i - 1. Reading and writing unallocated heap memory causes segmentation faults or memory corruption.",
+          fixSolution: "Set the inner loop limit to: for (int j = 0; j < n - i - 1; j++)"
+        },
+        timeComp: "O(N²)",
+        spaceComp: "O(1)",
+        classification: "Comparison Sorting / Memory Safety.",
+        bestPractices: "Use std::sort from <algorithm> in production C++ code for O(N log N) introsort guarantees.",
+        steps: [
+          { line: 5, vars: { n: 5 }, log: "n = arr.size() = 5" },
+          { line: 8, vars: { j: 4, 'j+1': 5 }, log: "🔴 Out of bounds: arr[5] does not exist in vector of size 5" }
+        ],
+        eli5Explain: [
+          { line: 8, role: "Stepping off the Edge", desc: "The sorting robot tries to swap the last person in line with a ghost standing off the edge of the platform!" }
+        ],
+        techExplain: [
+          { line: 8, role: "Vector Buffer Boundary", desc: "Vector indexing does not perform bounds checking in release builds; triggers undefined behavior or SIGSEGV." }
+        ],
+        tests: [
+          { input: "{64, 34, 25, 12, 22}", expected: "{12, 22, 25, 34, 64}", status: "Fail (Buffer Overflow)" }
+        ]
+      },
+
+      java_linkedlist: {
+        lang: 'java',
+        filename: 'LinkedListSearch.java',
+        title: 'NullPointerException in Linked List Traversal',
+        severity: 'critical',
+        buggyLine: 9,
+        code: `public class LinkedListSearch {
+    static class Node {
+        int val;
+        Node next;
+        Node(int v) { this.val = v; }
+    }
+
+    public static boolean containsValue(Node head, int target) {
+        Node curr = head;
+        // BUG: Loops while curr.val != target without checking if curr is null!
+        while (curr.val != target) {
+            curr = curr.next;
+        }
+        return true;
+    }
+}`,
+        fixedCode: `public class LinkedListSearch {
+    static class Node {
+        int val;
+        Node next;
+        Node(int v) { this.val = v; }
+    }
+
+    public static boolean containsValue(Node head, int target) {
+        Node curr = head;
+        // FIXED: Checks curr != null before inspecting curr.val
+        while (curr != null) {
+            if (curr.val == target) return true;
+            curr = curr.next;
+        }
+        return false;
+    }
+}`,
+        diagnosis: {
+          title: "java.lang.NullPointerException",
+          whatHappened: "If target is not found in the list, curr advances past the tail node and becomes null. In the next iteration, evaluating curr.val causes a fatal NullPointerException.",
+          rootCause: "Missing null pointer guard on loop condition. A pointer must always be verified non-null before dereferencing fields.",
+          fixSolution: "Loop while (curr != null) and check 'if (curr.val == target) return true;' inside the loop."
+        },
+        timeComp: "O(N)",
+        spaceComp: "O(1)",
+        classification: "Linked List Data Structure / Pointer Safety.",
+        bestPractices: "Always ensure reference pointers are guarded against null before accessing members.",
+        steps: [
+          { line: 8, vars: { 'curr': 'Node(10)' }, log: "curr points to head (10)" },
+          { line: 10, vars: { 'curr': 'Node(20)' }, log: "curr advanced to next (20)" },
+          { line: 10, vars: { 'curr': 'null' }, log: "curr advanced past tail to null" },
+          { line: 9, isCrash: true, vars: { 'curr': 'null' }, log: "🔴 NullPointerException: Cannot read field 'val' because 'curr' is null" }
+        ],
+        eli5Explain: [
+          { line: 9, role: "End of the Rope", desc: "You are following a chain of paperclips. When you reach the end, you keep trying to grab the next clip even though nothing is there!" }
+        ],
+        techExplain: [
+          { line: 9, role: "JVM Null Dereference", desc: "Invokes getfield on null reference; JVM throws NullPointerException." }
+        ],
+        tests: [
+          { input: "Search 20 (Present)", expected: "true", status: "Pass" },
+          { input: "Search 99 (Absent)", expected: "false", status: "Fail (NullPointerException)" }
+        ]
+      }
+    };
+
+    /* ===================================================================
+       APP CONTROLLER STATE
+       =================================================================== */
+    let currentPresetKey = 'py_off_by_one';
+    let currentStepIndex = 0;
+    let isPlaying = false;
+    let playTimer = null;
+    let isCodeFixed = false;
+    let breakpoints = new Set();
+    let speechSynth = window.speechSynthesis;
+    let isSpeaking = false;
+
+    // Elements
+    const presetSelect = document.getElementById('presetSelect');
+    const langSelect = document.getElementById('langSelect');
+    const codeGutter = document.getElementById('codeGutter');
+    const codeLinesContainer = document.getElementById('codeLinesContainer');
+    const codeTextarea = document.getElementById('codeTextarea');
+    const editorVisualArea = document.getElementById('editorVisualArea');
+    const tabFilename = document.getElementById('tabFilename');
+    const tabBugStatus = document.getElementById('tabBugStatus');
+
+    const stepCounterPill = document.getElementById('stepCounterPill');
+    const stepLinePill = document.getElementById('stepLinePill');
+    const stepExecState = document.getElementById('stepExecState');
+    const stepPrevBtn = document.getElementById('stepPrevBtn');
+    const stepPlayBtn = document.getElementById('stepPlayBtn');
+    const stepNextBtn = document.getElementById('stepNextBtn');
+    const stepResetBtn = document.getElementById('stepResetBtn');
+    const speedSelect = document.getElementById('speedSelect');
+
+    const btnAnalyze = document.getElementById('btnAnalyze');
+    const btnAutoFix = document.getElementById('btnAutoFix');
+    const btnModeVisual = document.getElementById('btnModeVisual');
+    const btnModeEdit = document.getElementById('btnModeEdit');
+    const btnClearCode = document.getElementById('btnClearCode');
+    const btnAudioExplain = document.getElementById('btnAudioExplain');
+    const btnAudioText = document.getElementById('btnAudioText');
+    const btnExportReport = document.getElementById('btnExportReport');
+
+    const diagTitle = document.getElementById('diagTitle');
+    const diagStatusBadge = document.getElementById('diagStatusBadge');
+    const diagWhatHappened = document.getElementById('diagWhatHappened');
+    const diagRootCause = document.getElementById('diagRootCause');
+    const diagFixSolution = document.getElementById('diagFixSolution');
+    const lineExplainerList = document.getElementById('lineExplainerList');
+    const scopeWatchTbody = document.getElementById('scopeWatchTbody');
+    const complexityTime = document.getElementById('complexityTime');
+    const complexitySpace = document.getElementById('complexitySpace');
+    const consolePane = document.getElementById('consolePane');
+    const diffPane = document.getElementById('diffPane');
+    const testsPane = document.getElementById('testsPane');
+    const appToast = document.getElementById('appToast');
+    const toastMsg = document.getElementById('toastMsg');
+
+    /* ===================================================================
+       SYNTAX HIGHLIGHTER UTILITY
+       =================================================================== */
+    function highlightSyntax(rawCode, lang) {
+      const escape = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const lines = rawCode.split('\n');
+      
+      const keywords = {
+        python: /\b(def|return|if|elif|else|for|in|while|import|from|class|try|except|None|True|False|and|or|not)\b/g,
+        javascript: /\b(function|return|if|else|for|while|const|let|var|async|await|new|null|undefined|true|false)\b/g,
+        cpp: /\b(int|void|std|vector|size|swap|return|for|if|else|include|main|cout|endl)\b/g,
+        java: /\b(public|static|class|boolean|int|Node|return|while|if|else|new|null|true|false|this)\b/g
+      }[lang] || /\b(def|return|if|else|for|while|function|const|let)\b/g;
+
+      return lines.map((lineText, idx) => {
+        let safe = escape(lineText);
+        // Highlight comments
+        if (safe.includes('#')) {
+          const parts = safe.split('#');
+          safe = parts[0] + '<span style="color:#64748b; font-style:italic;">#' + parts.slice(1).join('#') + '</span>';
+        } else if (safe.includes('//')) {
+          const parts = safe.split('//');
+          safe = parts[0] + '<span style="color:#64748b; font-style:italic;">//' + parts.slice(1).join('//') + '</span>';
+        }
+        // Highlight keywords
+        safe = safe.replace(keywords, '<span style="color:#a855f7; font-weight:600;">$1</span>');
+        // Highlight strings
+        safe = safe.replace(/("[^"]*"|'[^']*')/g, '<span style="color:#34d399;">$1</span>');
+        // Highlight numbers
+        safe = safe.replace(/\b(\d+)\b/g, '<span style="color:#f59e0b;">$1</span>');
+        return safe;
+      });
+    }
+
+    /* ===================================================================
+       LOAD PRESET SCENARIO
+       =================================================================== */
+    function loadPreset(key) {
+      currentPresetKey = key;
+      isCodeFixed = false;
+      currentStepIndex = 0;
+      stopAutoPlay();
+      stopVoice();
+
+      const data = PRESETS[key];
+      if (!data) return;
+
+      langSelect.value = data.lang;
+      tabFilename.textContent = data.filename;
+      codeTextarea.value = data.code;
+
+      renderCodeEditor(data.code, data.lang, data.buggyLine);
+      updateDiagnosisCard(data);
+      updateLineExplainer(data.eli5Explain);
+      updateScopeWatcher(data.steps[0] ? data.steps[0].vars : {});
+      updateComplexity(data.timeComp, data.spaceComp, data.classification, data.bestPractices);
+      renderConsoleLogs(data.steps);
+      renderDiff(data.code, data.fixedCode);
+      renderTests(data.tests);
+      syncStepper();
+    }
+
+    /* ===================================================================
+       RENDER CODE VIEW & GUTTER
+       =================================================================== */
+    function renderCodeEditor(codeString, lang, buggyLineNum) {
+      const lines = codeString.split('\n');
+      const highlightedLines = highlightSyntax(codeString, lang);
+
+      codeGutter.innerHTML = '';
+      codeLinesContainer.innerHTML = '';
+
+      lines.forEach((lineText, idx) => {
+        const lineNum = idx + 1;
+
+        // Gutter line
+        const gLine = document.createElement('div');
+        gLine.className = 'gutter-line';
+        gLine.id = `gutter-line-${lineNum}`;
+        gLine.innerHTML = `<span class="bp-dot"></span><span>${lineNum}</span>`;
+        gLine.addEventListener('click', () => toggleBreakpoint(lineNum));
+        codeGutter.appendChild(gLine);
+
+        // Code Line
+        const cLine = document.createElement('div');
+        cLine.className = 'code-line';
+        cLine.id = `code-line-${lineNum}`;
+        if (lineNum === buggyLineNum && !isCodeFixed) {
+          cLine.classList.add('buggy-line');
+        }
+        cLine.innerHTML = highlightedLines[idx] || '&nbsp;';
+        cLine.addEventListener('click', () => {
+          highlightLineInExplainer(lineNum);
+        });
+        codeLinesContainer.appendChild(cLine);
+      });
+    }
+
+    /* ===================================================================
+       STEPPER ENGINE
+       =================================================================== */
+    function syncStepper() {
+      const data = PRESETS[currentPresetKey];
+      if (!data || !data.steps || data.steps.length === 0) return;
+
+      const totalSteps = data.steps.length;
+      const step = data.steps[currentStepIndex];
+
+      stepCounterPill.textContent = `${currentStepIndex + 1} / ${totalSteps}`;
+      stepLinePill.textContent = step.line;
+
+      // Update executing line in code editor
+      document.querySelectorAll('.code-line').forEach(el => el.classList.remove('active-executing'));
+      document.querySelectorAll('.gutter-line').forEach(el => el.classList.remove('active-step'));
+
+      const activeCodeLine = document.getElementById(`code-line-${step.line}`);
+      const activeGutterLine = document.getElementById(`gutter-line-${step.line}`);
+      if (activeCodeLine) {
+        activeCodeLine.classList.add('active-executing');
+        activeCodeLine.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      if (activeGutterLine) activeGutterLine.classList.add('active-step');
+
+      // Update Scope Watcher
+      updateScopeWatcher(step.vars || {});
+
+      // Status indicator
+      if (step.isCrash) {
+        stepExecState.textContent = 'HALTED (CRASH)';
+        stepExecState.style.color = 'var(--accent-red)';
+      } else {
+        stepExecState.textContent = 'Running';
+        stepExecState.style.color = 'var(--accent-cyan)';
+      }
+    }
+
+    function stepNext() {
+      const data = PRESETS[currentPresetKey];
+      if (!data) return;
+
+      if (currentStepIndex < data.steps.length - 1) {
+        currentStepIndex++;
+        const nextStep = data.steps[currentStepIndex];
+        
+        // Breakpoint halt check
+        if (breakpoints.has(nextStep.line)) {
+          stopAutoPlay();
+          showToast(`Halted at Breakpoint on Line ${nextStep.line}`, '🔴');
+        }
+        syncStepper();
+      } else {
+        stopAutoPlay();
+      }
+    }
+
+    function stepPrev() {
+      if (currentStepIndex > 0) {
+        currentStepIndex--;
+        syncStepper();
+      }
+    }
+
+    function toggleAutoPlay() {
+      if (isPlaying) {
+        stopAutoPlay();
+      } else {
+        startAutoPlay();
+      }
+    }
+
+    function startAutoPlay() {
+      isPlaying = true;
+      stepPlayBtn.textContent = '⏸';
+      stepPlayBtn.classList.add('active');
+      const delay = parseInt(speedSelect.value, 10) || 650;
+
+      playTimer = setInterval(() => {
+        const data = PRESETS[currentPresetKey];
+        if (currentStepIndex >= data.steps.length - 1) {
+          stopAutoPlay();
+        } else {
+          stepNext();
+        }
+      }, delay);
+    }
+
+    function stopAutoPlay() {
+      isPlaying = false;
+      stepPlayBtn.textContent = '▶';
+      stepPlayBtn.classList.remove('active');
+      if (playTimer) {
+        clearInterval(playTimer);
+        playTimer = null;
+      }
+    }
+
+    function toggleBreakpoint(lineNum) {
+      const gLine = document.getElementById(`gutter-line-${lineNum}`);
+      if (!gLine) return;
+
+      if (breakpoints.has(lineNum)) {
+        breakpoints.delete(lineNum);
+        gLine.classList.remove('has-breakpoint');
+        showToast(`Breakpoint removed from line ${lineNum}`, '⚪');
+      } else {
+        breakpoints.add(lineNum);
+        gLine.classList.add('has-breakpoint');
+        showToast(`Breakpoint set on line ${lineNum}`, '🔴');
+      }
+    }
+
+    /* ===================================================================
+       DIAGNOSIS & EXPLAINER UPDATES
+       =================================================================== */
+    function updateDiagnosisCard(data) {
+      if (isCodeFixed) {
+        diagTitle.textContent = "All Tests Passing • 0 Bugs Detected";
+        diagStatusBadge.className = "status-badge clean";
+        diagStatusBadge.textContent = "🟢 CLEAN (FIXED)";
+        diagWhatHappened.textContent = "The code has been successfully patched. Boundary, type, and recursion invariants are properly maintained.";
+        diagRootCause.textContent = "Bug eliminated. Program runs to termination with zero unhandled exceptions.";
+        diagFixSolution.textContent = "Optimal implementation applied and verified against test suite.";
+        tabBugStatus.textContent = "0 Bugs (Clean)";
+        tabBugStatus.style.color = "var(--accent-green)";
+      } else {
+        diagTitle.textContent = data.diagnosis.title;
+        diagStatusBadge.className = `status-badge ${data.severity}`;
+        diagStatusBadge.textContent = `🔴 ${data.severity.toUpperCase()} BUG`;
+        diagWhatHappened.textContent = data.diagnosis.whatHappened;
+        diagRootCause.textContent = data.diagnosis.rootCause;
+        diagFixSolution.textContent = data.diagnosis.fixSolution;
+        tabBugStatus.textContent = "1 Bug Detected";
+        tabBugStatus.style.color = "var(--accent-red)";
+      }
+    }
+
+    function updateLineExplainer(explainList) {
+      lineExplainerList.innerHTML = '';
+      if (!explainList || !explainList.length) return;
+
+      explainList.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'line-card';
+        card.id = `line-card-${item.line}`;
+        card.innerHTML = `
+          <div class="line-card-head">
+            <span class="line-num-badge">LINE ${item.line}</span>
+            <span class="line-role-badge">${item.role}</span>
+          </div>
+          <div class="line-desc">${item.desc}</div>
+        `;
+        card.addEventListener('click', () => {
+          document.querySelectorAll('.line-card').forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+          const codeEl = document.getElementById(`code-line-${item.line}`);
+          if (codeEl) {
+            codeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            codeEl.style.boxShadow = '0 0 15px rgba(0, 240, 255, 0.6)';
+            setTimeout(() => codeEl.style.boxShadow = '', 1200);
+          }
+        });
+        lineExplainerList.appendChild(card);
+      });
+    }
+
+    function highlightLineInExplainer(lineNum) {
+      document.querySelectorAll('.line-card').forEach(c => c.classList.remove('active'));
+      const card = document.getElementById(`line-card-${lineNum}`);
+      if (card) {
+        card.classList.add('active');
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function updateScopeWatcher(varsObj) {
+      scopeWatchTbody.innerHTML = '';
+      const keys = Object.keys(varsObj);
+      if (!keys.length) {
+        scopeWatchTbody.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted); text-align:center;">No variables in scope</td></tr>';
+        return;
+      }
+
+      keys.forEach(k => {
+        const tr = document.createElement('tr');
+        const val = varsObj[k];
+        let valType = typeof val;
+        if (Array.isArray(val) || String(val).startsWith('[')) valType = 'array/list';
+        if (String(val).startsWith('{')) valType = 'object';
+
+        tr.innerHTML = `
+          <td class="var-name">${k}</td>
+          <td style="color:var(--text-secondary);">${valType}</td>
+          <td class="var-val changed">${String(val)}</td>
+        `;
+        scopeWatchTbody.appendChild(tr);
+      });
+    }
+
+    function updateComplexity(time, space, classification, bestPractices) {
+      complexityTime.textContent = time;
+      complexitySpace.textContent = space;
+      document.getElementById('algoClassification').textContent = classification;
+      document.getElementById('algoBestPractices').innerHTML = bestPractices;
+    }
+
+    function renderConsoleLogs(steps) {
+      consolePane.innerHTML = '';
+      steps.forEach((s, idx) => {
+        const div = document.createElement('div');
+        div.className = `console-line ${s.isCrash ? 'error' : (idx === steps.length - 1 ? 'info' : '')}`;
+        div.innerHTML = `<span style="color:var(--text-muted);">[T+${idx * 15}ms]</span> ${s.log}`;
+        consolePane.appendChild(div);
+      });
+    }
+
+    function renderDiff(buggyCode, fixedCode) {
+      diffPane.innerHTML = '';
+      const bLines = buggyCode.split('\n');
+      const fLines = fixedCode.split('\n');
+
+      const wrap = document.createElement('div');
+      wrap.className = 'diff-container';
+
+      // Simple diff display
+      bLines.forEach((line, i) => {
+        if (fLines[i] !== line) {
+          const dDel = document.createElement('div');
+          dDel.className = 'diff-line del';
+          dDel.textContent = `- [Line ${i+1}] ${line}`;
+          wrap.appendChild(dDel);
+
+          const dAdd = document.createElement('div');
+          dAdd.className = 'diff-line add';
+          dAdd.textContent = `+ [Line ${i+1}] ${fLines[i] || '(added line)'}`;
+          wrap.appendChild(dAdd);
+        }
+      });
+
+      diffPane.appendChild(wrap);
+    }
+
+    function renderTests(testArray) {
+      testsPane.innerHTML = '';
+      if (!testArray) return;
+
+      testArray.forEach((t, i) => {
+        const div = document.createElement('div');
+        div.style.padding = '8px 12px';
+        div.style.marginBottom = '6px';
+        div.style.background = 'rgba(5, 8, 20, 0.7)';
+        div.style.borderRadius = '6px';
+        div.style.border = '1px solid rgba(255,255,255,0.06)';
+        div.style.display = 'flex';
+        div.style.justifyContent = 'space-between';
+        div.style.alignItems = 'center';
+
+        const isPass = isCodeFixed;
+        div.innerHTML = `
+          <div>
+            <strong>Test ${i + 1}:</strong> <code>${t.input}</code> → Expected: <code>${t.expected}</code>
+          </div>
+          <span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:700; color:${isPass ? '#34d399' : '#f87171'};">
+            ${isPass ? 'PASS ✓' : t.status}
+          </span>
+        `;
+        testsPane.appendChild(div);
+      });
+    }
+
+    /* ===================================================================
+       ONE-CLICK AUTO FIX
+       =================================================================== */
+    function applyAutoFix() {
+      const data = PRESETS[currentPresetKey];
+      if (!data) return;
+
+      isCodeFixed = true;
+      codeTextarea.value = data.fixedCode;
+      renderCodeEditor(data.fixedCode, data.lang, null);
+      updateDiagnosisCard(data);
+      renderTests(data.tests);
+      showToast("Patch applied successfully! 0 bugs remaining.", "✨");
+    }
+
+    /* ===================================================================
+       VOICE AI AUDIO EXPLAINER (WEB SPEECH API)
+       =================================================================== */
+    function toggleVoiceExplanation() {
+      if (!('speechSynthesis' in window)) {
+        showToast("Text-to-Speech not supported in this browser.", "⚠️");
+        return;
+      }
+
+      if (isSpeaking) {
+        stopVoice();
+      } else {
+        startVoice();
+      }
+    }
+
+    function startVoice() {
+      const data = PRESETS[currentPresetKey];
+      if (!data) return;
+
+      speechSynth.cancel();
+      const narrative = isCodeFixed 
+        ? `The code is now fixed. ${data.diagnosis.fixSolution}`
+        : `Bug diagnosis: ${data.diagnosis.title}. What happened: ${data.diagnosis.whatHappened}. Root cause: ${data.diagnosis.rootCause}. Recommended fix: ${data.diagnosis.fixSolution}`;
+
+      const utter = new SpeechSynthesisUtterance(narrative);
+      utter.rate = 1.0;
+      utter.pitch = 1.0;
+
+      utter.onstart = () => {
+        isSpeaking = true;
+        btnAudioText.textContent = "Stop Explainer";
+        btnAudioExplain.classList.add('btn-fix');
+      };
+
+      utter.onend = () => {
+        stopVoice();
+      };
+
+      speechSynth.speak(utter);
+    }
+
+    function stopVoice() {
+      if (speechSynth) speechSynth.cancel();
+      isSpeaking = false;
+      btnAudioText.textContent = "Listen to Explainer";
+      btnAudioExplain.classList.remove('btn-fix');
+    }
+
+    /* ===================================================================
+       EXPORT REPORT (.MD)
+       =================================================================== */
+    function exportReport() {
+      const data = PRESETS[currentPresetKey];
+      if (!data) return;
+
+      const mdContent = `# BugTrace AI Debug Report
+**Project:** ${data.title}
+**Language:** ${data.lang}
+**Timestamp:** ${new Date().toISOString()}
+
+---
+
+## 1. Diagnosis
+- **Status:** ${isCodeFixed ? 'RESOLVED (CLEAN)' : 'CRITICAL BUG DETECTED'}
+- **Issue:** ${data.diagnosis.title}
+- **What Happened:** ${data.diagnosis.whatHappened}
+- **Root Cause:** ${data.diagnosis.rootCause}
+
+---
+
+## 2. Recommended Solution
+${data.diagnosis.fixSolution}
+
+---
+
+## 3. Code (Fixed Version)
+\`\`\`${data.lang}
+${data.fixedCode}
+\`\`\`
+
+---
+*Generated by Jaswanth Kamaraj BugTrace AI Debugger*`;
+
+      const blob = new Blob([mdContent], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `debug-report-${currentPresetKey}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Debug report exported as Markdown!", "📥");
+    }
+
+    /* ===================================================================
+       TOAST UTILITY
+       =================================================================== */
+    let toastTimeout = null;
+    function showToast(msg, icon = '📋') {
+      document.getElementById('toastIcon').textContent = icon;
+      toastMsg.textContent = msg;
+      appToast.classList.add('show');
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        appToast.classList.remove('show');
+      }, 3000);
+    }
+
+    /* ===================================================================
+       EVENT LISTENERS & BINDINGS
+       =================================================================== */
+    presetSelect.addEventListener('change', (e) => {
+      if (e.target.value === 'custom') {
+        switchToEditMode();
+        showToast("Switched to Custom Code editor. Type or paste your code!", "✏️");
+      } else {
+        loadPreset(e.target.value);
+        switchToVisualMode();
+      }
+    });
+
+    langSelect.addEventListener('change', (e) => {
+      const data = PRESETS[currentPresetKey];
+      if (data) renderCodeEditor(codeTextarea.value, e.target.value, isCodeFixed ? null : data.buggyLine);
+    });
+
+    btnAnalyze.addEventListener('click', () => {
+      showToast("Deep static analysis completed. Invariants verified.", "⚡");
+      loadPreset(currentPresetKey);
+    });
+
+    btnAutoFix.addEventListener('click', applyAutoFix);
+    stepPlayBtn.addEventListener('click', toggleAutoPlay);
+    stepNextBtn.addEventListener('click', stepNext);
+    stepPrevBtn.addEventListener('click', stepPrev);
+    stepResetBtn.addEventListener('click', () => {
+      stopAutoPlay();
+      currentStepIndex = 0;
+      syncStepper();
+      showToast("Reset debugger to line 1", "🔄");
+    });
+
+    btnAudioExplain.addEventListener('click', toggleVoiceExplanation);
+    btnExportReport.addEventListener('click', exportReport);
+
+    // Mode toggles
+    function switchToEditMode() {
+      btnModeEdit.classList.add('active');
+      btnModeVisual.classList.remove('active');
+      editorVisualArea.style.display = 'none';
+      codeTextarea.style.display = 'block';
+    }
+
+    function switchToVisualMode() {
+      btnModeVisual.classList.add('active');
+      btnModeEdit.classList.remove('active');
+      editorVisualArea.style.display = 'flex';
+      codeTextarea.style.display = 'none';
+      const data = PRESETS[currentPresetKey] || {};
+      renderCodeEditor(codeTextarea.value, langSelect.value, isCodeFixed ? null : data.buggyLine);
+    }
+
+    btnModeEdit.addEventListener('click', switchToEditMode);
+    btnModeVisual.addEventListener('click', switchToVisualMode);
+    btnClearCode.addEventListener('click', () => {
+      loadPreset(currentPresetKey);
+      showToast("Snippet reset to default", "🔄");
+    });
+
+    // Subpanel Tabs (Console, Diff, Tests)
+    document.querySelectorAll('.subpanel-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.subpanel-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.getAttribute('data-tab');
+        consolePane.style.display = target === 'console' ? 'block' : 'none';
+        diffPane.style.display = target === 'diff' ? 'block' : 'none';
+        testsPane.style.display = target === 'tests' ? 'block' : 'none';
+      });
+    });
+
+    // Hub Tabs (Diagnosis, Explainer, Scope, Theory)
+    document.querySelectorAll('.hub-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.hub-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const targetId = tab.getAttribute('data-target');
+        document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+        const targetPane = document.getElementById(targetId);
+        if (targetPane) targetPane.style.display = 'flex';
+      });
+    });
+
+    // ELI5 vs Tech Explainer toggle
+    const btnExplainEli5 = document.getElementById('btnExplainEli5');
+    const btnExplainTech = document.getElementById('btnExplainTech');
+    btnExplainEli5.addEventListener('click', () => {
+      btnExplainEli5.classList.add('active');
+      btnExplainTech.classList.remove('active');
+      const data = PRESETS[currentPresetKey];
+      if (data) updateLineExplainer(data.eli5Explain);
+    });
+
+    btnExplainTech.addEventListener('click', () => {
+      btnExplainTech.classList.add('active');
+      btnExplainEli5.classList.remove('active');
+      const data = PRESETS[currentPresetKey];
+      if (data) updateLineExplainer(data.techExplain);
+    });
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement === codeTextarea) return;
+      if (e.key === 'ArrowRight') stepNext();
+      if (e.key === 'ArrowLeft') stepPrev();
+      if (e.key === ' ') {
+        e.preventDefault();
+        toggleAutoPlay();
+      }
+    });
+
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadPreset('py_off_by_one');
+    });
+  </script>
+</body>
+</html>

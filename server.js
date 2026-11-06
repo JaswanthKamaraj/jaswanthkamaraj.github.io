@@ -32,21 +32,21 @@ const server = http.createServer((req, res) => {
   let safePath = path.normalize(decodeURIComponent(cleanUrl)).replace(/^(\.\.[\/\\])+/, '');
   let filePath = path.join(ROOT, safePath);
 
+  // If URL is directory without trailing slash, redirect with trailing slash
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory() && !cleanUrl.endsWith('/')) {
+    res.writeHead(302, { 'Location': cleanUrl + '/' });
+    return res.end();
+  }
+
   // If directory, try index.html
   if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
     filePath = path.join(filePath, 'index.html');
   }
 
-  // Handle /nexus-museum or /nexus-museum/
-  if (cleanUrl === '/nexus-museum') {
-    res.writeHead(302, { 'Location': '/nexus-museum/' });
-    return res.end();
-  }
-
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
       res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
-      res.end(`<h1>404 Not Found</h1><p>Path: ${cleanUrl}</p><p><a href="/">Go to Home</a> | <a href="/nexus-museum/">Go to Museum</a></p>`);
+      res.end(`<h1>404 Not Found</h1><p>Path: ${cleanUrl}</p><p><a href="/">Go to Home</a> | <a href="/code-debugger/">Go to Code Debugger</a> | <a href="/flowchart-generator/">Go to Flowchart Generator</a></p>`);
       return;
     }
 
@@ -59,7 +59,8 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Portfolio & Museum Server running at:`);
+  console.log(`Portfolio Server running at:`);
   console.log(`- http://localhost:${PORT}/`);
-  console.log(`- http://localhost:${PORT}/nexus-museum/`);
+  console.log(`- http://localhost:${PORT}/code-debugger/`);
+  console.log(`- http://localhost:${PORT}/flowchart-generator/`);
 });
