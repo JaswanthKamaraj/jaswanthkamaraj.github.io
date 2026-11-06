@@ -27,6 +27,11 @@
       <stop offset="100%" stop-color="#047857"/>
     </linearGradient>
 
+    <linearGradient id="cePurpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#7e22ce"/>
+    </linearGradient>
+
     <!-- Filters -->
     <filter id="ceGlowCyan" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="6" result="blur"/>
@@ -96,99 +101,122 @@
     <polygon points="248,16 248,28 259,22" fill="#fff"/>
     <text x="268" y="27" fill="#ffffff" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800">RUN CODE</text>
 
-    <!-- Execution Stats Pill -->
-    <rect x="580" y="9" width="132" height="26" rx="13" fill="rgba(16, 185, 129, 0.12)" stroke="rgba(16, 185, 129, 0.35)" stroke-width="1"/>
-    <circle cx="594" cy="22" r="4" fill="#10b981"/>
-    <text x="606" y="26" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700">STATUS: READY</text>
+    <!-- Graph Badge -->
+    <rect x="540" y="9" width="172" height="26" rx="13" fill="rgba(0, 240, 255, 0.12)" stroke="rgba(0, 240, 255, 0.35)" stroke-width="1"/>
+    <circle cx="554" cy="22" r="4" fill="#00f0ff" filter="url(#ceGlowCyan)"/>
+    <text x="566" y="26" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="700">📊 VISUAL GRAPH READY</text>
 
-    <!-- Code Editor Section (Left 420px) -->
+    <!-- Code Editor Section (Left 380px) -->
     <g transform="translate(0, 44)">
       <!-- Gutter -->
-      <rect width="44" height="344" fill="#040610"/>
-      <line x1="44" y1="0" x2="44" y2="344" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
-      <text x="22" y="32" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">1</text>
-      <text x="22" y="60" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">2</text>
-      <text x="22" y="88" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">3</text>
-      <text x="22" y="116" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">4</text>
-      <text x="22" y="144" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">5</text>
-      <text x="22" y="172" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">6</text>
-      <text x="22" y="200" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">7</text>
-      <text x="22" y="228" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">8</text>
-      <text x="22" y="256" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">9</text>
-      <text x="22" y="284" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">10</text>
+      <rect width="40" height="344" fill="#040610"/>
+      <line x1="40" y1="0" x2="40" y2="344" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+      <text x="20" y="32" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10.5" text-anchor="middle">1</text>
+      <text x="20" y="60" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10.5" text-anchor="middle">2</text>
+      <text x="20" y="88" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10.5" text-anchor="middle">3</text>
+      <text x="20" y="116" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10.5" text-anchor="middle">4</text>
+      <text x="20" y="144" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10.5" text-anchor="middle">5</text>
+      <text x="20" y="172" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10.5" text-anchor="middle">6</text>
+      <text x="20" y="200" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10.5" text-anchor="middle">7</text>
+      <text x="20" y="228" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10.5" text-anchor="middle">8</text>
+      <text x="20" y="256" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10.5" text-anchor="middle">9</text>
+      <text x="20" y="284" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10.5" text-anchor="middle">10</text>
 
       <!-- Code Lines -->
-      <g transform="translate(56, 0)">
-        <text x="0" y="32" font-family="'JetBrains Mono', monospace" font-size="12">
-          <tspan fill="#64748b" font-style="italic"># Online Compiler &amp; Polyglot Execution Engine</tspan>
+      <g transform="translate(50, 0)">
+        <text x="0" y="32" font-family="'JetBrains Mono', monospace" font-size="11.5">
+          <tspan fill="#a855f7" font-weight="600">import</tspan> <tspan fill="#f8fafc">matplotlib.pyplot</tspan> <tspan fill="#a855f7" font-weight="600">as</tspan> <tspan fill="#00f0ff">plt</tspan>
         </text>
-        <text x="0" y="60" font-family="'JetBrains Mono', monospace" font-size="12">
-          <tspan fill="#a855f7" font-weight="600">def</tspan> <tspan fill="#00f0ff">fibonacci_sequence</tspan><tspan fill="#94a3b8">(n):</tspan>
+        <text x="0" y="60" font-family="'JetBrains Mono', monospace" font-size="11.5">
+          <tspan fill="#a855f7" font-weight="600">import</tspan> <tspan fill="#f8fafc">numpy</tspan> <tspan fill="#a855f7" font-weight="600">as</tspan> <tspan fill="#00f0ff">np</tspan>
         </text>
-        <text x="16" y="88" font-family="'JetBrains Mono', monospace" font-size="12">
-          <tspan fill="#f8fafc">seq = [</tspan><tspan fill="#f59e0b">0</tspan><tspan fill="#94a3b8">, </tspan><tspan fill="#f59e0b">1</tspan><tspan fill="#f8fafc">]</tspan>
+        <text x="0" y="88" font-family="'JetBrains Mono', monospace" font-size="11.5">
+          <tspan fill="#f8fafc">x = np.linspace(</tspan><tspan fill="#f59e0b">0</tspan><tspan fill="#94a3b8">, </tspan><tspan fill="#f59e0b">10</tspan><tspan fill="#94a3b8">, </tspan><tspan fill="#f59e0b">100</tspan><tspan fill="#f8fafc">)</tspan>
         </text>
-        <text x="16" y="116" font-family="'JetBrains Mono', monospace" font-size="12">
-          <tspan fill="#a855f7" font-weight="600">for</tspan> <tspan fill="#f8fafc">_ </tspan><tspan fill="#a855f7" font-weight="600">in</tspan> <tspan fill="#00f0ff">range</tspan><tspan fill="#94a3b8">(</tspan><tspan fill="#f59e0b">2</tspan><tspan fill="#94a3b8">, n):</tspan>
+        <text x="0" y="116" font-family="'JetBrains Mono', monospace" font-size="11.5">
+          <tspan fill="#f8fafc">y_sin = np.sin(x)</tspan>
         </text>
-        <text x="32" y="144" font-family="'JetBrains Mono', monospace" font-size="12">
-          <tspan fill="#f8fafc">seq.append(seq[-</tspan><tspan fill="#f59e0b">1</tspan><tspan fill="#f8fafc">] + seq[-</tspan><tspan fill="#f59e0b">2</tspan><tspan fill="#f8fafc">])</tspan>
+        <text x="0" y="144" font-family="'JetBrains Mono', monospace" font-size="11.5">
+          <tspan fill="#f8fafc">y_cos = np.cos(x)</tspan>
         </text>
-        <text x="16" y="172" font-family="'JetBrains Mono', monospace" font-size="12">
-          <tspan fill="#a855f7" font-weight="600">return</tspan> <tspan fill="#f8fafc">seq</tspan>
+        <text x="0" y="172" font-family="'JetBrains Mono', monospace" font-size="11.5">
+          <tspan fill="#00f0ff">plt.plot</tspan><tspan fill="#94a3b8">(x, y_sin, label=</tspan><tspan fill="#34d399">"sin(x)"</tspan><tspan fill="#94a3b8">)</tspan>
         </text>
-        <text x="0" y="200" font-family="'JetBrains Mono', monospace" font-size="12">
-          <tspan fill="#64748b" font-style="italic"># Execute calculation</tspan>
+        <text x="0" y="200" font-family="'JetBrains Mono', monospace" font-size="11.5">
+          <tspan fill="#00f0ff">plt.plot</tspan><tspan fill="#94a3b8">(x, y_cos, label=</tspan><tspan fill="#34d399">"cos(x)"</tspan><tspan fill="#94a3b8">)</tspan>
         </text>
-        <text x="0" y="228" font-family="'JetBrains Mono', monospace" font-size="12">
-          <tspan fill="#00f0ff">result</tspan> <tspan fill="#94a3b8">=</tspan> <tspan fill="#f8fafc">fibonacci_sequence(</tspan><tspan fill="#f59e0b">8</tspan><tspan fill="#f8fafc">)</tspan>
+        <text x="0" y="228" font-family="'JetBrains Mono', monospace" font-size="11.5">
+          <tspan fill="#00f0ff">plt.title</tspan><tspan fill="#94a3b8">(</tspan><tspan fill="#34d399">"Harmonic Waveform"</tspan><tspan fill="#94a3b8">)</tspan>
         </text>
-        <text x="0" y="256" font-family="'JetBrains Mono', monospace" font-size="12">
-          <tspan fill="#00f0ff">print</tspan><tspan fill="#94a3b8">(</tspan><tspan fill="#34d399">"Fibonacci series:"</tspan><tspan fill="#94a3b8">, </tspan><tspan fill="#f8fafc">result</tspan><tspan fill="#94a3b8">)</tspan>
+        <text x="0" y="256" font-family="'JetBrains Mono', monospace" font-size="11.5">
+          <tspan fill="#00f0ff">plt.show</tspan><tspan fill="#94a3b8">()</tspan>
         </text>
-        <text x="0" y="284" font-family="'JetBrains Mono', monospace" font-size="12">
-          <tspan fill="#00f0ff">print</tspan><tspan fill="#94a3b8">(</tspan><tspan fill="#34d399">"Sum of sequence:"</tspan><tspan fill="#94a3b8">, </tspan><tspan fill="#00f0ff">sum</tspan><tspan fill="#94a3b8">(</tspan><tspan fill="#f8fafc">result</tspan><tspan fill="#94a3b8">))</tspan>
+        <text x="0" y="284" font-family="'JetBrains Mono', monospace" font-size="11.5">
+          <tspan fill="#00f0ff">print</tspan><tspan fill="#94a3b8">(</tspan><tspan fill="#34d399">"Plot rendered successfully."</tspan><tspan fill="#94a3b8">)</tspan>
         </text>
       </g>
     </g>
 
-    <!-- Terminal Section (Right 300px) -->
-    <g transform="translate(424, 44)">
+    <!-- Visual Graph & Terminal Section (Right 348px) -->
+    <g transform="translate(380, 44)">
       <!-- Divider -->
       <line x1="0" y1="0" x2="0" y2="344" stroke="rgba(0, 240, 255, 0.2)" stroke-width="1.5"/>
-      <rect width="304" height="344" fill="url(#ceTermBg)"/>
+      <rect width="348" height="344" fill="url(#ceTermBg)"/>
 
-      <!-- Terminal Header -->
-      <rect width="304" height="32" fill="#040612"/>
-      <line x1="0" y1="32" x2="304" y2="32" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
-      <text x="14" y="21" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="700">TERMINAL OUTPUT (STDOUT)</text>
-      <circle cx="288" cy="16" r="3.5" fill="#10b981"/>
+      <!-- Header Tabs inside Terminal -->
+      <rect width="348" height="32" fill="#040612"/>
+      <line x1="0" y1="32" x2="348" y2="32" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+      <text x="14" y="21" fill="#00f0ff" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="700">📊 VISUAL PLOT: MATPLOTLIB</text>
+      <circle cx="332" cy="16" r="3.5" fill="#10b981"/>
 
-      <!-- Terminal Logs -->
-      <g transform="translate(14, 48)">
-        <text x="0" y="16" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="10.5">
-          $ python3 main.py
-        </text>
-        
-        <text x="0" y="44" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10.5">
-          [NexusEngine] Compiling &amp; executing...
-        </text>
+      <!-- Graph Canvas Box -->
+      <g transform="translate(14, 44)">
+        <rect width="320" height="210" rx="8" fill="#02040c" stroke="rgba(0, 240, 255, 0.25)" stroke-width="1"/>
 
-        <text x="0" y="74" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">
-          Fibonacci series: [0, 1, 1, 2, 3, 5, 8, 13]
-        </text>
+        <!-- Grid Lines in Graph -->
+        <g stroke="rgba(255, 255, 255, 0.06)" stroke-width="1">
+          <line x1="40" y1="30" x2="300" y2="30"/>
+          <line x1="40" y1="75" x2="300" y2="75"/>
+          <line x1="40" y1="120" x2="300" y2="120"/>
+          <line x1="40" y1="165" x2="300" y2="165"/>
+          <line x1="105" y1="20" x2="105" y2="180"/>
+          <line x1="170" y1="20" x2="170" y2="180"/>
+          <line x1="235" y1="20" x2="235" y2="180"/>
+        </g>
 
-        <text x="0" y="102" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">
-          Sum of sequence: 33
-        </text>
+        <!-- Sine Curve (Cyan) -->
+        <path d="M 40 120 Q 72 40 105 75 T 170 120 T 235 120 T 300 75" fill="none" stroke="#00f0ff" stroke-width="2.5" filter="url(#ceGlowCyan)"/>
 
-        <!-- Success Exit Box -->
-        <rect x="0" y="130" width="276" height="54" rx="8" fill="rgba(16, 185, 129, 0.1)" stroke="rgba(16, 185, 129, 0.3)" stroke-width="1"/>
-        <text x="14" y="152" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="700">
-          ✔ Process finished with exit code 0
+        <!-- Cosine Curve (Purple) -->
+        <path d="M 40 60 Q 72 140 105 165 T 170 80 T 235 160 T 300 120" fill="none" stroke="#c084fc" stroke-width="2.5"/>
+
+        <!-- Hover Data Point Dot -->
+        <circle cx="170" cy="120" r="5" fill="#f59e0b" stroke="#fff" stroke-width="1.5"/>
+        <rect x="180" y="105" width="86" height="20" rx="4" fill="rgba(5, 8, 20, 0.9)" stroke="#00f0ff" stroke-width="0.8"/>
+        <text x="185" y="119" fill="#00f0ff" font-family="'JetBrains Mono', monospace" font-size="8.5">(4.71, -1.00)</text>
+
+        <!-- Graph Title -->
+        <text x="170" y="18" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700" text-anchor="middle">Harmonic Waveform: sin(x) &amp; cos(x)</text>
+
+        <!-- Legend Pills -->
+        <circle cx="60" cy="195" r="3.5" fill="#00f0ff"/>
+        <text x="68" y="198" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">sin(x)</text>
+
+        <circle cx="120" cy="195" r="3.5" fill="#c084fc"/>
+        <text x="128" y="198" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">cos(x)</text>
+      </g>
+
+      <!-- Terminal Output Below Graph -->
+      <g transform="translate(14, 266)">
+        <rect width="320" height="64" rx="6" fill="#040714" stroke="rgba(16, 185, 129, 0.3)" stroke-width="1"/>
+        <text x="12" y="22" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700">
+          ✔ [NexusEngine] Graph Analyzed &amp; Rendered
         </text>
-        <text x="14" y="172" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="9.5">
-          Execution Time: 14.8 ms | Memory: 3.2 MB
+        <text x="12" y="38" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9.5">
+          Plot rendered successfully. 100 data points.
+        </text>
+        <text x="12" y="52" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="9">
+          Exit code 0 | Time: 18.2 ms | Interactive Tooltips Active
         </text>
       </g>
     </g>
@@ -197,7 +225,7 @@
   <!-- Bottom Brand Subtext -->
   <g transform="translate(36, 432)">
     <text x="0" y="0" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="9.5" letter-spacing="1.5">
-      NEXUSCODE • UNIVERSAL ONLINE COMPILER &amp; REAL-TIME CODE EXECUTION ENGINE
+      NEXUSCODE • UNIVERSAL ONLINE COMPILER, CODE EXECUTOR &amp; VISUAL GRAPH ENGINE
     </text>
   </g>
 </svg>
