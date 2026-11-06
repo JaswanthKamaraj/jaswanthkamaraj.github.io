@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>NexusCode | Universal Online Compiler, Code Executor & Visual Graph Engine</title>
   <meta name="description" content="Fast, interactive online compiler, code executor, and visual graph plotter supporting Python 3 (Matplotlib/WASM), JavaScript, C++, C, and Java with real-time terminal and visual chart output. Created by Jaswanth Kamaraj.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
@@ -1226,8 +1229,69 @@ public class Main {
     }
 
     /* ===================================================================
-       PYODIDE WEB-ASSEMBLY INITIALIZATION
+       PYODIDE WEB-ASSEMBLY INITIALIZATION & MODULE SHIMS
        =================================================================== */
+    async function ensurePyodideModules(py) {
+      if (!py) return;
+      try {
+        await py.runPythonAsync(`
+import sys, types, math
+
+# 1. Zero-latency NumPy WASM Shim
+if 'numpy' not in sys.modules:
+    np = types.ModuleType('numpy')
+    np.pi = math.pi
+    np.e = math.e
+    np.linspace = lambda start, stop, num=50: [start + (stop - start) * i / max(1, num - 1) for i in range(num)]
+    np.arange = lambda *args: list(range(*args))
+    np.sin = lambda x: [math.sin(v) for v in x] if isinstance(x, (list, tuple)) else math.sin(x)
+    np.cos = lambda x: [math.cos(v) for v in x] if isinstance(x, (list, tuple)) else math.cos(x)
+    np.tan = lambda x: [math.tan(v) for v in x] if isinstance(x, (list, tuple)) else math.tan(x)
+    np.exp = lambda x: [math.exp(v) for v in x] if isinstance(x, (list, tuple)) else math.exp(x)
+    np.sqrt = lambda x: [math.sqrt(v) for v in x] if isinstance(x, (list, tuple)) else math.sqrt(x)
+    np.array = lambda x: x
+    np.zeros = lambda n: [0] * n
+    np.ones = lambda n: [1] * n
+    sys.modules['numpy'] = np
+
+# 2. Zero-latency Matplotlib & Pyplot WASM Shim
+if 'matplotlib' not in sys.modules or 'matplotlib.pyplot' not in sys.modules:
+    mpl = types.ModuleType('matplotlib')
+    plt = types.ModuleType('matplotlib.pyplot')
+
+    class Figure:
+        def __init__(self, *args, **kwargs): pass
+        def add_subplot(self, *args, **kwargs): return self
+        def plot(self, *args, **kwargs): pass
+        def show(self, *args, **kwargs): pass
+
+    plt.figure = lambda *args, **kwargs: Figure()
+    plt.plot = lambda *args, **kwargs: None
+    plt.scatter = lambda *args, **kwargs: None
+    plt.bar = lambda *args, **kwargs: None
+    plt.barh = lambda *args, **kwargs: None
+    plt.hist = lambda *args, **kwargs: None
+    plt.title = lambda *args, **kwargs: None
+    plt.xlabel = lambda *args, **kwargs: None
+    plt.ylabel = lambda *args, **kwargs: None
+    plt.grid = lambda *args, **kwargs: None
+    plt.legend = lambda *args, **kwargs: None
+    plt.show = lambda *args, **kwargs: None
+    plt.savefig = lambda *args, **kwargs: None
+    plt.close = lambda *args, **kwargs: None
+    plt.xlim = lambda *args, **kwargs: None
+    plt.ylim = lambda *args, **kwargs: None
+    plt.clf = lambda *args, **kwargs: None
+
+    mpl.pyplot = plt
+    sys.modules['matplotlib'] = mpl
+    sys.modules['matplotlib.pyplot'] = plt
+`);
+      } catch (err) {
+        console.warn("Could not register Pyodide module shims:", err);
+      }
+    }
+
     async function initPyodide() {
       if (pyodideReady || isPyodideLoading) return;
       if (typeof loadPyodide === 'undefined') {
@@ -1243,6 +1307,7 @@ public class Main {
         pyodideInstance = await loadPyodide({
           indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.1/full/"
         });
+        await ensurePyodideModules(pyodideInstance);
         pyodideReady = true;
         isPyodideLoading = false;
         engineBadge.textContent = "Pyodide WASM Active";
@@ -1851,6 +1916,11 @@ public class Main {
           appendTerm('----------------------------------------', 'term-line');
           appendTerm(`[NexusEngine] 📊 Visual Graph Detected! Generated interactive chart in 'Visual Plot' tab.`, 'term-success');
           renderGraph(detectedPlot);
+          if (graphTabBadge) graphTabBadge.style.display = 'inline-block';
+          // Auto-switch to visual graph tab so the user sees the plot immediately
+          setTimeout(() => {
+            switchTab('graph');
+          }, 350);
         }
 
         const elapsed = (performance.now() - startTime).toFixed(1);
@@ -1929,6 +1999,7 @@ public class Main {
     /* 2. PYTHON RUNNER */
     async function runPython(code, stdin) {
       if (pyodideReady && pyodideInstance) {
+        await ensurePyodideModules(pyodideInstance);
         pyodideInstance.setStdout({
           batched: (msg) => appendTerm(msg)
         });
