@@ -16,14 +16,14 @@
   <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js" defer></script>
   <style>
     :root {
-      --bg-pitch: #0b0c10;
-      --bg-surface: #12141a;
-      --bg-card: rgba(18, 20, 26, 0.88);
-      --border-color: rgba(255, 255, 255, 0.1);
-      --border-hover: rgba(255, 255, 255, 0.28);
-      --accent-cyan: #e2e8f0;
-      --accent-purple: #cbd5e1;
-      --accent-pink: #f1f5f9;
+      --bg-pitch: #050508;
+      --bg-surface: #0a0c14;
+      --bg-card: rgba(10, 12, 20, 0.90);
+      --border-color: rgba(0, 153, 255, 0.18);
+      --border-hover: rgba(0, 153, 255, 0.45);
+      --accent-cyan: #0099ff;   /* Cerulean Blue */
+      --accent-purple: #a855f7;
+      --accent-pink: #ff1a75;   /* Neon Rose */
       --accent-amber: #f59e0b;
       --accent-green: #10b981;
       --accent-red: #ef4444;
@@ -47,9 +47,9 @@
       min-height: 100vh;
       line-height: 1.6;
       background-image:
-        radial-gradient(ellipse 70% 45% at 50% -10%, rgba(255, 255, 255, 0.05), transparent),
-        radial-gradient(ellipse 60% 40% at 90% 80%, rgba(255, 255, 255, 0.02), transparent),
-        radial-gradient(ellipse 50% 30% at 10% 85%, rgba(255, 255, 255, 0.02), transparent);
+        radial-gradient(ellipse 70% 45% at 50% -10%, rgba(0, 153, 255, 0.14), transparent),
+        radial-gradient(ellipse 60% 40% at 90% 80%, rgba(255, 26, 117, 0.09), transparent),
+        radial-gradient(ellipse 50% 30% at 10% 85%, rgba(0, 153, 255, 0.08), transparent);
       background-attachment: fixed;
     }
 
@@ -58,8 +58,8 @@
       position: fixed;
       inset: 0;
       background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        linear-gradient(rgba(0, 153, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 153, 255, 0.035) 1px, transparent 1px);
       background-size: 32px 32px;
       pointer-events: none;
       z-index: 0;
@@ -172,18 +172,18 @@
     }
 
     .btn-run {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      border-color: #34d399;
+      background: linear-gradient(135deg, #0099ff 0%, #ff1a75 100%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       color: #ffffff;
       font-size: 0.88rem;
       font-weight: 800;
       padding: 9px 22px;
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.45);
+      box-shadow: 0 0 20px rgba(0, 153, 255, 0.45), 0 0 10px rgba(255, 26, 117, 0.3);
     }
 
     .btn-run:hover {
-      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-      box-shadow: 0 0 28px rgba(16, 185, 129, 0.7);
+      background: linear-gradient(135deg, #00aaff 0%, #ff3388 100%);
+      box-shadow: 0 0 28px rgba(0, 153, 255, 0.65), 0 0 16px rgba(255, 26, 117, 0.45);
       transform: translateY(-1px);
     }
 
@@ -516,6 +516,109 @@
       gap: 8px;
     }
 
+    .btn-download-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: linear-gradient(135deg, #0099ff 0%, #ff1a75 100%);
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0, 153, 255, 0.35);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-download-primary:hover {
+      background: linear-gradient(135deg, #00aaff 0%, #ff3388 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(0, 153, 255, 0.55), 0 2px 8px rgba(255, 26, 117, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .download-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: rgba(10, 12, 20, 0.98);
+      border: 1px solid rgba(0, 153, 255, 0.3);
+      border-radius: var(--radius-md);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 153, 255, 0.15);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      width: 260px;
+      padding: 6px;
+      display: none;
+      flex-direction: column;
+      gap: 3px;
+      z-index: 100;
+      animation: dropdownFade 0.15s ease-out;
+    }
+
+    .download-dropdown-menu.show {
+      display: flex;
+    }
+
+    @keyframes dropdownFade {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      text-align: left;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.15s ease;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .dropdown-item-icon {
+      font-size: 1.15rem;
+      flex-shrink: 0;
+      width: 24px;
+      text-align: center;
+    }
+
+    .dropdown-item-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.3;
+    }
+
+    .dropdown-item-text strong {
+      font-size: 0.78rem;
+      color: #ffffff;
+      font-family: var(--font-mono);
+    }
+
+    .dropdown-item-text span {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin: 4px 4px;
+    }
+
     .graph-stage-wrap {
       flex: 1;
       min-height: 380px;
@@ -801,13 +904,60 @@
               <p id="graphPlotSubtitle">Generated via code analysis</p>
             </div>
             <div class="graph-controls">
-              <select id="graphTypeSelect" class="styled-select" style="padding: 4px 10px; font-size: 0.74rem;">
-                <option value="line">Line Plot</option>
-                <option value="bar">Bar Chart</option>
-                <option value="scatter">Scatter Plot</option>
-                <option value="network">Node Graph</option>
+              <select id="graphTypeSelect" class="styled-select" style="padding: 5px 12px; font-size: 0.76rem;" title="Chart Type">
+                <option value="line">📈 Line Plot</option>
+                <option value="bar">📊 Bar Chart</option>
+                <option value="scatter">🔵 Scatter Plot</option>
+                <option value="network">🕸 Node Graph</option>
               </select>
-              <button class="icon-btn" id="btnDownloadGraph" title="Export graph as PNG">📥 Save Plot</button>
+
+              <!-- Prominent Download Dropdown Suite -->
+              <div class="dropdown-wrapper" style="position: relative; display: inline-block;">
+                <button class="btn-download-primary" id="btnDownloadGraph" title="Download chart in high-resolution">
+                  <span>📥 Download Graph</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="download-dropdown-menu" id="downloadDropdownMenu">
+                  <button class="dropdown-item" data-format="png">
+                    <span class="dropdown-item-icon">🖼</span>
+                    <div class="dropdown-item-text">
+                      <strong>PNG Image (.png)</strong>
+                      <span>2x High-resolution publication chart</span>
+                    </div>
+                  </button>
+                  <button class="dropdown-item" data-format="jpg">
+                    <span class="dropdown-item-icon">📷</span>
+                    <div class="dropdown-item-text">
+                      <strong>JPEG Photo (.jpg)</strong>
+                      <span>Compressed raster graphic</span>
+                    </div>
+                  </button>
+                  <button class="dropdown-item" data-format="svg">
+                    <span class="dropdown-item-icon">📐</span>
+                    <div class="dropdown-item-text">
+                      <strong>Scalable Vector (.svg)</strong>
+                      <span>Infinite-resolution vector markup</span>
+                    </div>
+                  </button>
+                  <button class="dropdown-item" data-format="csv">
+                    <span class="dropdown-item-icon">📊</span>
+                    <div class="dropdown-item-text">
+                      <strong>Raw Data (.csv)</strong>
+                      <span>Export coordinates to spreadsheet</span>
+                    </div>
+                  </button>
+                  <div class="dropdown-divider"></div>
+                  <button class="dropdown-item" data-format="copy">
+                    <span class="dropdown-item-icon">📋</span>
+                    <div class="dropdown-item-text">
+                      <strong>Copy to Clipboard</strong>
+                      <span>Direct paste into Docs, Slides & Chat</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <button class="icon-btn" id="btnQuickCopyGraph" title="Quick copy image to clipboard">📋 Copy</button>
             </div>
           </div>
 
@@ -819,11 +969,15 @@
           <div class="graph-footer-legend" id="graphFooterLegend">
             <div class="legend-series" id="legendSeriesContainer">
               <div class="legend-item">
-                <span class="legend-dot" style="background: #00f0ff;"></span>
+                <span class="legend-dot" style="background: #f8fafc;"></span>
                 <span id="legendLabel1">Series 1</span>
               </div>
             </div>
-            <div id="graphStatsText" style="color: var(--text-muted);">X Range: [0 .. 10] | Points: 100</div>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <div id="graphStatsText" style="color: var(--text-muted); font-size: 0.72rem;">X Range: [0 .. 10] | Points: 100</div>
+              <button class="icon-btn" id="btnFooterDownload" title="Quick download as High-Res PNG">📥 PNG</button>
+              <button class="icon-btn" id="btnFooterCSV" title="Export raw data as CSV">📊 CSV</button>
+            </div>
           </div>
         </div>
 
@@ -1164,6 +1318,10 @@ public class Main {
     const graphPlotSubtitle = document.getElementById('graphPlotSubtitle');
     const graphTypeSelect = document.getElementById('graphTypeSelect');
     const btnDownloadGraph = document.getElementById('btnDownloadGraph');
+    const downloadDropdownMenu = document.getElementById('downloadDropdownMenu');
+    const btnQuickCopyGraph = document.getElementById('btnQuickCopyGraph');
+    const btnFooterDownload = document.getElementById('btnFooterDownload');
+    const btnFooterCSV = document.getElementById('btnFooterCSV');
     const legendSeriesContainer = document.getElementById('legendSeriesContainer');
     const graphStatsText = document.getElementById('graphStatsText');
     const graphTabBadge = document.getElementById('graphTabBadge');
@@ -1848,13 +2006,342 @@ if 'matplotlib' not in sys.modules or 'matplotlib.pyplot' not in sys.modules:
       legendSeriesContainer.appendChild(item);
     }
 
-    // Export Graph as Image
-    btnDownloadGraph.addEventListener('click', () => {
+    /* ===================================================================
+       GRAPH EXPORT & DOWNLOAD SUITE (PNG, JPG, SVG, CSV, CLIPBOARD)
+       =================================================================== */
+
+    // Generate high-resolution publication-quality canvas for export
+    function generateExportCanvas() {
+      const expCanvas = document.createElement('canvas');
+      const width = 1400;
+      const height = 860;
+      expCanvas.width = width;
+      expCanvas.height = height;
+      const ctx = expCanvas.getContext('2d');
+
+      // 1. Jet Black Canvas Background
+      ctx.fillStyle = '#050508';
+      ctx.fillRect(0, 0, width, height);
+
+      // Subtle Grid / Cerulean Tint
+      ctx.strokeStyle = 'rgba(0, 153, 255, 0.04)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+
+      // Outer Cerulean / Rose Border
+      ctx.strokeStyle = 'rgba(0, 153, 255, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(16, 16, width - 32, height - 32);
+
+      // 2. Title & Subtitle Header
+      const title = (currentPlotData && currentPlotData.title) ? currentPlotData.title : 'NexusCode Visual Plot';
+      const subtitle = (currentPlotData && currentPlotData.subtitle) ? currentPlotData.subtitle : 'Generated via NexusCode Engine & Python Runtime';
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 26px "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(title, 48, 62);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = '14px "JetBrains Mono", monospace';
+      ctx.fillText(subtitle, 48, 88);
+
+      // Decorative divider
+      const divGrad = ctx.createLinearGradient(48, 106, width - 48, 106);
+      divGrad.addColorStop(0, '#0099ff');
+      divGrad.addColorStop(0.5, '#a855f7');
+      divGrad.addColorStop(1, '#ff1a75');
+      ctx.strokeStyle = divGrad;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(48, 106);
+      ctx.lineTo(width - 48, 106);
+      ctx.stroke();
+
+      // 3. Draw Main Graph from Live Canvas
+      const plotAreaX = 48;
+      const plotAreaY = 120;
+      const plotAreaW = width - 96;
+      const plotAreaH = height - 200;
+
+      // Dark card backing for plot
+      ctx.fillStyle = '#0a0c14';
+      ctx.fillRect(plotAreaX, plotAreaY, plotAreaW, plotAreaH);
+      ctx.strokeStyle = 'rgba(0, 153, 255, 0.16)';
+      ctx.strokeRect(plotAreaX, plotAreaY, plotAreaW, plotAreaH);
+
+      // Draw the canvas content scaled to fit nicely
+      if (graphCanvas.width > 0 && graphCanvas.height > 0) {
+        ctx.drawImage(graphCanvas, plotAreaX + 8, plotAreaY + 8, plotAreaW - 16, plotAreaH - 16);
+      }
+
+      // 4. Footer Metadata & Branding
+      const stats = graphStatsText ? graphStatsText.textContent : 'X/Y Numerical Analysis';
+      ctx.fillStyle = '#64748b';
+      ctx.font = '12px "JetBrains Mono", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(stats, 48, height - 42);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.textAlign = 'right';
+      ctx.font = '13px "JetBrains Mono", monospace';
+      ctx.fillText('jaswanthkamaraj.github.io • NexusCode Engine', width - 48, height - 42);
+
+      return expCanvas;
+    }
+
+    // Download as PNG or JPG
+    function downloadGraphImage(format = 'png') {
+      try {
+        const canvas = generateExportCanvas();
+        const mimeType = format === 'jpg' ? 'image/jpeg' : 'image/png';
+        const ext = format === 'jpg' ? 'jpg' : 'png';
+        const dataUrl = canvas.toDataURL(mimeType, 0.95);
+
+        const link = document.createElement('a');
+        const filename = (currentPlotData && currentPlotData.title) 
+          ? `${currentPlotData.title.toLowerCase().replace(/[^a-z0-9]+/g, '_')}.${ext}`
+          : `nexus_plot.${ext}`;
+        link.download = filename;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        playSound('success');
+        showToast(`Saved chart as ${filename}`, "📥");
+      } catch (e) {
+        console.error("Export error:", e);
+        showToast("Export failed: " + e.message, "✖");
+      }
+    }
+
+    // Export Raw Data as CSV
+    function downloadGraphCSV() {
+      if (!currentPlotData) {
+        showToast("No active chart data to export.", "⚠️");
+        return;
+      }
+      let csvContent = "";
+      const d = currentPlotData;
+
+      if (d.type === 'multiline' || (d.series && d.series.length)) {
+        const headers = ['x'];
+        d.series.forEach((s, idx) => headers.push(s.name || `series_${idx + 1}`));
+        csvContent += headers.join(',') + '\n';
+        const rows = (d.x && d.x.length) ? d.x.length : (d.series[0]?.y?.length || 0);
+        for (let i = 0; i < rows; i++) {
+          const row = [d.x ? d.x[i] : i];
+          d.series.forEach(s => {
+            row.push(s.y && s.y[i] !== undefined ? s.y[i] : '');
+          });
+          csvContent += row.join(',') + '\n';
+        }
+      } else if (d.type === 'bar' && d.categories && d.values) {
+        csvContent += 'category,value\n';
+        for (let i = 0; i < d.categories.length; i++) {
+          csvContent += `"${d.categories[i]}",${d.values[i]}\n`;
+        }
+      } else if (d.type === 'scatter' && d.points) {
+        csvContent += 'x,y\n';
+        d.points.forEach(pt => {
+          csvContent += `${pt.x},${pt.y}\n`;
+        });
+      } else if (d.type === 'network' && d.edges) {
+        csvContent += 'source,target,weight\n';
+        d.edges.forEach(e => {
+          csvContent += `"${e.u}","${e.v}",${e.weight}\n`;
+        });
+      } else {
+        csvContent += 'index,value\n';
+        const vals = d.y || d.values || [];
+        vals.forEach((v, idx) => {
+          csvContent += `${idx},${v}\n`;
+        });
+      }
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.download = 'nexus_plot.png';
-      link.href = graphCanvas.toDataURL('image/png');
+      const filename = (d.title ? d.title.toLowerCase().replace(/[^a-z0-9]+/g, '_') : 'nexus_chart') + '_data.csv';
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
       link.click();
-      showToast("Saved visual plot as nexus_plot.png", "📥");
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      playSound('success');
+      showToast(`Exported CSV dataset (${filename})`, "📊");
+    }
+
+    // Export as Scalable Vector Graphic (SVG)
+    function downloadGraphSVG() {
+      if (!currentPlotData) {
+        showToast("No active chart data to export.", "⚠️");
+        return;
+      }
+      const d = currentPlotData;
+      const width = 1000;
+      const height = 600;
+      const pad = { top: 60, right: 40, bottom: 60, left: 60 };
+      const pw = width - pad.left - pad.right;
+      const ph = height - pad.top - pad.bottom;
+
+      let svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+  <style>
+    .bg { fill: #0b0c10; }
+    .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 20px; font-weight: bold; fill: #f8fafc; }
+    .subtitle { font-family: "JetBrains Mono", monospace; font-size: 11px; fill: #94a3b8; }
+    .grid { stroke: rgba(255,255,255,0.06); stroke-width: 1; }
+    .axis { stroke: rgba(255,255,255,0.25); stroke-width: 1.5; }
+    .label { font-family: "JetBrains Mono", monospace; font-size: 11px; fill: #94a3b8; }
+    .watermark { font-family: "JetBrains Mono", monospace; font-size: 10px; fill: #475569; }
+  </style>
+  <rect class="bg" width="100%" height="100%"/>
+  <text x="40" y="36" class="title">${d.title || 'Nexus Plot'}</text>
+  <text x="40" y="52" class="subtitle">${d.subtitle || 'Exported Vector Graphic'}</text>
+  
+  <!-- Plot Frame -->
+  <rect x="${pad.left}" y="${pad.top}" width="${pw}" height="${ph}" fill="#101216" stroke="rgba(255,255,255,0.1)"/>
+`;
+
+      // Plot elements
+      if (d.type === 'bar' && d.categories && d.values) {
+        const maxVal = Math.max(...d.values, 1);
+        const colW = pw / d.categories.length;
+        d.values.forEach((v, i) => {
+          const barH = (v / maxVal) * (ph - 20);
+          const bx = pad.left + i * colW + colW * 0.15;
+          const by = pad.top + ph - barH;
+          const bw = colW * 0.7;
+          svg += `  <rect x="${bx}" y="${by}" width="${bw}" height="${barH}" fill="#ffffff" rx="3" opacity="0.9"/>\n`;
+          svg += `  <text x="${bx + bw / 2}" y="${height - pad.bottom + 18}" class="label" text-anchor="middle">${d.categories[i]}</text>\n`;
+        });
+      } else if (d.series && d.series.length) {
+        let minX = d.x ? Math.min(...d.x) : 0;
+        let maxX = d.x ? Math.max(...d.x) : 10;
+        let minY = Infinity, maxY = -Infinity;
+        d.series.forEach(s => {
+          s.y.forEach(y => {
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+          });
+        });
+        if (minY === maxY) { minY -= 1; maxY += 1; }
+
+        d.series.forEach((s, sIdx) => {
+          const stroke = s.color || (sIdx === 0 ? '#ffffff' : '#94a3b8');
+          const pts = s.y.map((y, idx) => {
+            const xVal = d.x ? d.x[idx] : idx;
+            const px = pad.left + ((xVal - minX) / (maxX - minX)) * pw;
+            const py = pad.top + ph - ((y - minY) / (maxY - minY)) * ph;
+            return `${px.toFixed(1)},${py.toFixed(1)}`;
+          }).join(' ');
+          svg += `  <polyline fill="none" stroke="${stroke}" stroke-width="2" points="${pts}"/>\n`;
+        });
+      }
+
+      svg += `  <text x="${width - 40}" y="${height - 20}" class="watermark" text-anchor="end">jaswanthkamaraj.github.io</text>\n</svg>`;
+
+      const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const filename = (d.title ? d.title.toLowerCase().replace(/[^a-z0-9]+/g, '_') : 'nexus_plot') + '.svg';
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      playSound('success');
+      showToast(`Exported SVG vector graphic (${filename})`, "📐");
+    }
+
+    // Direct Copy Image to Clipboard
+    async function copyGraphToClipboard() {
+      try {
+        const canvas = generateExportCanvas();
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            downloadGraphImage('png');
+            return;
+          }
+          if (navigator.clipboard && window.ClipboardItem) {
+            try {
+              await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': blob })
+              ]);
+              playSound('success');
+              showToast("Plot copied to clipboard! Paste directly (Ctrl+V)", "📋");
+            } catch (err) {
+              console.warn("ClipboardItem write failed, fallback to download:", err);
+              downloadGraphImage('png');
+            }
+          } else {
+            downloadGraphImage('png');
+          }
+        }, 'image/png');
+      } catch (err) {
+        downloadGraphImage('png');
+      }
+    }
+
+    // Toggle dropdown on button click
+    btnDownloadGraph.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playSound('click');
+      downloadDropdownMenu.classList.toggle('show');
+    });
+
+    // Handle dropdown item clicks
+    downloadDropdownMenu.addEventListener('click', (e) => {
+      const item = e.target.closest('.dropdown-item');
+      if (!item) return;
+      const format = item.dataset.format;
+      downloadDropdownMenu.classList.remove('show');
+
+      if (format === 'png') downloadGraphImage('png');
+      else if (format === 'jpg') downloadGraphImage('jpg');
+      else if (format === 'svg') downloadGraphSVG();
+      else if (format === 'csv') downloadGraphCSV();
+      else if (format === 'copy') copyGraphToClipboard();
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dropdown-wrapper')) {
+        downloadDropdownMenu.classList.remove('show');
+      }
+    });
+
+    // Quick Action Buttons
+    btnQuickCopyGraph.addEventListener('click', () => {
+      playSound('click');
+      copyGraphToClipboard();
+    });
+
+    btnFooterDownload.addEventListener('click', () => {
+      playSound('click');
+      downloadGraphImage('png');
+    });
+
+    btnFooterCSV.addEventListener('click', () => {
+      playSound('click');
+      downloadGraphCSV();
     });
 
     graphTypeSelect.addEventListener('change', (e) => {
